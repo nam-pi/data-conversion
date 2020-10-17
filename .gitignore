@@ -2,3 +2,4 @@
 .vim
 cache
 __pycache__
+out
