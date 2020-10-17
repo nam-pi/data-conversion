@@ -1,0 +1,4 @@
+.credentials.json
+.vim
+cache
+__pycache__
