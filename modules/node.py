@@ -47,14 +47,16 @@ class Node:
             self.node = self._graph.add_blind(type_uri)
 
     def add_relationship(
-        self, predicate: URIRef, object: Union[Node, URIRef, BNode, Literal]
+        self, pred: URIRef, obj: Union[Node, URIRef, BNode, Literal]
     ) -> None:
         """Add an relationship triple with the node as subject to the graph.
 
         Parameters:
-            predicate (URIRef): The predicate for the resulting relationship.
-            object (Union[Node, URIRef, BNode, Literal]): The object node.
+            pred (URIRef): The predicate for the resulting relationship.
+            obj (Union[Node, URIRef, BNode, Literal]): The object node.
         """
         self._graph.add(
-            self.node, predicate, object.node if hasattr(object, "node") else object
+            self.node,
+            pred,
+            obj.node if hasattr(obj, "node") else obj,
         )
