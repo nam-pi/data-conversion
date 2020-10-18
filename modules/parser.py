@@ -6,6 +6,7 @@ Classes:
 """
 
 from modules.date import Date
+from modules.di_act import Di_act
 from modules.event import Event
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
@@ -68,3 +69,12 @@ class Parser:
                 self._graph, self._tables, Nampi_type.Core.birth, "", date, place
             )
             event.add_relationship(Nampi_type.Core.starts_life_of, person)
+            di_act = Di_act(
+                self._graph,
+                self._tables,
+                row[Column.author],
+                source_location,
+                row[Column.interpretation_date],
+                event,
+                row[Column.comment],
+            )
