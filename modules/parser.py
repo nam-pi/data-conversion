@@ -11,8 +11,8 @@ from modules.person import Person
 from modules.place import Place
 from modules.source import Source
 from modules.source_location import Source_location
-from modules.source import Source
-from modules.source_location import Source_location
+from modules.tables import Column, Table, Tables
+from rdflib import Graph
 
 
 class Parser:
