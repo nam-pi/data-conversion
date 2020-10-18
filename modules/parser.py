@@ -4,14 +4,12 @@ Classes:
     Parser
 """
 
-from modules.date import Date
+from modules.birth import Birth
 from modules.di_act import Di_act
 from modules.event import Event
 from modules.nampi_graph import Nampi_graph
-from modules.nampi_type import Nampi_type
-from modules.person import Person
-from modules.place import Place
 from modules.tables import Column, Table, Tables
+from pandas import Series
 from rdflib import Graph
 
 
@@ -36,39 +34,30 @@ class Parser:
         Returns:
             Graph: the tabular data as RDF.
         """
-        self.__parse_births()
+        self.__add_births()
         return self._graph.graph
 
-    def __parse_births(self):
+    def __add_births(self):
         for _, row in self._tables.get_table(Table.BIRTHS).iterrows():
-            date = Date.optional(
-                self._graph,
-                self._tables,
-                row[Column.exact_date],
-                row[Column.earliest_date],
-                row[Column.latest_date],
-            )
-            person = Person(
+            birth = Birth(
                 self._graph,
                 self._tables,
                 row[Column.person],
-            )
-            place = Place.optional(
-                self._graph,
-                self._tables,
+                row[Column.exact_date],
+                row[Column.earliest_date],
+                row[Column.latest_date],
                 row[Column.event_place],
             )
-            event = Event(
-                self._graph, self._tables, Nampi_type.Core.birth, "", date, place
-            )
-            event.add_relationship(Nampi_type.Core.starts_life_of, person)
-            di_act = Di_act(
-                self._graph,
-                self._tables,
-                event,
-                row[Column.author],
-                row[Column.source],
-                row[Column.source_location],
-                row[Column.interpretation_date],
-                row[Column.comment],
-            )
+        self.__add_di_act(row, birth)
+
+    def __add_di_act(self, row: Series, event: Event):
+        Di_act(
+            self._graph,
+            self._tables,
+            event,
+            row[Column.author],
+            row[Column.source],
+            row[Column.source_location],
+            row[Column.interpretation_date],
+            row[Column.comment],
+        )
