@@ -119,22 +119,20 @@ class Tables:
         return ServiceAccountCredentials.from_json_keyfile_dict(credentials_json, scope)
 
     def __get_data(
-        self,
-        spreadsheet: gspread.Spreadsheet,
-        worksheet_name: str,
-        numericise_ignore: Optional[List[int]] = None,
+        self, spreadsheet: gspread.Spreadsheet, worksheet_name: str
     ) -> DataFrame:
         cache_file_path = os.path.join(self.__cache_path, worksheet_name + ".csv")
         if self.__use_cache(cache_file_path):
             print("Read {} from cache".format(worksheet_name))
-            return pd.read_csv(cache_file_path)
+            return pd.read_csv(cache_file_path, dtype=str, keep_default_na=False)
         else:
             print("Read {} from Google".format(worksheet_name))
             worksheet = spreadsheet.worksheet(worksheet_name)
             df: DataFrame = DataFrame(
                 worksheet.get_all_records(
-                    default_blank=None, numericise_ignore=numericise_ignore
-                )
+                    default_blank=None, numericise_ignore=["all"]
+                ),
+                dtype=str,
             ).dropna(how="all")
             df.to_csv(cache_file_path)
             return df
@@ -174,9 +172,10 @@ class Tables:
         indexed = df.set_index(index_column)
         row = indexed.loc[index_value]
         result = row[output_column]
-        if isinstance(result, Number) and math.isnan(result):  # type: ignore
-            return None
-        elif isinstance(result, str) and not result:
-            return None
-        else:
-            return result
+        return result if result else None
+        # if isinstance(result, Number) and math.isnan(result):  # type: ignore
+        #     return None
+        # elif isinstance(result, str) and not result:
+        #     return None
+        # else:
+        #     return result

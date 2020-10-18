@@ -8,6 +8,7 @@ Classes:
 from modules.date import Date
 from modules.nampi_graph import Nampi_graph
 from modules.person import Person
+from modules.place import Place
 from modules.tables import Column, Table, Tables
 from rdflib import Graph
 
@@ -49,4 +50,9 @@ class Parser:
                 self.__graph,
                 self.__tables,
                 row[Column.person],
+            )
+            place = Place.optional(
+                self.__graph,
+                self.__tables,
+                row[Column.event_place],
             )

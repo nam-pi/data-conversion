@@ -1,7 +1,7 @@
-"""The module for the Person class.
+"""The module for the Place class.
 
 Classes:
-    Person
+    Place
 """
 from __future__ import annotations
 
@@ -14,24 +14,26 @@ from modules.resource import Resource
 from modules.tables import Column, Tables, Table
 
 
-class Person(Resource):
+class Place(Resource):
     """A person RDF resource."""
 
-    gnd_id: Optional[str]
+    geoname_id: Optional[str]
+    wikidata_id: Optional[str]
 
     def __init__(self, graph: Nampi_graph, tables: Tables, label: str):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the person belongs to.
+            graph (Nampi_graph): The RDF graph the place belongs to.
             tables (Tables): The data tables.
-            label (str): The persons label.
+            label (str): The places label.
         """
-        super().__init__(
-            graph, tables, Nampi_type.Core.person, Nampi_ns.persons, label=label
+        super().__init__(graph, tables, Nampi_type.Core.place, Nampi_ns.places, label)
+        self.geoname_id = tables.get_from_table(
+            Table.PLACES, Column.name, label, Column.geoname_id
         )
-        self.gnd_id = tables.get_from_table(
-            Table.PERSONS, Column.name, label, Column.gnd_id
+        self.wikidata_id = tables.get_from_table(
+            Table.PLACES, Column.name, label, Column.wikidata
         )
 
     @classmethod
@@ -40,15 +42,15 @@ class Person(Resource):
         graph: Nampi_graph,
         tables: Tables,
         label: Optional[str],
-    ) -> Optional[Person]:
+    ) -> Optional[Place]:
         """Initialize the class if a valid label exists.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the person belongs to.
+            graph (Nampi_graph): The RDF graph the place belongs to.
             tables (Tables): The data tables.
-            label (str): The persons label.
+            label (str): The places label.
 
         Returns:
-            Optional[Person]: A Person object or None
+            Optional[Place]: A Place object or None
         """
         return cls(graph, tables, label) if label else None

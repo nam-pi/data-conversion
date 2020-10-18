@@ -41,7 +41,7 @@ class Date(Node):
         earliest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
         latest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the latest possible date.
         """
-        if isinstance(exact_date, str):
+        if exact_date:
             super().__init__(graph, tables, Nampi_type.Core.date)
             self.exact = exact_date
             graph.add(
@@ -51,14 +51,14 @@ class Date(Node):
             )
         else:
             super().__init__(graph, tables, Nampi_type.Core.unclear_date)
-            if isinstance(earliest_date, str):
+            if earliest_date:
                 self.earliest = earliest_date
                 graph.add(
                     self.node,
                     Nampi_type.Core.has_earliest_possible_date_time_representation,
                     Nampi_graph.date_time_literal(self.earliest),
                 )
-            if isinstance(latest_date, str):
+            if latest_date:
                 self.latest = latest_date
                 graph.add(
                     self.node,
@@ -89,8 +89,6 @@ class Date(Node):
         """
         return (
             cls(graph, tables, exact_date, earliest_date, latest_date)
-            if isinstance(exact_date, str)
-            or isinstance(earliest_date, str)
-            or isinstance(latest_date, str)
+            if exact_date or earliest_date or latest_date
             else None
         )
