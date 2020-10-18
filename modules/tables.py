@@ -49,6 +49,7 @@ class Column:
     event_place = "Event Place"
     exact_date = "Exact Date"
     family_name = "Family name"
+    gender = "Gender"
     geoname_id = "Geonames-ID"
     gnd_id = "GND ID"
     interpretation_date = "Interpretation Date"
