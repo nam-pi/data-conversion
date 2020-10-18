@@ -35,4 +35,4 @@ class Resource(Node):
         label (Optional[str] = None): An optional label for the resource.
         """
         super().__init__(graph, tables, type_uri, ns, label)
-        self.__label = label
+        self.label = label

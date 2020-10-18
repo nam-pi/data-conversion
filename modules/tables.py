@@ -173,9 +173,3 @@ class Tables:
         row = indexed.loc[index_value]
         result = row[output_column]
         return result if result else None
-        # if isinstance(result, Number) and math.isnan(result):  # type: ignore
-        #     return None
-        # elif isinstance(result, str) and not result:
-        #     return None
-        # else:
-        #     return result

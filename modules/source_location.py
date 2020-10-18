@@ -26,9 +26,8 @@ class Source_location(Node):
             location (str): The location string (page name, url or similar).
         """
         super().__init__(graph, tables, Nampi_type.Core.source_location)
-        graph.add(self.node, Nampi_type.Core.has_source, source.node)
-        graph.add(
-            self.node,
+        self.add_relationship(Nampi_type.Core.has_source, source.node)
+        self.add_relationship(
             Nampi_type.Core.has_string_representation,
             graph.string_literal(location),
         )

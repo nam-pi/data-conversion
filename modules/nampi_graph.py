@@ -60,14 +60,17 @@ class Nampi_graph:
         return Literal(string, datatype=XSD.string)
 
     def add(
-        self, subj: Union[URIRef, BNode], pred: URIRef, obj: Union[URIRef, BNode]
+        self,
+        subj: Union[URIRef, BNode, Literal],
+        pred: URIRef,
+        obj: Union[URIRef, BNode, Literal],
     ) -> None:
         """Add a rdf triple to the graph.
 
         Parameters:
-            subj (Union[URIRef, BNode]): The subject, can be a full resource with an URIRef or a blank node.
+            subj (Union[URIRef, BNode, Literal]): The subject, can be a full resource with an URIRef or a blank node.
             pred (URIRef): The predicate of the triple, a URIRef.
-            obj (Union[URIRef, BNode]): The object, can be a full resource with an URIRef or a blank node.
+            obj (Union[URIRef, BNode, Literal]): The object, can be a full resource with an URIRef or a blank node.
 
         """
         self.graph.add((subj, pred, obj))

@@ -20,9 +20,9 @@ from rdflib import RDF
 class Date(Node):
     """A blank node with associated triples that represents a date."""
 
-    exact: Optional[str]
-    earliest: Optional[str]
-    latest: Optional[str]
+    exact: Optional[str] = None
+    earliest: Optional[str] = None
+    latest: Optional[str] = None
 
     def __init__(
         self,
@@ -44,8 +44,7 @@ class Date(Node):
         if exact_date:
             super().__init__(graph, tables, Nampi_type.Core.date)
             self.exact = exact_date
-            graph.add(
-                self.node,
+            self.add_relationship(
                 Nampi_type.Core.has_date_time_representation,
                 Nampi_graph.date_time_literal(self.exact),
             )
@@ -53,15 +52,13 @@ class Date(Node):
             super().__init__(graph, tables, Nampi_type.Core.unclear_date)
             if earliest_date:
                 self.earliest = earliest_date
-                graph.add(
-                    self.node,
+                self.add_relationship(
                     Nampi_type.Core.has_earliest_possible_date_time_representation,
                     Nampi_graph.date_time_literal(self.earliest),
                 )
             if latest_date:
                 self.latest = latest_date
-                graph.add(
-                    self.node,
+                self.add_relationship(
                     Nampi_type.Core.has_latest_possible_date_time_representation,
                     Nampi_graph.date_time_literal(self.latest),
                 )
