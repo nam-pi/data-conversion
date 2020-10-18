@@ -14,7 +14,7 @@ from modules.nampi_type import Nampi_type
 from modules.person import Person
 from modules.resource import Resource
 from modules.source_location import Source_location
-from modules.tables import Column, Table, Tables
+from modules.tables import Tables
 from rdflib import RDFS
 
 
@@ -25,22 +25,24 @@ class Di_act(Resource):
         self,
         graph: Nampi_graph,
         tables: Tables,
-        author_label: str,
-        source_location: Source_location,
-        interpretation_date: Optional[str],
         event: Event,
-        comment: Optional[str] = None,
+        author_label: str,
+        source_label: str,
+        source_location_text: str,
+        interpretation_date: Optional[str],
+        comment: Optional[str],
     ):
         """Initialize the class.
 
         Parameters:
             graph (Nampi_graph): The RDF graph the person belongs to.
             tables (Tables): The data tables.
-            author_label str: The label of the author of the document interpretation act.
-            source_location (Source_location): The source location of the document interpretation act.
-            interpretation_date (Optional[str]): The interpretation date as a string of the format "YYYY-MM-DD". If it is missing, the current date is used.
             event: The event of the document interpretation act.
-            comment: An optional comment.
+            author_label (str): The label of the author of the document interpretation act.
+            source_label (str)
+            source_location_text (str): The source location of the document interpretation act.
+            interpretation_date (Optional[str]): The interpretation date as a string of the format "YYYY-MM-DD". If it is missing, the current date is used.
+            comment (str): An optional comment.
         """
         super().__init__(
             graph,
@@ -54,6 +56,12 @@ class Di_act(Resource):
             interpretation_date
             if interpretation_date
             else datetime.datetime.now().strftime("%Y-%m-%d"),
+        )
+        source_location = Source_location(
+            self._graph,
+            self._tables,
+            source_label,
+            source_location_text,
         )
         author = Person(graph, tables, author_label)
         self.add_relationship(Nampi_type.Core.has_interpretation, event)

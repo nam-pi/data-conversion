@@ -2,7 +2,6 @@
 
 Classes:
     Parser
-
 """
 
 from modules.date import Date
@@ -12,8 +11,6 @@ from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
 from modules.person import Person
 from modules.place import Place
-from modules.source import Source
-from modules.source_location import Source_location
 from modules.tables import Column, Table, Tables
 from rdflib import Graph
 
@@ -61,10 +58,6 @@ class Parser:
                 self._tables,
                 row[Column.event_place],
             )
-            source = Source(self._graph, self._tables, row[Column.source])
-            source_location = Source_location(
-                self._graph, self._tables, source, row[Column.source_location]
-            )
             event = Event(
                 self._graph, self._tables, Nampi_type.Core.birth, "", date, place
             )
@@ -72,9 +65,10 @@ class Parser:
             di_act = Di_act(
                 self._graph,
                 self._tables,
-                row[Column.author],
-                source_location,
-                row[Column.interpretation_date],
                 event,
+                row[Column.author],
+                row[Column.source],
+                row[Column.source_location],
+                row[Column.interpretation_date],
                 row[Column.comment],
             )
