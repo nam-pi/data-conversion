@@ -8,7 +8,7 @@ Classes:
 from modules.date import Date
 from modules.nampi_graph import Nampi_graph
 from modules.person import Person
-from modules.tables import Column, Tables, Table
+from modules.tables import Column, Table, Tables
 from rdflib import Graph
 
 
