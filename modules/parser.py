@@ -5,10 +5,11 @@ Classes:
 """
 
 from modules.birth import Birth
+from modules.death import Death
 from modules.di_act import Di_act
 from modules.event import Event
 from modules.nampi_graph import Nampi_graph
-from modules.tables import Column, Table, Tables
+from modules.tables import Table, Tables
 from pandas import Series
 from rdflib import Graph
 
@@ -35,29 +36,18 @@ class Parser:
             Graph: the tabular data as RDF.
         """
         self.__add_births()
+        self.__add_deaths()
         return self._graph.graph
 
     def __add_births(self):
         for _, row in self._tables.get_table(Table.BIRTHS).iterrows():
-            birth = Birth(
-                self._graph,
-                self._tables,
-                row[Column.person],
-                row[Column.exact_date],
-                row[Column.earliest_date],
-                row[Column.latest_date],
-                row[Column.event_place],
-            )
+            birth = Birth(self._graph, self._tables, row)
         self.__add_di_act(row, birth)
 
+    def __add_deaths(self):
+        for _, row in self._tables.get_table(Table.DEATHS).iterrows():
+            death = Death(self._graph, self._tables, row)
+        self.__add_di_act(row, death)
+
     def __add_di_act(self, row: Series, event: Event):
-        Di_act(
-            self._graph,
-            self._tables,
-            event,
-            row[Column.author],
-            row[Column.source],
-            row[Column.source_location],
-            row[Column.interpretation_date],
-            row[Column.comment],
-        )
+        Di_act(self._graph, self._tables, event, row)

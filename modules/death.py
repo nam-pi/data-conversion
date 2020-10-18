@@ -1,7 +1,7 @@
-"""The module for the Birth class.
+"""The module for the Death class.
 
 Classes:
-    Birth
+    Death
 """
 from typing import Optional
 
@@ -15,16 +15,16 @@ from modules.tables import Column, Tables
 from pandas import Series
 
 
-class Birth(Event):
-    """A birth event RDF resource."""
+class Death(Event):
+    """A death event RDF resource."""
 
     def __init__(self, graph: Nampi_graph, tables: Tables, row: Series) -> None:
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the birth belongs to.
+            graph (Nampi_graph): The RDF graph the death belongs to.
             tables (Tables): The data tables.
-            row (Series): The data row for the birth.
+            row (Series): The data row for the death.
         """
         event_date = Date.optional(
             graph,
@@ -42,4 +42,4 @@ class Birth(Event):
             self._tables,
             row[Column.person],
         )
-        self.add_relationship(Nampi_type.Core.starts_life_of, person)
+        self.add_relationship(Nampi_type.Core.ends_life_of, person)
