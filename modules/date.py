@@ -35,11 +35,11 @@ class Date(Node):
         """Initialize the class.
 
         Parameters:
-        graph (Nampi_graph): The RDF graph the resource belongs to.
-        tables (Tables): The data tables.
-        exact_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the exact date.
-        earliest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
-        latest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the latest possible date.
+            graph (Nampi_graph): The RDF graph the date belongs to.
+            tables (Tables): The data tables.
+            exact_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the exact date.
+            earliest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
+            latest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the latest possible date.
         """
         if exact_date:
             super().__init__(graph, tables, Nampi_type.Core.date)

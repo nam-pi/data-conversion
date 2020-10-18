@@ -9,8 +9,10 @@ from modules.date import Date
 from modules.nampi_graph import Nampi_graph
 from modules.person import Person
 from modules.place import Place
-from modules.tables import Column, Table, Tables
-from rdflib import Graph
+from modules.source import Source
+from modules.source_location import Source_location
+from modules.source import Source
+from modules.source_location import Source_location
 
 
 class Parser:
@@ -55,4 +57,8 @@ class Parser:
                 self.__graph,
                 self.__tables,
                 row[Column.event_place],
+            )
+            source = Source(self.__graph, self.__tables, row[Column.source])
+            source_location = Source_location(
+                self.__graph, self.__tables, source, row[Column.source_location]
             )
