@@ -35,7 +35,7 @@ class Birth(Event):
         )
         event_place = Place.optional(graph, tables, row[Column.event_place])
         super().__init__(
-            graph, tables, Nampi_type.Core.death, "", event_date, event_place
+            graph, tables, Nampi_type.Core.birth, "", event_date, event_place
         )
         person = Person(
             self._graph,
