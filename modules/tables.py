@@ -1,14 +1,45 @@
+"""The module for the Table and related classes.
+
+Classes:
+    Column: Headings for columns in the Google sheet.
+    Table: Names of the available tables.
+    Tables: The tables of the Google sheet document as DataFrame objects.
+
+"""
+import json
+import math
 import os
 import time
-import json
+from numbers import Number
+from typing import Any, Dict, List, Literal, Optional, TypeVar
+
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
+from modules.no_value import NoValue
+from oauth2client.service_account import ServiceAccountCredentials
 from pandas import DataFrame
-from typing import Optional, List, TypeVar
 
 
-class Col_heading:
+class Table(NoValue):
+    """Names of the avaialable tables."""
+
+    BIRTHS = "Births"
+    COMPLEX_EVENTS = "Complex Events"
+    DEATHS = "Deaths"
+    GROUPS = "Groups"
+    OBJECT_CREATIONS = "Object Creations"
+    OBJECTS = "Objects"
+    OCCUPATIONS = "Occupations"
+    PERSONS = "Persons"
+    PLACES = "Places"
+    SOURCES = "Sources"
+    STATUSES = "Statuses"
+    TITLES = "Titles"
+
+
+class Column:
+    """Headings for the columns in the available tables."""
+
     author = "Author"
     comment = "Comment"
     community_astheim = "Community Astheim"
@@ -33,20 +64,11 @@ class Col_heading:
 
 
 class Tables:
+    """Bundles the Google Sheets tables as pandas dataframes."""
+
     __cache_path: str
     __cache_validity_days: int
-    births: DataFrame
-    complex_events: DataFrame
-    deaths: DataFrame
-    groups: DataFrame
-    object_creations: DataFrame
-    objects: DataFrame
-    occupations: DataFrame
-    persons: DataFrame
-    places: DataFrame
-    sources: DataFrame
-    statuses: DataFrame
-    titles: DataFrame
+    __tables: Dict[Table, DataFrame] = {}
 
     def __init__(
         self,
@@ -54,6 +76,13 @@ class Tables:
         credentials_path: str,
         cache_validity_days: int,
     ):
+        """Initialize the class.
+
+        Parameters:
+            cache_path (str): The path to cache the individual tables so they do not need to be refetched on each execution of the script. Needs to exist.
+            credentials_path (str): The path to the Google Service Account credentials to access Google Sheets. Needs to exist.
+            cache_validity_days (int): The number of days cached files stay valid and are not refetched.
+        """
         self.__cache_path = cache_path
         self.__cache_validity_days = cache_validity_days
 
@@ -61,18 +90,8 @@ class Tables:
         gc = gspread.authorize(credentials)
         spreadsheet = gc.open("NAMPI Data Entry Form v2")
 
-        self.births = self.__get_data(spreadsheet, "Births")
-        self.complex_events = self.__get_data(spreadsheet, "Complex Events")
-        self.deaths = self.__get_data(spreadsheet, "Deaths")
-        self.groups = self.__get_data(spreadsheet, "Groups")
-        self.object_creations = self.__get_data(spreadsheet, "Object Creations")
-        self.objects = self.__get_data(spreadsheet, "Objects")
-        self.occupations = self.__get_data(spreadsheet, "Occupations")
-        self.persons = self.__get_data(spreadsheet, "Persons", numericise_ignore=[2, 5])
-        self.places = self.__get_data(spreadsheet, "Places", numericise_ignore=[2, 6])
-        self.sources = self.__get_data(spreadsheet, "Sources")
-        self.statuses = self.__get_data(spreadsheet, "Statuses")
-        self.titles = self.__get_data(spreadsheet, "Titles")
+        for _, member in Table.__members__.items():
+            self.__tables[member] = self.__get_data(spreadsheet, member.value)
 
     def __use_cache(self, file: str) -> bool:
         if not os.path.exists(file):
@@ -119,3 +138,45 @@ class Tables:
             ).dropna(how="all")
             df.to_csv(cache_file_path)
             return df
+
+    def get_table(self, table: Table) -> DataFrame:
+        """Get a table as a dataframe.
+
+        Parameter:
+            table (Table): The table to get.
+
+        Returns:
+            Table: The table.
+        """
+        return self.__tables[table]
+
+    def get_from_table(
+        self,
+        table: Table,
+        index_column: str,
+        index_value: str,
+        output_column: str,
+    ) -> Optional[str]:
+        """Get a specific value from the indicated table. The target row is specified by an index value in an index column and the actual returned value is taken from the output column.
+
+        Parameters:
+            table (Table): The table to search in.
+            index_column (str): The column in which the index value has to be found.
+            index_value (str): The value to be present in the index column to indicate the desired row in the table.
+            output_column (str): The name of the column to get the desired value from the indicated row.
+
+        Returns:
+            Optional[str]: The desired value if it can be found.
+        """
+        if not index_value:
+            return None
+        df = self.__tables[table]
+        indexed = df.set_index(index_column)
+        row = indexed.loc[index_value]
+        result = row[output_column]
+        if isinstance(result, Number) and math.isnan(result):  # type: ignore
+            return None
+        elif isinstance(result, str) and not result:
+            return None
+        else:
+            return result

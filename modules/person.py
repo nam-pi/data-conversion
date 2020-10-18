@@ -1,21 +1,40 @@
+"""The module for the Person class.
+
+Classes:
+    Person
+
+"""
+
 from __future__ import annotations
-from modules.resource import Resource
-from modules.tables import Tables, Col_heading
-from modules.nampi_graph import Nampi_graph
-from rdflib import URIRef, BNode, Namespace
-from modules.rdf_types import Type
-from modules.rdf_namespaces import Namespace as Nampi_ns
-from modules.utils import get_df_value
+
 from typing import Optional
+
+from modules.nampi_graph import Nampi_graph
+from modules.nampi_ns import Nampi_ns
+from modules.nampi_type import Nampi_type
+from modules.resource import Resource
+from modules.tables import Column, Tables, Table
+from rdflib import BNode, Namespace, URIRef
 
 
 class Person(Resource):
+    """A person RDF resource."""
+
     gnd_id: Optional[str]
 
     def __init__(self, graph: Nampi_graph, tables: Tables, label: str):
-        super().__init__(graph, tables, Type.Core.person, Nampi_ns.persons, label=label)
-        self.gnd_id = get_df_value(
-            tables.persons, Col_heading.name, label, Col_heading.gnd_id
+        """Initialize the class.
+
+        Parameters:
+            graph (Nampi_graph): The RDF graph the resource belongs to.
+            tables (Tables): The data tables.
+            label (str): The persons label.
+        """
+        super().__init__(
+            graph, tables, Nampi_type.Core.person, Nampi_ns.persons, label=label
+        )
+        self.gnd_id = tables.get_from_table(
+            Table.PERSONS, Column.name, label, Column.gnd_id
         )
 
     @classmethod
@@ -25,4 +44,14 @@ class Person(Resource):
         tables: Tables,
         label: Optional[str],
     ) -> Optional[Person]:
+        """Initialize the class if a valid label exists.
+
+        Parameters:
+            graph (Nampi_graph): The RDF graph the resource belongs to.
+            tables (Tables): The data tables.
+            label (str): The persons label.
+
+        Returns:
+            Optional[Person]: A Person object or None
+        """
         return cls(graph, tables, label) if label else None
