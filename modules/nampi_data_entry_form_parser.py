@@ -1,7 +1,7 @@
-"""The module for the Parser class.
+"""The module for the Nampi data entry form parser.
 
 Classes:
-    Parser
+    Nampi_data_entry_form
 """
 
 from typing import Optional
@@ -18,41 +18,48 @@ from modules.place import Place
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
-from modules.tables import Column, Table, Tables
+from modules.nampi_data_entry_form import (
+    Column,
+    Table,
+    Nampi_data_entry_form as Sheet,
+)
 from pandas import Series
 from rdflib import Graph
 
 
-class Parser:
+class Nampi_data_entry_form_parser:
     """A parser that parses the NAMPI input tables and transforms the data to an RDF graph."""
 
-    _tables: Tables
+    __sheet: Sheet
     _graph: Nampi_graph
 
-    def __init__(self, tables: Tables):
+    def __init__(
+        self,
+        graph: Nampi_graph,
+        cache_path: str,
+        credentials_path: str,
+        cache_validity_days: int,
+    ):
         """Initialize the class.
 
         Parameters:
-            tables (Tables): The data tables.
+            graph: The data graph.
         """
-        self._tables = tables
-        self._graph = Nampi_graph()
+        self.__sheet = Sheet(cache_path, credentials_path, cache_validity_days)
+        self._graph = graph
 
-    def parse(self) -> Graph:
-        """Parse the input data and return the resulting RDF graph.
+        print("\nParse the data for '{}'".format(self.__sheet.sheet_name))
 
-        Returns:
-            The tabular data as RDF.
-        """
         self.__add_births()
         self.__add_deaths()
-        return self._graph.graph
+
+        print("Finished parsing the data for '{}'".format(self.__sheet.sheet_name))
 
     def __add_births(self):
-        for _, row in self._tables.get_table(Table.BIRTHS).iterrows():
+        for _, row in self.__sheet.get_table(Table.BIRTHS).iterrows():
             born_person = self.__get_person(row[Column.person])
             if not born_person:
-                return None
+                continue
             birth_date = self.__get_date(
                 row[Column.exact_date],
                 row[Column.earliest_date],
@@ -61,12 +68,13 @@ class Parser:
             birth_place = self.__get_place(row[Column.event_place])
             birth = Birth(self._graph, born_person, birth_date, birth_place)
             self.__add_di_act(row, birth)
+        print("\tParsed the births")
 
     def __add_deaths(self):
-        for _, row in self._tables.get_table(Table.DEATHS).iterrows():
+        for _, row in self.__sheet.get_table(Table.DEATHS).iterrows():
             died_person = self.__get_person(row[Column.person])
             if not died_person:
-                return None
+                continue
             death_date = self.__get_date(
                 row[Column.exact_date],
                 row[Column.earliest_date],
@@ -75,6 +83,7 @@ class Parser:
             death_place = self.__get_place(row[Column.event_place])
             death = Death(self._graph, died_person, death_date, death_place)
             self.__add_di_act(row, death)
+        print("\tParsed the deaths")
 
     def __add_di_act(self, row: Series, event: Event):
         author = self.__get_person(row[Column.author])
@@ -106,7 +115,7 @@ class Parser:
         )
 
     def __get_person(self, person_label: Optional[str]) -> Optional[Person]:
-        gender_text = self._tables.get_from_table(
+        gender_text = self.__sheet.get_from_table(
             Table.PERSONS, Column.name, person_label, Column.gender
         )
         gender = None
@@ -114,16 +123,16 @@ class Parser:
             gender = Gender.MALE
         elif gender_text == "F":
             gender = Gender.FEMALE
-        gnd_id = self._tables.get_from_table(
+        gnd_id = self.__sheet.get_from_table(
             Table.PERSONS, Column.name, person_label, Column.gnd_id
         )
         return Person.optional(self._graph, person_label, gender=gender, gnd_id=gnd_id)
 
     def __get_place(self, place_label: Optional[str]) -> Optional[Place]:
-        geoname_id = self._tables.get_from_table(
+        geoname_id = self.__sheet.get_from_table(
             Table.PLACES, Column.name, place_label, Column.geoname_id
         )
-        wikidata_id = self._tables.get_from_table(
+        wikidata_id = self.__sheet.get_from_table(
             Table.PLACES, Column.name, place_label, Column.wikidata
         )
         return Place.optional(
@@ -133,7 +142,7 @@ class Parser:
     def __get_source_location(
         self, source_label: str, location_text: str
     ) -> Source_location:
-        source_type_text = self._tables.get_from_table(
+        source_type_text = self.__sheet.get_from_table(
             Table.SOURCES, Column.title, source_label, Column.type
         )
         source_type = None

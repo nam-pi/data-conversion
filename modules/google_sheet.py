@@ -1,15 +1,14 @@
-"""The module for the Table and related classes.
+"""The module for the Google Sheet datasource class.
 
 Classes:
-    Column: Headings for columns in the Google sheet.
-    Table: Names of the available tables.
-    Tables: The tables of the Google sheet document as DataFrame objects.
-
+    Googlesheet
 """
+
+import errno
 import json
 import os
 import time
-from typing import Dict, Optional
+from typing import Dict, Optional, Type
 
 import gspread
 import pandas as pd
@@ -18,79 +17,48 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pandas import DataFrame
 
 
-class Table(NoValue):
-    """Names of the avaialable tables."""
-
-    BIRTHS = "Births"
-    COMPLEX_EVENTS = "Complex Events"
-    DEATHS = "Deaths"
-    GROUPS = "Groups"
-    OBJECT_CREATIONS = "Object Creations"
-    OBJECTS = "Objects"
-    OCCUPATIONS = "Occupations"
-    PERSONS = "Persons"
-    PLACES = "Places"
-    SOURCES = "Sources"
-    STATUSES = "Statuses"
-    TITLES = "Titles"
-
-
-class Column:
-    """Headings for the columns in the available tables."""
-
-    author = "Author"
-    comment = "Comment"
-    community_astheim = "Community Astheim"
-    community_gaming = "Community Gaming"
-    earliest_date = "Earliest Possible Date"
-    event_definition = "Event Definition"
-    event_place = "Event Place"
-    exact_date = "Exact Date"
-    family_name = "Family name"
-    gender = "Gender"
-    geoname_id = "Geonames-ID"
-    gnd_id = "GND ID"
-    interpretation_date = "Interpretation Date"
-    latest_date = "Latest Possible Date"
-    name = "Name"
-    person = "Person"
-    religious_name = "Religious name"
-    source = "Source"
-    source_location = "Source Location"
-    title = "Title"
-    type = "Type"
-    wikidata = "Wikidata"
-
-
-class Tables:
-    """Bundles the Google Sheets tables as pandas dataframes."""
+class Google_sheet:
+    """An abstraction layer that provides data from tables in Google sheets."""
 
     __cache_path: str
     __cache_validity_days: int
-    __tables: Dict[Table, DataFrame] = {}
+    __spreadsheet: gspread.Spreadsheet
+    _tables: Dict[NoValue, DataFrame] = {}
+    sheet_name: str
 
     def __init__(
         self,
+        sheet_name: str,
         cache_path: str,
         credentials_path: str,
         cache_validity_days: int,
+        Tables: Type[NoValue],
     ):
         """Initialize the class.
 
         Parameters:
+            sheet_name: The name of the Google Sheet
             cache_path: The path to cache the individual tables so they do not need to be refetched on each execution of the script. Needs to exist.
             credentials_path: The path to the Google Service Account credentials to access Google Sheets. Needs to exist.
             cache_validity_days: The number of days cached files stay valid and are not refetched.
+            Tables: The enum-like list of the table names.
         """
         self.__cache_path = cache_path
         self.__cache_validity_days = cache_validity_days
+        self.sheet_name = sheet_name
 
+        print("\nRead Google Sheet data for '{}'".format(sheet_name))
+
+        # Open spreadsheet
         credentials = self.__load_credentials(credentials_path)
         gc = gspread.authorize(credentials)
-        spreadsheet = gc.open("NAMPI Data Entry Form v2")
+        self.__spreadsheet = gc.open(sheet_name)
 
-        for _, member in Table.__members__.items():
-            self.__tables[member] = self.__get_data(spreadsheet, member.value)
+        # Read all tables in the sheet
+        for _, member in Tables.__members__.items():
+            self._tables[member] = self._get_data(member.value)
+
+        print("Finished reading Google Sheet data '{}'".format(sheet_name))
 
     def __use_cache(self, file: str) -> bool:
         if not os.path.exists(file):
@@ -117,16 +85,20 @@ class Tables:
         ]
         return ServiceAccountCredentials.from_json_keyfile_dict(credentials_json, scope)
 
-    def __get_data(
-        self, spreadsheet: gspread.Spreadsheet, worksheet_name: str
-    ) -> DataFrame:
-        cache_file_path = os.path.join(self.__cache_path, worksheet_name + ".csv")
+    def _get_data(self, table_name: str) -> DataFrame:
+        cache_folder = os.path.join(self.__cache_path, self.sheet_name)
+        try:
+            os.makedirs(cache_folder)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        cache_file_path = os.path.join(cache_folder, table_name + ".csv")
         if self.__use_cache(cache_file_path):
-            print("Read {} from cache".format(worksheet_name))
+            print("\tRead {} from cache".format(table_name))
             return pd.read_csv(cache_file_path, dtype=str, keep_default_na=False)
         else:
-            print("Read {} from Google".format(worksheet_name))
-            worksheet = spreadsheet.worksheet(worksheet_name)
+            print("\tRead {} from Google".format(table_name))
+            worksheet = self.__spreadsheet.worksheet(table_name)
             df: DataFrame = DataFrame(
                 worksheet.get_all_records(
                     default_blank=None, numericise_ignore=["all"]
@@ -136,7 +108,7 @@ class Tables:
             df.to_csv(cache_file_path)
             return df
 
-    def get_table(self, table: Table) -> DataFrame:
+    def get_table(self, table: NoValue) -> DataFrame:
         """Get a table as a dataframe.
 
         Parameter:
@@ -145,11 +117,11 @@ class Tables:
         Returns:
             The table.
         """
-        return self.__tables[table]
+        return self._tables[table]
 
     def get_from_table(
         self,
-        table: Table,
+        table: NoValue,
         index_column: str,
         index_value: Optional[str],
         output_column: str,
@@ -167,7 +139,7 @@ class Tables:
         """
         if not index_value:
             return None
-        df = self.__tables[table]
+        df = self._tables[table]
         indexed = df.set_index(index_column)
         row = indexed.loc[index_value]
         result = row[output_column]

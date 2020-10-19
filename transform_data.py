@@ -12,13 +12,14 @@ Command-Line Parameters:
 Paths:
     By default, the cache and output paths are located in the script root directory
 """
+import errno
 import getopt
 import os
 import sys
 from os import getcwd, path, remove
 
-from modules.parser import Parser
-from modules.tables import Column, Tables
+from modules.nampi_data_entry_form_parser import Nampi_data_entry_form_parser
+from modules.nampi_graph import Nampi_graph
 
 """Read command line arguments"""
 argv = sys.argv[1:]
@@ -29,15 +30,31 @@ cred_path = opts["-c"] if "-c" in opts else path.join(getcwd(), ".credentials.js
 out_path = opts["-o"] if "-o" in opts else path.join(getcwd(), "out", "nampi_data.ttl")
 out_format = opts["-f"] if "-f" in opts else "turtle"
 
+print()
+print("************************************")
+print("* NAMPI data transformation script *")
+print("*                                  *")
+print("************************************")
+
+"""Create the data graph"""
+nampi_graph = Nampi_graph()
+
 """Parse data to RDF"""
-tables = Tables(cache_path, cred_path, cache_validity_days)
-graph = Parser(tables).parse()
+Nampi_data_entry_form_parser(nampi_graph, cache_path, cred_path, cache_validity_days)
 
 """Write RDF graph to file"""
+print("\nSerialize graph")
+try:
+    os.makedirs(os.path.split(out_path)[0])
+except OSError as e:
+    if e.errno != errno.EEXIST:
+        raise
 if path.isfile(out_path):
     remove(out_path)
-    print("Old output file removed")
+    print("\tOld output file removed at '{}'".format(out_path))
 file = open(out_path, "w")
-file.write(graph.serialize(format=out_format).decode("utf-8"))
-print("New output file written")
+file.write(nampi_graph.graph.serialize(format=out_format).decode("utf-8"))
+print("\tNew output file written at '{}'".format(out_path))
 file.close()
+
+print("\n\nFinished successfully")
