@@ -6,14 +6,11 @@ Classes:
 """
 from __future__ import annotations
 
-import math
-from numbers import Number
-from typing import Any, Optional
+from typing import Optional
 
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
 from modules.node import Node
-from modules.tables import Tables
 from rdflib import RDF
 
 
@@ -27,7 +24,6 @@ class Date(Node):
     def __init__(
         self,
         graph: Nampi_graph,
-        tables: Tables,
         exact_date: Optional[str] = None,
         earliest_date: Optional[str] = None,
         latest_date: Optional[str] = None,
@@ -36,20 +32,19 @@ class Date(Node):
 
         Parameters:
             graph: The RDF graph the date belongs to.
-            tables: The data tables.
             exact_date: An optional string in the format of YYYY-MM-DD that represents the exact date.
             earliest_date: An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
             latest_date: An optional string in the format of YYYY-MM-DD that represents the latest possible date.
         """
         if exact_date:
-            super().__init__(graph, tables, Nampi_type.Core.date)
+            super().__init__(graph, Nampi_type.Core.date)
             self.exact = exact_date
             self.add_relationship(
                 Nampi_type.Core.has_date_time_representation,
                 Nampi_graph.date_time_literal(self.exact),
             )
         else:
-            super().__init__(graph, tables, Nampi_type.Core.unclear_date)
+            super().__init__(graph, Nampi_type.Core.unclear_date)
             if earliest_date:
                 self.earliest = earliest_date
                 self.add_relationship(
@@ -67,7 +62,6 @@ class Date(Node):
     def optional(
         cls,
         graph: Nampi_graph,
-        tables: Tables,
         exact_date: Optional[str] = None,
         earliest_date: Optional[str] = None,
         latest_date: Optional[str] = None,
@@ -76,7 +70,6 @@ class Date(Node):
 
         Parameters:
             graph: The RDF graph the resource belongs to.
-            tables: The data tables.
             exact_date: An optional string in the format of YYYY-MM-DD that represents the exact date.
             earliest_date: An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
             latest_date: An optional string in the format of YYYY-MM-DD that represents the latest possible date.
@@ -85,7 +78,7 @@ class Date(Node):
             A new date object if at least one of the provided values is a string, otherwise None.
         """
         return (
-            cls(graph, tables, exact_date, earliest_date, latest_date)
+            cls(graph, exact_date, earliest_date, latest_date)
             if exact_date or earliest_date or latest_date
             else None
         )

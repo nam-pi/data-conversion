@@ -15,7 +15,7 @@ Paths:
 import getopt
 import os
 import sys
-from os import getcwd, path
+from os import getcwd, path, remove
 
 from modules.parser import Parser
 from modules.tables import Column, Tables
@@ -34,6 +34,10 @@ tables = Tables(cache_path, cred_path, cache_validity_days)
 graph = Parser(tables).parse()
 
 """Write RDF graph to file"""
+if path.isfile(out_path):
+    remove(out_path)
+    print("Old output file removed")
 file = open(out_path, "w")
 file.write(graph.serialize(format=out_format).decode("utf-8"))
+print("New output file written")
 file.close()

@@ -9,21 +9,18 @@ from __future__ import annotations
 from typing import Optional, Union
 
 from modules.nampi_graph import Nampi_graph
-from modules.tables import Tables
 from rdflib import BNode, Literal, Namespace, URIRef
 
 
 class Node:
-    """A node in the RDF graph. It is aware of the graph it belongs to and has access to the original source tables to use in initialization of node relationships."""
+    """A node in the RDF graph."""
 
     _graph: Nampi_graph
-    _tables: Tables
     node: Union[URIRef, BNode]
 
     def __init__(
         self,
         graph: Nampi_graph,
-        tables: Tables,
         type_uri: URIRef,
         ns: Optional[Namespace] = None,
         label: Optional[str] = None,
@@ -32,13 +29,11 @@ class Node:
 
         Parameters:
             graph: The RDF graph the node belongs to.
-            tables: The data tables.
             type_uri: The URI of the nodes' type.
             ns: An optional namespace the nodes' URI will belong to.
             label: An optional label for the node.
         """
         self._graph = graph
-        self._tables = tables
         if label and ns:
             self.node = self._graph.add_labeled_resource(ns, type_uri, label)
         elif ns:

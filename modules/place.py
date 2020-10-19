@@ -11,46 +11,54 @@ from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
 from modules.nampi_type import Nampi_type
 from modules.resource import Resource
-from modules.tables import Column, Tables, Table
 
 
 class Place(Resource):
     """A person RDF resource."""
 
-    geoname_id: Optional[str]
-    wikidata_id: Optional[str]
+    geoname_id: Optional[str] = None
+    wikidata_id: Optional[str] = None
 
-    def __init__(self, graph: Nampi_graph, tables: Tables, label: str):
+    def __init__(
+        self,
+        graph: Nampi_graph,
+        label: str,
+        geoname_id: Optional[str] = None,
+        wikidata_id: Optional[str] = None,
+    ):
         """Initialize the class.
 
         Parameters:
             graph: The RDF graph the place belongs to.
-            tables: The data tables.
             label: The places label.
+            geoname_id: The geoname id.
+            wikidata_id: The wikidata id.
         """
-        super().__init__(graph, tables, Nampi_type.Core.place, Nampi_ns.places, label)
-        self.geoname_id = tables.get_from_table(
-            Table.PLACES, Column.name, label, Column.geoname_id
-        )
-        self.wikidata_id = tables.get_from_table(
-            Table.PLACES, Column.name, label, Column.wikidata
-        )
+        super().__init__(graph, Nampi_type.Core.place, Nampi_ns.places, label)
+        self.geoname_id = geoname_id
+        self.wikidata_id = wikidata_id
 
     @classmethod
     def optional(
         cls,
         graph: Nampi_graph,
-        tables: Tables,
         label: Optional[str],
+        geoname_id: Optional[str] = None,
+        wikidata_id: Optional[str] = None,
     ) -> Optional[Place]:
         """Initialize the class if a valid label exists.
 
         Parameters:
             graph: The RDF graph the place belongs to.
-            tables: The data tables.
             label: The places label.
+            geoname_id: The geoname id.
+            wikidata_id: The wikidata id.
 
         Returns:
             A Place object or None
         """
-        return cls(graph, tables, label) if label else None
+        return (
+            cls(graph, label, geoname_id=geoname_id, wikidata_id=wikidata_id)
+            if label
+            else None
+        )

@@ -9,7 +9,6 @@ from datetime import datetime
 from typing import Dict, List, Optional, TypeVar, Union
 
 from modules.nampi_ns import Nampi_ns
-from modules.tables import Tables
 from rdflib import RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
 
 

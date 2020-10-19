@@ -7,11 +7,9 @@ Classes:
 
 """
 import json
-import math
 import os
 import time
-from numbers import Number
-from typing import Any, Dict, List, Literal, Optional, TypeVar
+from typing import Dict, Optional
 
 import gspread
 import pandas as pd
@@ -153,7 +151,7 @@ class Tables:
         self,
         table: Table,
         index_column: str,
-        index_value: str,
+        index_value: Optional[str],
         output_column: str,
     ) -> Optional[str]:
         """Get a specific value from the indicated table. The target row is specified by an index value in an index column and the actual returned value is taken from the output column.
