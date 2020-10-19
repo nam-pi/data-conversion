@@ -36,12 +36,12 @@ class Event(Resource):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the person belongs to.
-            tables (Tables): The data tables.
-            event_type (URIRef): The type URI of the event
-            label (Optional[str]): An optional label for the event.
-            date (Optional[Date]): The event date.
-            place (Optional[Place]): The event place.
+            graph: The RDF graph the person belongs to.
+            tables: The data tables.
+            event_type: The type URI of the event
+            label: An optional label for the event.
+            date: The event date.
+            place: The event place.
         """
         super().__init__(graph, tables, event_type, Nampi_ns.events, label)
         if place:

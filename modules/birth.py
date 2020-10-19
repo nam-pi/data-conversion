@@ -22,9 +22,9 @@ class Birth(Event):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the birth belongs to.
-            tables (Tables): The data tables.
-            row (Series): The data row for the birth.
+            graph: The RDF graph the birth belongs to.
+            tables: The data tables.
+            row: The data row for the birth.
         """
         event_date = Date.optional(
             graph,

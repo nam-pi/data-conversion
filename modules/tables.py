@@ -80,9 +80,9 @@ class Tables:
         """Initialize the class.
 
         Parameters:
-            cache_path (str): The path to cache the individual tables so they do not need to be refetched on each execution of the script. Needs to exist.
-            credentials_path (str): The path to the Google Service Account credentials to access Google Sheets. Needs to exist.
-            cache_validity_days (int): The number of days cached files stay valid and are not refetched.
+            cache_path: The path to cache the individual tables so they do not need to be refetched on each execution of the script. Needs to exist.
+            credentials_path: The path to the Google Service Account credentials to access Google Sheets. Needs to exist.
+            cache_validity_days: The number of days cached files stay valid and are not refetched.
         """
         self.__cache_path = cache_path
         self.__cache_validity_days = cache_validity_days
@@ -142,10 +142,10 @@ class Tables:
         """Get a table as a dataframe.
 
         Parameter:
-            table (Table): The table to get.
+            table: The table to get.
 
         Returns:
-            Table: The table.
+            The table.
         """
         return self.__tables[table]
 
@@ -159,13 +159,13 @@ class Tables:
         """Get a specific value from the indicated table. The target row is specified by an index value in an index column and the actual returned value is taken from the output column.
 
         Parameters:
-            table (Table): The table to search in.
-            index_column (str): The column in which the index value has to be found.
-            index_value (str): The value to be present in the index column to indicate the desired row in the table.
-            output_column (str): The name of the column to get the desired value from the indicated row.
+            table: The table to search in.
+            index_column: The column in which the index value has to be found.
+            index_value: The value to be present in the index column to indicate the desired row in the table.
+            output_column: The name of the column to get the desired value from the indicated row.
 
         Returns:
-            Optional[str]: The desired value if it can be found.
+            The desired value if it can be found.
         """
         if not index_value:
             return None

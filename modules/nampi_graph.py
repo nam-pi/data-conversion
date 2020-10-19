@@ -40,10 +40,10 @@ class Nampi_graph:
         """Transform a date string into an rdflib datetime literal.
 
         Parameters:
-            date_string (str): The string in the format of "YYYY-MM-DD".
+            date_string: The string in the format of "YYYY-MM-DD".
 
         Returns:
-            Literal: A datetime Literal.
+            A datetime Literal.
         """
         return Literal(datetime.strptime(date_string, "%Y-%m-%d"))
 
@@ -52,10 +52,10 @@ class Nampi_graph:
         """Transform a string into an rdflib literal.
 
         Parameters:
-            string (str): The string to transform.
+            string: The string to transform.
 
         Returns:
-            Literal: A rdflib literal.
+            A rdflib literal.
         """
         return Literal(string, datatype=XSD.string)
 
@@ -68,9 +68,9 @@ class Nampi_graph:
         """Add a rdf triple to the graph.
 
         Parameters:
-            subj (Union[URIRef, BNode, Literal]): The subject, can be a full resource with an URIRef or a blank node.
-            pred (URIRef): The predicate of the triple, a URIRef.
-            obj (Union[URIRef, BNode, Literal]): The object, can be a full resource with an URIRef or a blank node.
+            subj: The subject, can be a full resource with an URIRef or a blank node.
+            pred: The predicate of the triple, a URIRef.
+            obj: The object, can be a full resource with an URIRef or a blank node.
 
         """
         self.graph.add((subj, pred, obj))
@@ -79,10 +79,10 @@ class Nampi_graph:
         """Add a blind node to the graph.
 
         Parameters:
-            type_uri (URIRef): The URI of the type for the blank node.
+            type_uri: The URI of the type for the blank node.
 
         Returns:
-            BNode: The reference to the blank node.
+            The reference to the blank node.
 
         """
         node = BNode()
@@ -93,11 +93,11 @@ class Nampi_graph:
         """Add a resource to the graph.
 
         Parameters:
-            ns (Namespace): The namespace the resource will be added to. The full URI will be a combination of the namespace and a random identifier.
-            type_uri (URIRef): The URI of the resource type.
+            ns: The namespace the resource will be added to. The full URI will be a combination of the namespace and a random identifier.
+            type_uri: The URI of the resource type.
 
         Returns:
-            URIRef: The reference to the resource.
+            The reference to the resource.
         """
         node = self.__create_entity(ns)
         self.add(node, RDF.type, type_uri)
@@ -111,12 +111,12 @@ class Nampi_graph:
         The method tries to find a resource with the label in the graph and only creates a new one if it doesn't find anything.
 
         Parameters:
-            ns (Namespace): The namespace the resource will be added to. The full URI will be a combination of the namespace and a random identifier.
-            type_uri (URIRef): The URI of the resource type.
-            label (str): The label of the resource.
+            ns: The namespace the resource will be added to. The full URI will be a combination of the namespace and a random identifier.
+            type_uri: The URI of the resource type.
+            label: The label of the resource.
 
         Returns:
-            URIRef: The reference to the resource.
+            The reference to the resource.
         """
         query = 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?subject WHERE {{ ?subject rdfs:label "{}"}}'.format(
             label

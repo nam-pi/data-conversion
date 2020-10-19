@@ -28,11 +28,11 @@ class Resource(Node):
         """Initialize the class.
 
         Parameters:
-        graph (Nampi_graph): The RDF graph the resource belongs to.
-        tables (Tables): The data tables.
-        type_uri (URIRef): The URI of the resources' type.
-        ns (Optional[Namespace] = None): The namespace the resources' URI will belong to.
-        label (Optional[str] = None): An optional label for the resource.
+        graph: The RDF graph the resource belongs to.
+        tables: The data tables.
+        type_uri: The URI of the resources' type.
+        ns: The namespace the resources' URI will belong to.
+        label: An optional label for the resource.
         """
         super().__init__(graph, tables, type_uri, ns, label)
         self.label = label

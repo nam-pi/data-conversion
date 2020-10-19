@@ -33,7 +33,7 @@ class Parser:
         """Parse the input data and return the resulting RDF graph.
 
         Returns:
-            Graph: the tabular data as RDF.
+            The tabular data as RDF.
         """
         self.__add_births()
         self.__add_deaths()

@@ -31,11 +31,11 @@ class Node:
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the node belongs to.
-            tables (Tables): The data tables.
-            type_uri (URIRef): The URI of the nodes' type.
-            ns (Optional[Namespace] = None): An optional namespace the nodes' URI will belong to.
-            label (Optional[str] = None): An optional label for the node.
+            graph: The RDF graph the node belongs to.
+            tables: The data tables.
+            type_uri: The URI of the nodes' type.
+            ns: An optional namespace the nodes' URI will belong to.
+            label: An optional label for the node.
         """
         self._graph = graph
         self._tables = tables
@@ -52,8 +52,8 @@ class Node:
         """Add an relationship triple with the node as subject to the graph.
 
         Parameters:
-            pred (URIRef): The predicate for the resulting relationship.
-            obj (Union[Node, URIRef, BNode, Literal]): The object node.
+            pred: The predicate for the resulting relationship.
+            obj: The object node.
         """
         self._graph.add(
             self.node,

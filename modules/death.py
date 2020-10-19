@@ -22,9 +22,9 @@ class Death(Event):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the death belongs to.
-            tables (Tables): The data tables.
-            row (Series): The data row for the death.
+            graph: The RDF graph the death belongs to.
+            tables: The data tables.
+            row: The data row for the death.
         """
         event_date = Date.optional(
             graph,

@@ -24,9 +24,9 @@ class Place(Resource):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the place belongs to.
-            tables (Tables): The data tables.
-            label (str): The places label.
+            graph: The RDF graph the place belongs to.
+            tables: The data tables.
+            label: The places label.
         """
         super().__init__(graph, tables, Nampi_type.Core.place, Nampi_ns.places, label)
         self.geoname_id = tables.get_from_table(
@@ -46,11 +46,11 @@ class Place(Resource):
         """Initialize the class if a valid label exists.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the place belongs to.
-            tables (Tables): The data tables.
-            label (str): The places label.
+            graph: The RDF graph the place belongs to.
+            tables: The data tables.
+            label: The places label.
 
         Returns:
-            Optional[Place]: A Place object or None
+            A Place object or None
         """
         return cls(graph, tables, label) if label else None

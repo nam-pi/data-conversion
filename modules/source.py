@@ -38,9 +38,9 @@ class Source(Resource):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the source belongs to.
-            tables (Tables): The data tables.
-            label (str): The sources label.
+            graph: The RDF graph the source belongs to.
+            tables: The data tables.
+            label: The sources label.
         """
         super().__init__(graph, tables, Nampi_type.Core.source, Nampi_ns.sources, label)
         type = tables.get_from_table(

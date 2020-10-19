@@ -19,10 +19,10 @@ class Source_location(Node):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the source location belongs to.
-            tables (Tables): The data tables.
-            source_label (str): The label of the source the source location belongs to.
-            location (str): The location string (page name, url or similar).
+            graph: The RDF graph the source location belongs to.
+            tables: The data tables.
+            source_label: The label of the source the source location belongs to.
+            location: The location string (page name, url or similar).
         """
         super().__init__(graph, tables, Nampi_type.Core.source_location)
         source = Source(self._graph, self._tables, source_label)

@@ -35,11 +35,11 @@ class Date(Node):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the date belongs to.
-            tables (Tables): The data tables.
-            exact_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the exact date.
-            earliest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
-            latest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the latest possible date.
+            graph: The RDF graph the date belongs to.
+            tables: The data tables.
+            exact_date: An optional string in the format of YYYY-MM-DD that represents the exact date.
+            earliest_date: An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
+            latest_date: An optional string in the format of YYYY-MM-DD that represents the latest possible date.
         """
         if exact_date:
             super().__init__(graph, tables, Nampi_type.Core.date)
@@ -75,14 +75,14 @@ class Date(Node):
         """Initialize the class if it can be meaningfully created from the provided input strings.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the resource belongs to.
-            tables (Tables): The data tables.
-            exact_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the exact date.
-            earliest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
-            latest_date (Optional[str] = None): An optional string in the format of YYYY-MM-DD that represents the latest possible date.
+            graph: The RDF graph the resource belongs to.
+            tables: The data tables.
+            exact_date: An optional string in the format of YYYY-MM-DD that represents the exact date.
+            earliest_date: An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
+            latest_date: An optional string in the format of YYYY-MM-DD that represents the latest possible date.
 
         Returns:
-            Optional[Date]: A new date object if at least one of the provided values is a string, otherwise None.
+            A new date object if at least one of the provided values is a string, otherwise None.
         """
         return (
             cls(graph, tables, exact_date, earliest_date, latest_date)

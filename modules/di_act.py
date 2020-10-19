@@ -28,10 +28,10 @@ class Di_act(Resource):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the person belongs to.
-            tables (Tables): The data tables.
+            graph: The RDF graph the person belongs to.
+            tables: The data tables.
             event: The event of the document interpretation act.
-            row (Series): The data row for the document interpretation act.
+            row: The data row for the document interpretation act.
         """
         super().__init__(
             graph,

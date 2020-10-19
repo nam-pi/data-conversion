@@ -40,9 +40,9 @@ class Person(Resource):
         """Initialize the class.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the person belongs to.
-            tables (Tables): The data tables.
-            label (str): The persons label.
+            graph: The RDF graph the person belongs to.
+            tables: The data tables.
+            label: The persons label.
         """
         super().__init__(
             graph, tables, Nampi_type.Core.person, Nampi_ns.persons, label=label
@@ -64,11 +64,11 @@ class Person(Resource):
         """Initialize the class if a valid label exists.
 
         Parameters:
-            graph (Nampi_graph): The RDF graph the person belongs to.
-            tables (Tables): The data tables.
-            label (str): The persons label.
+            graph: The RDF graph the person belongs to.
+            tables: The data tables.
+            label: The persons label.
 
         Returns:
-            Optional[Person]: A Person object or None
+            A Person object or None
         """
         return cls(graph, tables, label) if label else None
