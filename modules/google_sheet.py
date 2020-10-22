@@ -144,3 +144,21 @@ class Google_sheet:
         row = indexed.loc[index_value]
         result = row[output_column]
         return result if result else None
+
+    def table_has_value(
+        self, table: NoValue, column: str, value: Optional[str]
+    ) -> bool:
+        """Test if the table column has a specific value.
+
+        Parameters:
+            table: The table to check.
+            column: The name of the column to look in.
+            value: The value to find in the column.
+
+        Returns:
+            True if the value can be found, otherwise False.
+        """
+        if not value:
+            return False
+        df = self._tables[table]
+        return value in df[column].values

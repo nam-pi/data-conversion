@@ -5,6 +5,7 @@ Classes:
 """
 from typing import Optional
 
+from modules.appellation import Appellation, Appellation_type
 from modules.date import Date
 from modules.event import Event
 from modules.nampi_graph import Nampi_graph
@@ -22,6 +23,7 @@ class Birth(Event):
         born_person: Person,
         birth_date: Optional[Date] = None,
         birth_place: Optional[Place] = None,
+        birth_family_name_label: Optional[str] = None,
     ) -> None:
         """Initialize the class.
 
@@ -30,12 +32,21 @@ class Birth(Event):
             born_person: The person born in the event.
             birth_date: The birth date
             birth_place: The birth place.
+            birth_family_name_label: An optional family name.
         """
         super().__init__(
             graph,
-            Nampi_type.Core.birth,
             born_person,
             Nampi_type.Core.starts_life_of,
             date=birth_date,
             place=birth_place,
         )
+        if birth_family_name_label:
+            birth_family_name = Appellation(
+                self._graph, birth_family_name_label, Appellation_type.FAMILY_NAME
+            )
+            self.add_facet(
+                Nampi_type.Core.assigns_appellation_to,
+                Nampi_type.Core.assigns_appellation,
+                birth_family_name,
+            )

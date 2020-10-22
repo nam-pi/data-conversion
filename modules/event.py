@@ -5,12 +5,13 @@ Classes:
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Type
 
 from modules.date import Date
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
 from modules.nampi_type import Nampi_type
+from modules.node import Node
 from modules.person import Person
 from modules.place import Place
 from modules.resource import Resource
@@ -21,15 +22,16 @@ class Event(Resource):
     """An event RDF resource."""
 
     date: Optional[Date] = None
+    main_person: Person
     place: Optional[Place] = None
 
     def __init__(
         self,
         graph: Nampi_graph,
-        event_type: URIRef,
         main_person: Person,
         main_person_relationship: URIRef,
         label: str = "",
+        event_type: Optional[URIRef] = None,
         date: Optional[Date] = None,
         place: Optional[Place] = None,
     ):
@@ -45,7 +47,13 @@ class Event(Resource):
             date: The event date.
             place: The event place.
         """
-        super().__init__(graph, event_type, Nampi_ns.events, label)
+        super().__init__(
+            graph,
+            event_type if event_type else Nampi_type.Core.event,
+            Nampi_ns.events,
+            label,
+        )
+        self.main_person = main_person
 
         self.add_relationship(main_person_relationship, main_person)
 
@@ -64,3 +72,24 @@ class Event(Resource):
             else:
                 relationship_type = Nampi_type.Core.takes_place_sometime_between
             self.add_relationship(relationship_type, date)
+
+    def add_facet(
+        self,
+        person_relationship_type: URIRef,
+        facet_relationship_type: URIRef,
+        facet_object: Node,
+    ):
+        """Add a relationship facet to the event.
+
+        This means that a thing that is related to a person gets connected to the person in this event. There will be two triples created:
+            Example: Assignment of a name.
+            Event -> assigns_name_to -> a person
+            Event -> assigns_name -> a name
+
+        Parameters:
+            person_relationship_type: The type of relationship with the main person (event -> type -> person)
+            facet_relationship_type: The type of the relationship with the facet object (event -> type -> facet_object)
+            facet_object: The object node for the facet relationship (event -> type -> facet_object)
+        """
+        self.add_relationship(facet_relationship_type, facet_object)
+        self.add_relationship(person_relationship_type, self.main_person)

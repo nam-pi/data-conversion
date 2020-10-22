@@ -41,6 +41,7 @@ class Column:
     family_name = "Family name"
     gender = "Gender"
     geoname_id = "Geonames-ID"
+    given_name = "Given name"
     gnd_id = "GND ID"
     interpretation_date = "Interpretation Date"
     latest_date = "Latest Possible Date"

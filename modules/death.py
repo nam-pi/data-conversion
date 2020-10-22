@@ -33,7 +33,6 @@ class Death(Event):
         """
         super().__init__(
             graph,
-            Nampi_type.Core.death,
             died_person,
             Nampi_type.Core.ends_life_of,
             date=death_date,
