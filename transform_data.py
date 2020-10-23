@@ -18,7 +18,9 @@ import os
 import sys
 from os import getcwd, path, remove
 
-from modules.nampi_data_entry_form_parser import Nampi_data_entry_form_parser
+from parsers.nampi_data_entry_form.nampi_data_entry_form_parser import (
+    Nampi_data_entry_form_parser,
+)
 from modules.nampi_graph import Nampi_graph
 
 """Read command line arguments"""
