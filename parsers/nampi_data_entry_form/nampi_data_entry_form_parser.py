@@ -14,15 +14,17 @@ from modules.death import Death
 from modules.di_act import Di_act
 from modules.event import Event
 from modules.gender import Gender
-from modules.nampi_data_entry_form import Column
-from modules.nampi_data_entry_form import Nampi_data_entry_form as Sheet
-from modules.nampi_data_entry_form import Table
 from modules.nampi_graph import Nampi_graph
 from modules.person import Person
 from modules.place import Place
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
+from parsers.nampi_data_entry_form.nampi_data_entry_form import Column
+from parsers.nampi_data_entry_form.nampi_data_entry_form import (
+    Nampi_data_entry_form as Sheet,
+)
+from parsers.nampi_data_entry_form.nampi_data_entry_form import Table
 from pandas import Series
 from rdflib import Graph
 

@@ -1,3 +1,3 @@
-# Transform Temp Table
+# Data Conversion
 
-Scripts to transform the temporary input table on Google Sheets to RDF
+Python script that converts various data sources into NAMPI-compatible RDF.
