@@ -25,24 +25,28 @@ from modules.nampi_graph import Nampi_graph
 
 """Read command line arguments"""
 argv = sys.argv[1:]
-opts = dict(getopt.getopt(argv, "d:p:c:o:f:")[0])
+opts = dict(getopt.getopt(argv, "d:p:g:o:f:")[0])
 cache_validity_days = int(opts["-d"]) if "-d" in opts else 1
 cache_path = opts["-p"] if "-p" in opts else path.join(getcwd(), "cache/csv")
-cred_path = opts["-c"] if "-c" in opts else path.join(getcwd(), ".credentials.json")
+google_cred_path = (
+    opts["-g"] if "-g" in opts else path.join(getcwd(), ".credentials.json")
+)
 out_path = opts["-o"] if "-o" in opts else path.join(getcwd(), "out", "nampi_data.ttl")
 out_format = opts["-f"] if "-f" in opts else "turtle"
 
 print()
 print("************************************")
-print("* NAMPI data transformation script *")
+print("* NAMPI data conversion script *")
 print("*                                  *")
 print("************************************")
 
 """Create the data graph"""
 nampi_graph = Nampi_graph()
 
-"""Parse data to RDF"""
-Nampi_data_entry_form_parser(nampi_graph, cache_path, cred_path, cache_validity_days)
+"""Parse the various data sources to RDF"""
+Nampi_data_entry_form_parser(
+    nampi_graph, cache_path, google_cred_path, cache_validity_days
+)
 
 """Write RDF graph to file"""
 print("\nSerialize graph")
