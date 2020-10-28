@@ -21,6 +21,7 @@ from os import getcwd, path, remove
 from parsers.nampi_data_entry_form.nampi_data_entry_form_parser import (
     Nampi_data_entry_form_parser,
 )
+
 from modules.nampi_graph import Nampi_graph
 
 """Read command line arguments"""
@@ -36,7 +37,7 @@ out_format = opts["-f"] if "-f" in opts else "turtle"
 
 print()
 print("************************************")
-print("* NAMPI data conversion script *")
+print("* NAMPI data conversion script     *")
 print("*                                  *")
 print("************************************")
 

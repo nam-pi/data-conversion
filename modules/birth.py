@@ -24,6 +24,7 @@ class Birth(Event):
         birth_date: Optional[Date] = None,
         birth_place: Optional[Place] = None,
         birth_family_name_label: Optional[str] = None,
+        birth_given_name_label: Optional[str] = None,
     ) -> None:
         """Initialize the class.
 
@@ -33,6 +34,7 @@ class Birth(Event):
             birth_date: The birth date
             birth_place: The birth place.
             birth_family_name_label: An optional family name.
+            birth_given_name_label: An optional given name.
         """
         super().__init__(
             graph,
@@ -49,4 +51,13 @@ class Birth(Event):
                 Nampi_type.Core.assigns_appellation_to,
                 Nampi_type.Core.assigns_appellation,
                 birth_family_name,
+            )
+        if birth_given_name_label:
+            birth_given_name = Appellation(
+                self._graph, birth_given_name_label, Appellation_type.GIVEN_NAME
+            )
+            self.add_facet(
+                Nampi_type.Core.assigns_appellation_to,
+                Nampi_type.Core.assigns_appellation,
+                birth_given_name,
             )

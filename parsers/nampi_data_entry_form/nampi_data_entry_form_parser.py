@@ -20,12 +20,12 @@ from modules.place import Place
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
+from pandas import Series
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Column
 from parsers.nampi_data_entry_form.nampi_data_entry_form import (
     Nampi_data_entry_form as Sheet,
 )
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Table
-from pandas import Series
 from rdflib import Graph
 
 
@@ -69,17 +69,19 @@ class Nampi_data_entry_form_parser:
                 row[Column.latest_date],
             )
             birth_place = self.__get_place(row[Column.event_place])
-            family_name_label = None
-            if born_person.gender == Gender.MALE:
-                family_name_label = self.__sheet.get_from_table(
-                    Table.PERSONS, Column.name, born_person.label, Column.family_name
-                )
+            family_name_label = self.__sheet.get_from_table(
+                Table.PERSONS, Column.name, born_person.label, Column.family_name
+            )
+            given_name_label = self.__sheet.get_from_table(
+                Table.PERSONS, Column.name, born_person.label, Column.given_name
+            )
             birth = Birth(
                 self._graph,
                 born_person,
                 birth_date,
                 birth_place,
                 birth_family_name_label=family_name_label,
+                birth_given_name_label=given_name_label,
             )
             self.__insert_di_act(birth, row=row)
         print("\tParsed the births")
@@ -114,7 +116,8 @@ class Nampi_data_entry_form_parser:
             person = self.__get_person(row[Column.name])
             if not person:
                 continue
-            if not has_birth_event or person.gender == Gender.FEMALE:
+            if not has_birth_event:
+                # Hard-code authors because the "Persons" table doesn't have author informations
                 author_label = (
                     "Irene Rabl"
                     if source_label == "Professbuch Gaming 1604 - 1734"
