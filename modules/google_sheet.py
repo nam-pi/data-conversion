@@ -141,9 +141,16 @@ class Google_sheet:
             return None
         df = self._tables[table]
         indexed = df.set_index(index_column)
-        row = indexed.loc[index_value]
-        result = row[output_column]
-        return result if result else None
+        try:
+            row = indexed.loc[index_value]
+            result = row[output_column]
+            return result if result else None
+        except:
+            print(
+                "{} is not existing in table {} and column {}".format(
+                    index_value, table.value, index_column
+                )
+            )
 
     def table_has_value(
         self, table: NoValue, column: str, value: Optional[str]

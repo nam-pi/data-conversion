@@ -117,12 +117,6 @@ class Nampi_data_entry_form_parser:
             if not person:
                 continue
             if not has_birth_event:
-                # Hard-code authors because the "Persons" table doesn't have author informations
-                author_label = (
-                    "Irene Rabl"
-                    if source_label == "Professbuch Gaming 1604 - 1734"
-                    else "Patrick Fiska"
-                )
                 family_name = row[Column.family_name]
                 if family_name:
                     fn_assignment = Appellation_assignment(
@@ -131,23 +125,13 @@ class Nampi_data_entry_form_parser:
                         family_name,
                         Appellation_type.FAMILY_NAME,
                     )
-                    self.__insert_di_act(
-                        fn_assignment,
-                        author_label=author_label,
-                        source_label=source_label,
-                        source_location_label=location_text,
-                    )
+                    self.__insert_di_act(fn_assignment, row=row)
                 given_name = row[Column.given_name]
                 if given_name:
                     bn_assignment = Appellation_assignment(
                         self._graph, person, given_name
                     )
-                    self.__insert_di_act(
-                        bn_assignment,
-                        author_label=author_label,
-                        source_label=source_label,
-                        source_location_label=location_text,
-                    )
+                    self.__insert_di_act(bn_assignment, row=row)
         print("\tParsed the persons")
 
     def __get_date(
