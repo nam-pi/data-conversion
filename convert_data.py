@@ -8,25 +8,26 @@ Command-Line Parameters:
     c (str): The path to the credentials JSON file. Defaults to ".credentials.json" inside the script root folder.
     o (str): The output file path. Defaults to "out/nampi_data.ttl" inside the script root folder.
     r (str): The rdf file output format. Defaults to "turtle". Can by any of the available formats from "rdflib".
+    l (str): The path to the logfile. defaults to "conversion.log"
 
 Paths:
     By default, the cache and output paths are located in the script root directory
 """
 import errno
 import getopt
+import logging
 import os
 import sys
 from os import getcwd, path, remove
 
+from modules.nampi_graph import Nampi_graph
 from parsers.nampi_data_entry_form.nampi_data_entry_form_parser import (
     Nampi_data_entry_form_parser,
 )
 
-from modules.nampi_graph import Nampi_graph
-
 """Read command line arguments"""
 argv = sys.argv[1:]
-opts = dict(getopt.getopt(argv, "d:p:g:o:f:")[0])
+opts = dict(getopt.getopt(argv, "d:p:g:o:f:l:")[0])
 cache_validity_days = int(opts["-d"]) if "-d" in opts else 1
 cache_path = opts["-p"] if "-p" in opts else path.join(getcwd(), "cache/csv")
 google_cred_path = (
@@ -34,12 +35,24 @@ google_cred_path = (
 )
 out_path = opts["-o"] if "-o" in opts else path.join(getcwd(), "out", "nampi_data.ttl")
 out_format = opts["-f"] if "-f" in opts else "turtle"
+log_file = opts["-l"] if "-l" in opts else "conversion.log"
 
-print()
-print("************************************")
-print("* NAMPI data conversion script     *")
-print("*                                  *")
-print("************************************")
+
+""" Init logging """
+if path.isfile(log_file):
+    remove(log_file)
+logging.basicConfig(
+    filename=log_file,
+    format="%(asctime)s,%(msecs)d %(filename)s %(levelname)s %(message)s",
+    datefmt="%H:%M:%S",
+    level=logging.DEBUG,
+)
+
+
+logging.info("************************************")
+logging.info("* NAMPI data conversion script     *")
+logging.info("*                                  *")
+logging.info("************************************")
 
 """Create the data graph"""
 nampi_graph = Nampi_graph()
@@ -50,7 +63,7 @@ Nampi_data_entry_form_parser(
 )
 
 """Write RDF graph to file"""
-print("\nSerialize graph")
+logging.info("Serialize graph")
 try:
     os.makedirs(os.path.split(out_path)[0])
 except OSError as e:
@@ -58,10 +71,10 @@ except OSError as e:
         raise
 if path.isfile(out_path):
     remove(out_path)
-    print("\tOld output file removed at '{}'".format(out_path))
+    logging.info("Old output file removed at '{}'".format(out_path))
 file = open(out_path, "w")
 file.write(nampi_graph.graph.serialize(format=out_format).decode("utf-8"))
-print("\tNew output file written at '{}'".format(out_path))
+logging.info("New output file written at '{}'".format(out_path))
 file.close()
 
-print("\n\nFinished successfully")
+logging.info("Finished successfully")

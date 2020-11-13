@@ -3,6 +3,7 @@
 Classes:
     Nampi_data_entry_form
 """
+import logging
 from typing import Optional
 
 import pandas
@@ -50,13 +51,15 @@ class Nampi_data_entry_form_parser:
         self.__sheet = Sheet(cache_path, credentials_path, cache_validity_days)
         self._graph = graph
 
-        print("\nParse the data for '{}'".format(self.__sheet.sheet_name))
+        logging.info("Parse the data for '{}'".format(self.__sheet.sheet_name))
 
         self.__add_persons()
         self.__add_births()
         self.__add_deaths()
 
-        print("Finished parsing the data for '{}'".format(self.__sheet.sheet_name))
+        logging.info(
+            "Finished parsing the data for '{}'".format(self.__sheet.sheet_name)
+        )
 
     def __add_births(self):
         for _, row in self.__sheet.get_table(Table.BIRTHS).iterrows():
@@ -84,7 +87,7 @@ class Nampi_data_entry_form_parser:
                 birth_given_name_label=given_name_label,
             )
             self.__insert_di_act(birth, row=row)
-        print("\tParsed the births")
+        logging.info("Parsed the births")
 
     def __add_deaths(self):
         for _, row in self.__sheet.get_table(Table.DEATHS).iterrows():
@@ -99,7 +102,7 @@ class Nampi_data_entry_form_parser:
             death_place = self.__get_place(row[Column.event_place])
             death = Death(self._graph, died_person, death_date, death_place)
             self.__insert_di_act(death, row=row)
-        print("\tParsed the deaths")
+        logging.info("Parsed the deaths")
 
     def __add_persons(self):
         for _, row in self.__sheet.get_table(Table.PERSONS).iterrows():
@@ -132,7 +135,7 @@ class Nampi_data_entry_form_parser:
                         self._graph, person, given_name
                     )
                     self.__insert_di_act(bn_assignment, row=row)
-        print("\tParsed the persons")
+        logging.info("Parsed the persons")
 
     def __get_date(
         self,
