@@ -4,3 +4,6 @@ cache
 __pycache__
 out
 *.log
+.vscode
+.devcontainer
+.mypy_cache
