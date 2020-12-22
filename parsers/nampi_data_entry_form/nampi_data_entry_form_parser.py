@@ -23,11 +23,9 @@ from modules.source_location import Source_location
 from modules.source_type import Source_type
 from pandas import Series
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Column
-from parsers.nampi_data_entry_form.nampi_data_entry_form import (
-    Nampi_data_entry_form as Sheet,
-)
+from parsers.nampi_data_entry_form.nampi_data_entry_form import \
+    Nampi_data_entry_form as Sheet
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Table
-from rdflib import Graph
 
 
 class Nampi_data_entry_form_parser:
@@ -58,7 +56,8 @@ class Nampi_data_entry_form_parser:
         self.__add_deaths()
 
         logging.info(
-            "Finished parsing the data for '{}'".format(self.__sheet.sheet_name)
+            "Finished parsing the data for '{}'".format(
+                self.__sheet.sheet_name)
         )
 
     def __add_births(self):
@@ -87,6 +86,8 @@ class Nampi_data_entry_form_parser:
                 birth_given_name_label=given_name_label,
             )
             self.__insert_di_act(birth, row=row)
+            logging.debug(
+                "Added 'birth' for person '{}'".format(row[Column.person]))
         logging.info("Parsed the births")
 
     def __add_deaths(self):
@@ -105,11 +106,15 @@ class Nampi_data_entry_form_parser:
         logging.info("Parsed the deaths")
 
     def __add_persons(self):
+        """
+            Add all persons from the persons table not being added in birth events.
+        """
         for _, row in self.__sheet.get_table(Table.PERSONS).iterrows():
-            source_label = row[Column.source]
-            if not source_label:
+            if not row[Column.source]:
+                # Only use entries with source
+                logging.warning(
+                    "No source entry for 'person' table row '{}'".format(row[Column.name]))
                 continue
-            location_text = row[Column.source_location]
             person_label = row[Column.name]
             has_birth_event = self.__sheet.table_has_value(
                 Table.BIRTHS,
@@ -120,6 +125,7 @@ class Nampi_data_entry_form_parser:
             if not person:
                 continue
             if not has_birth_event:
+                # Add names for persons that don't have birth events
                 family_name = row[Column.family_name]
                 if family_name:
                     fn_assignment = Appellation_assignment(
@@ -135,6 +141,8 @@ class Nampi_data_entry_form_parser:
                         self._graph, person, given_name
                     )
                     self.__insert_di_act(bn_assignment, row=row)
+                logging.debug(
+                    "Added 'names' for birthless person '{}'".format(row[Column.name]))
         logging.info("Parsed the persons")
 
     def __get_date(

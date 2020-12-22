@@ -56,7 +56,7 @@ class Column:
 
 
 class Nampi_data_entry_form(Google_sheet):
-    """Wrapper arount the tables of the NAMPI data entry form on Google sheets."""
+    """Wrapper around the tables of the NAMPI data entry form on Google sheets."""
 
     def __init__(
         self,

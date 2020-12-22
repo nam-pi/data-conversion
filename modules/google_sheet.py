@@ -150,7 +150,7 @@ class Google_sheet:
             return str(result) if result else None
         except:
             logging.warning(
-                "{} is not existing in table {} and column {}".format(
+                "'{}' is not existing in table '{}' and column '{}'".format(
                     index_value, table.value, index_column
                 )
             )
