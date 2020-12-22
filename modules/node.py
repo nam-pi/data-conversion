@@ -8,8 +8,9 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from modules.nampi_graph import Nampi_graph
 from rdflib import BNode, Literal, Namespace, URIRef
+
+from modules.nampi_graph import Nampi_graph
 
 
 class Node:
@@ -53,5 +54,5 @@ class Node:
         self._graph.add(
             self.node,
             pred,
-            obj.node if hasattr(obj, "node") else obj,
+            getattr(obj, "node", obj),
         )
