@@ -13,9 +13,10 @@ from typing import Dict, Optional, Type
 
 import gspread
 import pandas as pd
-from modules.no_value import NoValue
 from oauth2client.service_account import ServiceAccountCredentials
 from pandas import DataFrame
+
+from modules.no_value import NoValue
 
 
 class Google_sheet:
@@ -59,7 +60,8 @@ class Google_sheet:
         for _, member in Tables.__members__.items():
             self._tables[member] = self._get_data(member.value)
 
-        logging.info("Finished reading Google Sheet data '{}'".format(sheet_name))
+        logging.info(
+            "Finished reading Google Sheet data '{}'".format(sheet_name))
 
     def __use_cache(self, file: str) -> bool:
         if not os.path.exists(file):
@@ -145,7 +147,7 @@ class Google_sheet:
         try:
             row = indexed.loc[index_value]
             result = row[output_column]
-            return result if result else None
+            return str(result) if result else None
         except:
             logging.warning(
                 "{} is not existing in table {} and column {}".format(
