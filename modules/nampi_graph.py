@@ -8,8 +8,9 @@ import uuid
 from datetime import datetime
 from typing import Dict, List, Optional, TypeVar, Union
 
-from modules.nampi_ns import Nampi_ns
 from rdflib import RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
+
+from modules.nampi_ns import Nampi_ns
 
 
 class Nampi_graph:
@@ -120,11 +121,16 @@ class Nampi_graph:
         query = 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?subject WHERE {{ ?subject rdfs:label "{}"}}'.format(
             label
         )
-        resources = self.graph.query(query)
-        if len(resources) == 0:
+        results = [res for res in self.graph.query(query)]
+        if len(results) == 0:
+            # Add a new resource
             node = self.add_resource(ns, type_uri)
             self.add(node, RDFS.label, Literal(label))
             return node
+        elif len(results) == 1:
+            # Return the existing resource URI
+            return results[0][0]
         else:
-            for row in resources:
-                return row[0]
+            # Raise exception
+            raise Exception("There should only no or a single resource found for query {}, actually found {}".format(
+                query, len(results)))
