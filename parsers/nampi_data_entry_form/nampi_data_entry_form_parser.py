@@ -61,6 +61,9 @@ class Nampi_data_entry_form_parser:
         )
 
     def __add_births(self):
+        """
+            Add all births from the births table including names and family group memberships.
+        """
         for _, row in self.__sheet.get_table(Table.BIRTHS).iterrows():
             born_person = self.__get_person(row[Column.person])
             if not born_person:
@@ -91,6 +94,9 @@ class Nampi_data_entry_form_parser:
         logging.info("Parsed the births")
 
     def __add_deaths(self):
+        """
+            Add all death events from the deaths table.
+        """
         for _, row in self.__sheet.get_table(Table.DEATHS).iterrows():
             died_person = self.__get_person(row[Column.person])
             if not died_person:
