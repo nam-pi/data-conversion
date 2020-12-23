@@ -14,8 +14,10 @@ from modules.date import Date
 from modules.death import Death
 from modules.di_act import Di_act
 from modules.event import Event
+from modules.family import Family
 from modules.gender import Gender
 from modules.nampi_graph import Nampi_graph
+from modules.nampi_type import Nampi_type
 from modules.person import Person
 from modules.place import Place
 from modules.source import Source
@@ -74,19 +76,21 @@ class Nampi_data_entry_form_parser:
                 row[Column.latest_date],
             )
             birth_place = self.__get_place(row[Column.event_place])
-            family_name_label = self.__sheet.get_from_table(
-                Table.PERSONS, Column.name, born_person.label, Column.family_name
-            )
+            family_names = [self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name_with_group), self.__sheet.get_from_table(
+                Table.PERSONS, Column.name, born_person.label, Column.family_name_gender_neutral), self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name)]
             given_name_label = self.__sheet.get_from_table(
                 Table.PERSONS, Column.name, born_person.label, Column.given_name
             )
+            family_group_label = next(
+                (s for s in family_names if s), None)
             birth = Birth(
                 self._graph,
                 born_person,
                 birth_date,
                 birth_place,
-                birth_family_name_label=family_name_label,
+                birth_family_name_label=family_names[2],
                 birth_given_name_label=given_name_label,
+                birth_family_group_label=family_group_label
             )
             self.__insert_di_act(birth, row=row)
             logging.debug(
@@ -131,22 +135,40 @@ class Nampi_data_entry_form_parser:
             if not person:
                 continue
             if not has_birth_event:
+                # Get all family name variants from the person table
+                family_names = [row[Column.family_name_with_group],
+                                row[Column.family_name_gender_neutral], row[Column.family_name]]
+                # Get the official family name by looking through the ordered family_names list and picking the first match
+                family_group_name = next(
+                    (s for s in family_names if s), None)
+                # Add family name group membership
+                if family_group_name:
+                    family = Family(self._graph, family_group_name)
+                    become_member_event = Event(
+                        self._graph, person, Nampi_type.Core.adds_group_status_to)
+                    become_member_event.add_relationship(
+                        Nampi_type.Core.adds_group_status_as, Nampi_type.Mona.family_member)
+                    become_member_event.add_relationship(
+                        Nampi_type.Core.adds_group_status_in, family)
+                    self.__insert_di_act(become_member_event, row=row)
+                    logging.debug("Added 'membership' in family '{}' for birthless person '{}'".format(
+                        family.label, row[Column.name]))
                 # Add names for persons that don't have birth events
-                family_name = row[Column.family_name]
-                if family_name:
+                if family_names[2]:
+                    # Add personal family name
                     fn_assignment = Appellation_assignment(
                         self._graph,
                         person,
-                        family_name,
+                        family_names[2],
                         Appellation_type.FAMILY_NAME,
                     )
                     self.__insert_di_act(fn_assignment, row=row)
-                given_name = row[Column.given_name]
-                if given_name:
-                    bn_assignment = Appellation_assignment(
-                        self._graph, person, given_name
+                if row[Column.given_name]:
+                    # Add given name
+                    gn_assignment = Appellation_assignment(
+                        self._graph, person, row[Column.given_name]
                     )
-                    self.__insert_di_act(bn_assignment, row=row)
+                    self.__insert_di_act(gn_assignment, row=row)
                 logging.debug(
                     "Added 'names' for birthless person '{}'".format(row[Column.name]))
         logging.info("Parsed the persons")

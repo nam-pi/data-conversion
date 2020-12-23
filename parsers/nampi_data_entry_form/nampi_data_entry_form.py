@@ -39,6 +39,8 @@ class Column:
     event_place = "Event Place"
     exact_date = "Exact Date"
     family_name = "Family name"
+    family_name_gender_neutral = "Family Name Gender Neutral Form"
+    family_name_with_group = "Family with Group"
     gender = "Gender"
     geoname_id = "Geonames-ID"
     given_name = "Given name"

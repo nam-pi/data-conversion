@@ -5,13 +5,11 @@ Classes:
 """
 from __future__ import annotations
 
-from typing import Optional, Dict
-from modules.resource import Resource
-from modules.person import Person
+from rdflib import URIRef
+
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
-from modules.nampi_type import Nampi_type
-from rdflib import URIRef
+from modules.resource import Resource
 
 
 class Group(Resource):
@@ -27,8 +25,8 @@ class Group(Resource):
 
         Parameters:
             graph: The RDF graph the group belongs to.
-            group_type: The URI of the group
-            label
+            group_type: The URI of the group.
+            label: The label for the group.
         """
         super().__init__(
             graph,

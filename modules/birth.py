@@ -8,6 +8,7 @@ from typing import Optional
 from modules.appellation import Appellation, Appellation_type
 from modules.date import Date
 from modules.event import Event
+from modules.family import Family
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
 from modules.person import Person
@@ -25,6 +26,7 @@ class Birth(Event):
         birth_place: Optional[Place] = None,
         birth_family_name_label: Optional[str] = None,
         birth_given_name_label: Optional[str] = None,
+        birth_family_group_label: Optional[str] = None
     ) -> None:
         """Initialize the class.
 
@@ -35,6 +37,7 @@ class Birth(Event):
             birth_place: The birth place.
             birth_family_name_label: An optional family name.
             birth_given_name_label: An optional given name.
+            birth_family_group_label: An optional label for the family group
         """
         super().__init__(
             graph,
@@ -60,4 +63,13 @@ class Birth(Event):
                 Nampi_type.Core.assigns_appellation_to,
                 Nampi_type.Core.assigns_appellation,
                 birth_given_name,
+            )
+        if birth_family_group_label:
+            family = Family(self._graph, birth_family_group_label)
+            self.add_relationship(
+                Nampi_type.Core.adds_group_status_to, born_person)
+            self.add_relationship(
+                Nampi_type.Core.adds_group_status_as, Nampi_type.Mona.family_member)
+            self.add_relationship(
+                Nampi_type.Core.adds_group_status_in, family
             )

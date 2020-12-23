@@ -26,12 +26,10 @@ class Nampi_type:
         given_name = Nampi_ns.core.given_name
         has_date_time_representation = Nampi_ns.core.has_date_time_representation
         has_earliest_possible_date_time_representation = (
-            Nampi_ns.core.has_earliest_possible_date_time_representation
-        )
+            Nampi_ns.core.has_earliest_possible_date_time_representation)
         has_interpretation = Nampi_ns.core.has_interpretation
         has_latest_possible_date_time_representation = (
-            Nampi_ns.core.has_latest_possible_date_time_representation
-        )
+            Nampi_ns.core.has_latest_possible_date_time_representation)
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
         has_string_representation = Nampi_ns.core.has_string_representation
@@ -53,5 +51,7 @@ class Nampi_type:
     class Mona:
         """The types in the Monastic Life ontology."""
 
+        family = Nampi_ns.mona.family
+        family_member = Nampi_ns.mona.family_member
         religious_name = Nampi_ns.mona.religious_name
         religious_title = Nampi_ns.mona.religious_title
