@@ -7,4 +7,5 @@ out
 .vscode
 .devcontainer
 .mypy_cache
-tmpQueries
+tmp_queries
+jupyter
