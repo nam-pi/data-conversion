@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Optional, Union
 
 from rdflib import BNode, Literal, Namespace, URIRef
+from rdflib.namespace import RDFS
 
 from modules.nampi_graph import Nampi_graph
 
@@ -25,6 +26,7 @@ class Node:
         type_uri: URIRef,
         ns: Optional[Namespace] = None,
         label: Optional[str] = None,
+        distinct: Optional[bool] = False
     ) -> None:
         """Initialize the class.
 
@@ -33,12 +35,16 @@ class Node:
             type_uri: The URI of the nodes' type.
             ns: An optional namespace the nodes' URI will belong to.
             label: An optional label for the node.
+            distinct: An optional bool that signifies whether or not to consider the node as a distinct node that shouldn't be reused based on its label
         """
         self._graph = graph
-        if label and ns:
+        if label and ns and not distinct:
             self.node = self._graph.add_labeled_resource(ns, type_uri, label)
         elif ns:
             self.node = self._graph.add_resource(ns, type_uri)
+            if label:
+                self.add_relationship(
+                    obj=Literal(label), pred=RDFS.label)
         else:
             self.node = self._graph.add_blind(type_uri)
 

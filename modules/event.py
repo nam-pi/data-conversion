@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from typing import Optional, Type
 
+from rdflib import URIRef
+
 from modules.date import Date
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
@@ -15,7 +17,6 @@ from modules.node import Node
 from modules.person import Person
 from modules.place import Place
 from modules.resource import Resource
-from rdflib import URIRef
 
 
 class Event(Resource):
@@ -29,7 +30,7 @@ class Event(Resource):
         self,
         graph: Nampi_graph,
         main_person: Person,
-        main_person_relationship: URIRef,
+        main_person_relationship: Optional[URIRef] = None,
         label: str = "",
         event_type: Optional[URIRef] = None,
         date: Optional[Date] = None,
@@ -52,10 +53,12 @@ class Event(Resource):
             event_type if event_type else Nampi_type.Core.event,
             Nampi_ns.events,
             label,
+            distinct=True
         )
         self.main_person = main_person
 
-        self.add_relationship(main_person_relationship, main_person)
+        if main_person_relationship:
+            self.add_relationship(main_person_relationship, main_person)
 
         if place:
             self.place = place

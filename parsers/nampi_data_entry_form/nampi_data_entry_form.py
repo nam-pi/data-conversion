@@ -16,6 +16,7 @@ class Table(NoValue):
     BIRTHS = "Births"
     COMPLEX_EVENTS = "Complex Events"
     DEATHS = "Deaths"
+    EVENT_DEFINITIONS = "Event Definitions"
     GROUPS = "Groups"
     OBJECT_CREATIONS = "Object Creations"
     OBJECTS = "Objects"
@@ -30,6 +31,7 @@ class Table(NoValue):
 class Column:
     """Headings for the columns in the available tables."""
 
+    added_status = "Added Status"
     author = "Author"
     comment = "Comment"
     community_astheim = "Community Astheim"
@@ -50,8 +52,12 @@ class Column:
     name = "Name"
     person = "Person"
     religious_name = "Religious name"
+    removed_status = "Removed Status"
     source = "Source"
     source_location = "Source Location"
+    started_occupation = "Started Occupation"
+    status_occupation_in_group = "Status/Occupation in Group"
+    stopped_occupation = "Stopped Occupation"
     title = "Title"
     type = "Type"
     wikidata = "Wikidata"

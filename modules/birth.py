@@ -45,6 +45,7 @@ class Birth(Event):
             Nampi_type.Core.starts_life_of,
             date=birth_date,
             place=birth_place,
+            label="Birth"
         )
         if birth_family_name_label:
             birth_family_name = Appellation(
@@ -69,7 +70,7 @@ class Birth(Event):
             self.add_relationship(
                 Nampi_type.Core.adds_group_status_to, born_person)
             self.add_relationship(
-                Nampi_type.Core.adds_group_status_as, Nampi_type.Mona.family_member)
+                Nampi_type.Core.adds_group_status_as, Nampi_type.Core.family_member)
             self.add_relationship(
                 Nampi_type.Core.adds_group_status_in, family
             )

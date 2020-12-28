@@ -14,12 +14,14 @@ def _ns(resource: str, hash_separator: bool = False) -> Namespace:
 class Nampi_ns:
     """A collection for namespaces to be used in the NAMPI input table conversion."""
 
-    core = _ns("owl/core", hash_separator=True)
-    mona = _ns("owl/monastic-life", hash_separator=True)
     acts = _ns("documentInterpretationActs")
+    core = _ns("owl/core", hash_separator=True)
     events = _ns("events")
-    persons = _ns("persons")
     groups = _ns("groups")
+    mona = _ns("owl/monastic-life", hash_separator=True)
+    objects = _ns("objects")
+    occupations = _ns("occupations")
+    persons = _ns("persons")
     places = _ns("places")
     sources = _ns("sources")
-    objects = _ns("objects")
+    statuses = _ns("statuses")

@@ -39,6 +39,7 @@ class Appellation_assignment(Event):
             Nampi_type.Core.assigns_appellation_to,
             date=assignment_date,
             place=assignment_place,
+            label="Assign appellation"
         )
         appellation = Appellation(graph, assignment_text, appellation_type)
         self.add_relationship(Nampi_type.Core.assigns_appellation, appellation)

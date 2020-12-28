@@ -37,4 +37,5 @@ class Death(Event):
             Nampi_type.Core.ends_life_of,
             date=death_date,
             place=death_place,
+            label="Death"
         )

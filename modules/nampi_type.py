@@ -22,6 +22,8 @@ class Nampi_type:
         document_interpretation_act = Nampi_ns.core.document_interpretation_act
         ends_life_of = Nampi_ns.core.ends_life_of
         event = Nampi_ns.core.event
+        family = Nampi_ns.mona.family
+        family_member = Nampi_ns.mona.family_member
         family_name = Nampi_ns.core.family_name
         given_name = Nampi_ns.core.given_name
         has_date_time_representation = Nampi_ns.core.has_date_time_representation
@@ -38,9 +40,13 @@ class Nampi_type:
         is_authored_on = Nampi_ns.core.is_authored_on
         person = Nampi_ns.core.person
         place = Nampi_ns.core.place
+        removes_group_status_as = Nampi_ns.core.removes_group_status_as
+        removes_group_status_in = Nampi_ns.core.removes_group_status_in
+        removes_group_status_from = Nampi_ns.core.removes_group_status_from
         source = Nampi_ns.core.source
         source_location = Nampi_ns.core.source_location
         starts_life_of = Nampi_ns.core.starts_life_of
+        status = Nampi_ns.core.status
         takes_place_after = Nampi_ns.core.takes_place_after
         takes_place_at = Nampi_ns.core.takes_place_at
         takes_place_before = Nampi_ns.core.takes_place_before
@@ -51,7 +57,19 @@ class Nampi_type:
     class Mona:
         """The types in the Monastic Life ontology."""
 
-        family = Nampi_ns.mona.family
-        family_member = Nampi_ns.mona.family_member
+        benedictine_community = Nampi_ns.mona.benedictine_community
+        canonesses_of_st_augustine = Nampi_ns.mona.canonesses_of_st_augustine
+        canonesses_of_st_augustine_community = Nampi_ns.mona.canonesses_of_st_augustine_community
+        carthusian_community = Nampi_ns.mona.carthusian_community
+        christian_community = Nampi_ns.mona.christian_community
+        christian_denomination = Nampi_ns.mona.christian_denomination
+        christian_diocese = Nampi_ns.mona.christian_diocese
+        christian_order = Nampi_ns.mona.christian_order
+        christian_parish = Nampi_ns.mona.christian_parish
+        dominican_community = Nampi_ns.mona.dominican_community
         religious_name = Nampi_ns.mona.religious_name
         religious_title = Nampi_ns.mona.religious_title
+        roman_catholic_diocese = Nampi_ns.mona.roman_catholic_diocese
+        roman_catholic_group = Nampi_ns.mona.roman_catholic_group
+        roman_catholic_order = Nampi_ns.mona.roman_catholic_order
+        roman_catholic_parish = Nampi_ns.mona.roman_catholic_parish

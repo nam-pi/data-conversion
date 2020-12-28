@@ -16,6 +16,7 @@ from modules.di_act import Di_act
 from modules.event import Event
 from modules.family import Family
 from modules.gender import Gender
+from modules.group import Group
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
 from modules.person import Person
@@ -23,6 +24,7 @@ from modules.place import Place
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
+from modules.status import Status
 from pandas import Series
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Column
 from parsers.nampi_data_entry_form.nampi_data_entry_form import \
@@ -56,6 +58,7 @@ class Nampi_data_entry_form_parser:
         self.__add_persons()
         self.__add_births()
         self.__add_deaths()
+        self.__add_complex_events()
 
         logging.info(
             "Finished parsing the data for '{}'".format(
@@ -96,6 +99,59 @@ class Nampi_data_entry_form_parser:
             logging.debug(
                 "Added 'birth' for person '{}'".format(row[Column.person]))
         logging.info("Parsed the births")
+
+    def __add_complex_events(self):
+        """
+            Add all complex events from the complex events table.
+        """
+        for _, row in self.__sheet.get_table(Table.COMPLEX_EVENTS).iterrows():
+            person = self.__get_person(row[Column.person])
+            if not person:
+                continue
+            definition = row[Column.event_definition]
+            event = None
+
+            def get_def_column(column: str):
+                return self.__sheet.get_from_table(Table.EVENT_DEFINITIONS, Column.name, definition, column)
+
+            def merge_event():
+                nonlocal person, definition
+                date = self.__get_date(
+                    row[Column.exact_date],
+                    row[Column.earliest_date],
+                    row[Column.latest_date],
+                )
+                place = self.__get_place(row[Column.event_place])
+                assert person is not None
+                return Event(self._graph, person, date=date, place=place, label=definition)
+            group_label = get_def_column(Column.status_occupation_in_group)
+            group = Group(self._graph, group_label) if group_label else None
+            added_status_label = get_def_column(Column.added_status)
+            removed_status_label = get_def_column(Column.removed_status)
+            if group and added_status_label:
+                status = Status(self._graph, added_status_label)
+                event = merge_event()
+                event.add_relationship(
+                    obj=person, pred=Nampi_type.Core.adds_group_status_to)
+                event.add_relationship(
+                    obj=group, pred=Nampi_type.Core.adds_group_status_in)
+                event.add_relationship(
+                    obj=status, pred=Nampi_type.Core.adds_group_status_as)
+            if group and removed_status_label:
+                status = Status(self._graph, removed_status_label)
+                event = merge_event()
+                event.add_relationship(
+                    obj=person, pred=Nampi_type.Core.removes_group_status_from)
+                event.add_relationship(
+                    obj=group, pred=Nampi_type.Core.removes_group_status_in)
+                event.add_relationship(
+                    obj=status, pred=Nampi_type.Core.removes_group_status_as)
+            if event:
+                self.__insert_di_act(event, row=row)
+            else:
+                logging.warn("Skip event '{}' for person '{}'".format(
+                    definition, person.label))
+        logging.info("Parsed the complex events")
 
     def __add_deaths(self):
         """
@@ -145,9 +201,9 @@ class Nampi_data_entry_form_parser:
                 if family_group_name:
                     family = Family(self._graph, family_group_name)
                     become_member_event = Event(
-                        self._graph, person, Nampi_type.Core.adds_group_status_to)
+                        self._graph, person, Nampi_type.Core.adds_group_status_to, label="Become family member")
                     become_member_event.add_relationship(
-                        Nampi_type.Core.adds_group_status_as, Nampi_type.Mona.family_member)
+                        Nampi_type.Core.adds_group_status_as, Nampi_type.Core.family_member)
                     become_member_event.add_relationship(
                         Nampi_type.Core.adds_group_status_in, family)
                     self.__insert_di_act(become_member_event, row=row)
