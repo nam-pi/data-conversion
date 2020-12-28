@@ -11,7 +11,7 @@ from modules.no_value import NoValue
 
 
 class Table(NoValue):
-    """Names of the avaialable tables."""
+    """Names of the available tables."""
 
     BIRTHS = "Births"
     COMPLEX_EVENTS = "Complex Events"
