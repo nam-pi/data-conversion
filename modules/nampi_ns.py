@@ -8,9 +8,7 @@ from rdflib import Namespace
 
 
 def _ns(resource: str, hash_separator: bool = False) -> Namespace:
-    return Namespace(
-        "https://purl.org/nampi/{}{}".format(resource, "#" if hash_separator else "/")
-    )
+    return Namespace("https://purl.org/nampi/{}{}".format(resource, "#" if hash_separator else "/"))
 
 
 class Nampi_ns:
