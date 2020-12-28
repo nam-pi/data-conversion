@@ -118,8 +118,8 @@ class Nampi_graph:
         Returns:
             The reference to the resource.
         """
-        query = 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?subject WHERE {{ ?subject rdfs:label "{}"}}'.format(
-            label
+        query = 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?subject WHERE {{ ?subject rdfs:label "{}" . ?subject a <{}> . }}'.format(
+            label, type_uri
         )
         results = [res for res in self.graph.query(query)]
         if len(results) == 0:

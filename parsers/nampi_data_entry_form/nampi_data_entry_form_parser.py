@@ -19,6 +19,7 @@ from modules.gender import Gender
 from modules.group import Group
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
+from modules.occupation import Occupation
 from modules.person import Person
 from modules.place import Place
 from modules.source import Source
@@ -115,7 +116,9 @@ class Nampi_data_entry_form_parser:
                 return self.__sheet.get_from_table(Table.EVENT_DEFINITIONS, Column.name, definition, column)
 
             def merge_event():
-                nonlocal person, definition
+                nonlocal event, person, definition
+                if event:
+                    return event
                 date = self.__get_date(
                     row[Column.exact_date],
                     row[Column.earliest_date],
@@ -123,29 +126,55 @@ class Nampi_data_entry_form_parser:
                 )
                 place = self.__get_place(row[Column.event_place])
                 assert person is not None
-                return Event(self._graph, person, date=date, place=place, label=definition)
+                event = Event(self._graph, person, date=date,
+                              place=place, label=definition)
+                return event
             group_label = get_def_column(Column.status_occupation_in_group)
             group = Group(self._graph, group_label) if group_label else None
             added_status_label = get_def_column(Column.added_status)
             removed_status_label = get_def_column(Column.removed_status)
+            started_occupation_label = get_def_column(
+                Column.started_occupation)
+            stopped_occupation_label = get_def_column(
+                Column.stopped_occupation)
             if group and added_status_label:
                 status = Status(self._graph, added_status_label)
-                event = merge_event()
-                event.add_relationship(
+                e = merge_event()
+                e.add_relationship(
                     obj=person, pred=Nampi_type.Core.adds_group_status_to)
-                event.add_relationship(
+                e.add_relationship(
                     obj=group, pred=Nampi_type.Core.adds_group_status_in)
-                event.add_relationship(
+                e.add_relationship(
                     obj=status, pred=Nampi_type.Core.adds_group_status_as)
             if group and removed_status_label:
                 status = Status(self._graph, removed_status_label)
-                event = merge_event()
-                event.add_relationship(
+                e = merge_event()
+                e.add_relationship(
                     obj=person, pred=Nampi_type.Core.removes_group_status_from)
-                event.add_relationship(
+                e.add_relationship(
                     obj=group, pred=Nampi_type.Core.removes_group_status_in)
-                event.add_relationship(
+                e.add_relationship(
                     obj=status, pred=Nampi_type.Core.removes_group_status_as)
+            if started_occupation_label:
+                occupation = Occupation(self._graph, started_occupation_label)
+                e = merge_event()
+                e.add_relationship(
+                    obj=person, pred=Nampi_type.Core.starts_occupation_of)
+                e.add_relationship(
+                    obj=occupation, pred=Nampi_type.Core.starts_occupation_as)
+                if group:
+                    e.add_relationship(
+                        obj=group, pred=Nampi_type.Core.starts_occupation_by)
+            if stopped_occupation_label:
+                occupation = Occupation(self._graph, stopped_occupation_label)
+                e = merge_event()
+                e.add_relationship(
+                    obj=person, pred=Nampi_type.Core.stops_occupation_of)
+                e.add_relationship(
+                    obj=occupation, pred=Nampi_type.Core.stops_occupation_as)
+                if group:
+                    e.add_relationship(
+                        obj=group, pred=Nampi_type.Core.stops_occupation_by)
             if event:
                 self.__insert_di_act(event, row=row)
             else:
