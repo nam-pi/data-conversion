@@ -6,7 +6,7 @@ Classes:
 """
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional, TypeVar, Union
+from typing import Union
 
 from rdflib import RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
 
@@ -27,9 +27,11 @@ class Nampi_graph:
         self.graph.bind("groups", Nampi_ns.groups)
         self.graph.bind("mona", Nampi_ns.mona)
         self.graph.bind("objects", Nampi_ns.objects)
+        self.graph.bind("occupations", Nampi_ns.occupations)
         self.graph.bind("persons", Nampi_ns.persons)
         self.graph.bind("places", Nampi_ns.places)
         self.graph.bind("sources", Nampi_ns.sources)
+        self.graph.bind("statuses", Nampi_ns.statuses)
 
     def __create_entity(self, ns: Namespace) -> URIRef:
         """Create an entity to be added to the graph. The URI is a combination of the provided namespace and random identifier."""

@@ -60,6 +60,7 @@ class Nampi_data_entry_form_parser:
         self.__add_births()
         self.__add_deaths()
         self.__add_complex_events()
+        self.__add_investiture_events_for_professions()
 
         logging.info(
             "Finished parsing the data for '{}'".format(
@@ -200,6 +201,78 @@ class Nampi_data_entry_form_parser:
             self.__insert_di_act(death, row=row)
         logging.info("Parsed the deaths")
 
+    def __add_investiture_events_for_professions(self):
+        """
+            Add investiture events for persons that have specific profession events
+        """
+        professions_query = """
+            PREFIX core: <https://purl.org/nampi/owl/core#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?author ?authoring_date ?source ?source_location ?group ?person_node ?person ?place ?exact_date ?earliest_date ?latest_date
+            WHERE {
+                ?event_node a core:event ;
+                    rdfs:label ?event_label .
+                ?dia_node core:has_interpretation ?event_node ;
+                    core:is_authored_by/rdfs:label ?author ;
+                    core:is_authored_on/core:has_date_time ?authoring_date ;
+                    core:has_source_location ?source_node .
+                ?source_node core:has_source/rdfs:label ?source ;
+                    core:has_string ?source_location .
+                ?event_node core:adds_status_in/rdfs:label ?group ;
+                    core:adds_status_to ?person_node .
+                ?person_node rdfs:label ?person .
+                OPTIONAL { ?event_node core:takes_place_at/rdfs:label ?place }
+                OPTIONAL { ?event_node core:takes_place_on/core:has_date_time ?exact_date }
+                OPTIONAL { ?event_node ( core:takes_place_before | core:takes_place_sometime_between )/core:has_latest_possible_date_time ?latest_date }
+                OPTIONAL { ?event_node ( core:takes_place_after | core:takes_place_sometime_between )/core:has_earliest_possible_date_time ?earliest_date }
+                VALUES ?event_label { "Profession as choir monk in Astheim" "Profession as choir monk in Bistra" "Profession as choir monk in Gaming" "Profession as choir monk in Žiče" "Profession as choir nun in Imbach" "Profession as choir nun in St. Jakob" "Profession as converse in Gaming" "Profession as lay sister in Imbach" "Profession as priest monk in Gaming" }
+            }
+        """
+        has_investiture_event_query = """
+            PREFIX core: <https://purl.org/nampi/owl/core#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            ASK WHERE {{
+            ?event core:adds_status_to <{}> ;
+                    rdfs:label ?label .
+            FILTER ( CONTAINS(LCASE(?label), "investiture") )
+            }}
+        """
+        for row in self._graph.graph.query(professions_query):
+            has_investiture_event = bool(self._graph.graph.query(
+                has_investiture_event_query.format(row["person_node"])))
+            if not has_investiture_event:
+                person = self.__get_person(row["person"])
+                if not person:
+                    continue
+                status = Status(self._graph, "Novice")
+                author_label = row["author"]
+                interpretation_date_text = row["authoring_date"].partition("T")[
+                    0]
+                source_label = str(row["source"])
+                source_location_label = row["source_location"]
+                group = Group(self._graph, str(row["group"]))
+                place = self.__get_place(str(row["place"]))
+                exact_date = row["exact_date"].partition(
+                    "T")[0] if row["exact_date"] else None
+                earliest_date = row["earliest_date"].partition(
+                    "T")[0] if row["earliest_date"] else None
+                latest_date = row["latest_date"].partition(
+                    "T")[0] if row["latest_date"] else None
+                dates = [exact_date, latest_date, earliest_date]
+                date = self.__get_date(latest_date=next(
+                    (s for s in dates if s), None))
+                event = Event(self._graph, person, main_person_relationship=Nampi_type.Core.adds_status_to,
+                              date=date, place=place, label="Investiture")
+                event.add_relationship(
+                    obj=group, pred=Nampi_type.Core.adds_status_in)
+                event.add_relationship(
+                    obj=status, pred=Nampi_type.Core.adds_status_as)
+                self.__insert_di_act(event, author_label=author_label, source_label=source_label,
+                                     source_location_label=source_location_label, interpretation_date_text=interpretation_date_text)
+                logging.debug(
+                    "Added investiture event and interpretation for '{}'".format(person.label))
+        logging.info("Finished adding investiture events")
+
     def __add_persons(self):
         """
             Add all persons from the persons table not being added in birth events.
@@ -260,7 +333,7 @@ class Nampi_data_entry_form_parser:
 
     def __get_date(
         self,
-        exact_date: Optional[str],
+        exact_date: Optional[str] = None,
         earliest_date: Optional[str] = None,
         latest_date: Optional[str] = None,
     ) -> Optional[Date]:
@@ -321,6 +394,7 @@ class Nampi_data_entry_form_parser:
         author_label: str = "",
         source_label: str = "",
         source_location_label: str = "",
+        interpretation_date_text: Optional[str] = None
     ):
         author_label = row[Column.author] if Column.author in row else author_label
         source_label = row[Column.source] if Column.source in row else source_label
@@ -338,7 +412,7 @@ class Nampi_data_entry_form_parser:
         interpretation_date = (
             row[Column.interpretation_date]
             if Column.interpretation_date in row
-            else None
+            else interpretation_date_text
         )
         comment = row[Column.comment] if Column.comment in row else None
         Di_act(
