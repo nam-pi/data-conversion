@@ -7,7 +7,7 @@ import logging
 from typing import Optional
 
 import pandas
-from modules.appellation import Appellation_type
+from modules.appellation import Appellation, Appellation_type
 from modules.appellation_assignment import Appellation_assignment
 from modules.birth import Birth
 from modules.date import Date
@@ -61,6 +61,7 @@ class Nampi_data_entry_form_parser:
         self.__add_deaths()
         self.__add_complex_events()
         self.__add_investiture_events_for_professions()
+        self.__add_religious_name()
 
         logging.info(
             "Finished parsing the data for '{}'".format(
@@ -330,6 +331,38 @@ class Nampi_data_entry_form_parser:
                 logging.debug(
                     "Added 'names' for birthless person '{}'".format(row[Column.name]))
         logging.info("Parsed the persons")
+
+    def __add_religious_name(self):
+        query = """
+            PREFIX core: <https://purl.org/nampi/owl/core#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?event ?person ?person_label
+            WHERE {
+                ?event a core:event ;
+                    rdfs:label ?label ;
+                    core:adds_status_to ?person .
+                ?person rdfs:label ?person_label
+                FILTER (CONTAINS(LCASE(?label), "investiture"))
+            }
+            ORDER BY ?label
+        """
+        for row in self._graph.graph.query(query):
+            person = row["person"]
+            person_label = str(row["person_label"])
+            investiture = row["event"]
+            religious_name = self.__sheet.get_from_table(
+                Table.PERSONS, Column.name, person_label, Column.religious_name)
+            if religious_name:
+                appellation = Appellation(
+                    self._graph, appellation_type=Appellation_type.RELIGIOUS_NAME, text=religious_name)
+                print(person, person_label, investiture, appellation.node)
+                self._graph.add(
+                    investiture, Nampi_type.Core.assigns_appellation, appellation.node)
+                self._graph.add(
+                    investiture, Nampi_type.Core.assigns_appellation_to, person)
+                logging.debug("Assigned religious name '{}' to '{}' in investiture".format(
+                    religious_name, person_label))
+        logging.info("Finished adding religious names to investitures")
 
     def __get_date(
         self,
