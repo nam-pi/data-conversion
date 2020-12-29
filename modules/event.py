@@ -75,24 +75,3 @@ class Event(Resource):
             else:
                 relationship_type = Nampi_type.Core.takes_place_sometime_between
             self.add_relationship(relationship_type, date)
-
-    def add_facet(
-        self,
-        person_relationship_type: URIRef,
-        facet_relationship_type: URIRef,
-        facet_object: Node,
-    ):
-        """Add a relationship facet to the event.
-
-        This means that a thing that is related to a person gets connected to the person in this event. There will be two triples created:
-            Example: Assignment of a name.
-            Event -> assigns_name_to -> a person
-            Event -> assigns_name -> a name
-
-        Parameters:
-            person_relationship_type: The type of relationship with the main person (event -> type -> person)
-            facet_relationship_type: The type of the relationship with the facet object (event -> type -> facet_object)
-            facet_object: The object node for the facet relationship (event -> type -> facet_object)
-        """
-        self.add_relationship(facet_relationship_type, facet_object)
-        self.add_relationship(person_relationship_type, self.main_person)

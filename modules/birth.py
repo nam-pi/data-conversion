@@ -51,20 +51,18 @@ class Birth(Event):
             birth_family_name = Appellation(
                 self._graph, birth_family_name_label, Appellation_type.FAMILY_NAME
             )
-            self.add_facet(
-                Nampi_type.Core.assigns_appellation_to,
-                Nampi_type.Core.assigns_appellation,
-                birth_family_name,
-            )
+            self.add_relationship(
+                obj=born_person, pred=Nampi_type.Core.assigns_appellation_to)
+            self.add_relationship(obj=birth_family_name,
+                                  pred=Nampi_type.Core.assigns_appellation)
         if birth_given_name_label:
             birth_given_name = Appellation(
                 self._graph, birth_given_name_label, Appellation_type.GIVEN_NAME
             )
-            self.add_facet(
-                Nampi_type.Core.assigns_appellation_to,
-                Nampi_type.Core.assigns_appellation,
-                birth_given_name,
-            )
+            self.add_relationship(
+                obj=born_person, pred=Nampi_type.Core.assigns_appellation_to)
+            self.add_relationship(obj=birth_given_name,
+                                  pred=Nampi_type.Core.assigns_appellation)
         if birth_family_group_label:
             family = Family(self._graph, birth_family_group_label)
             self.add_relationship(
