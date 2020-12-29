@@ -13,9 +13,9 @@ class Nampi_type:
     class Core:
         """The types in the NAMPI Core ontology."""
 
-        adds_group_status_as = Nampi_ns.core.adds_group_status_as
-        adds_group_status_in = Nampi_ns.core.adds_group_status_in
-        adds_group_status_to = Nampi_ns.core.adds_group_status_to
+        adds_status_as = Nampi_ns.core.adds_status_as
+        adds_status_in = Nampi_ns.core.adds_status_in
+        adds_status_to = Nampi_ns.core.adds_status_to
         assigns_appellation = Nampi_ns.core.assigns_appellation
         assigns_appellation_to = Nampi_ns.core.assigns_appellation_to
         date = Nampi_ns.core.date
@@ -26,24 +26,24 @@ class Nampi_type:
         family_member = Nampi_ns.mona.family_member
         family_name = Nampi_ns.core.family_name
         given_name = Nampi_ns.core.given_name
-        has_date_time_representation = Nampi_ns.core.has_date_time_representation
-        has_earliest_possible_date_time_representation = (
-            Nampi_ns.core.has_earliest_possible_date_time_representation)
+        has_date_time = Nampi_ns.core.has_date_time
+        has_earliest_possible_date_time = (
+            Nampi_ns.core.has_earliest_possible_date_time)
         has_interpretation = Nampi_ns.core.has_interpretation
-        has_latest_possible_date_time_representation = (
-            Nampi_ns.core.has_latest_possible_date_time_representation)
+        has_latest_possible_date_time = (
+            Nampi_ns.core.has_latest_possible_date_time)
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
-        has_string_representation = Nampi_ns.core.has_string_representation
+        has_string = Nampi_ns.core.has_string
         identifier = Nampi_ns.core.identifier
         is_authored_by = Nampi_ns.core.is_authored_by
         is_authored_on = Nampi_ns.core.is_authored_on
         occupation = Nampi_ns.core.occupation
         person = Nampi_ns.core.person
         place = Nampi_ns.core.place
-        removes_group_status_as = Nampi_ns.core.removes_group_status_as
-        removes_group_status_from = Nampi_ns.core.removes_group_status_from
-        removes_group_status_in = Nampi_ns.core.removes_group_status_in
+        removes_status_as = Nampi_ns.core.removes_status_as
+        removes_status_from = Nampi_ns.core.removes_status_from
+        removes_status_in = Nampi_ns.core.removes_status_in
         source = Nampi_ns.core.source
         source_location = Nampi_ns.core.source_location
         starts_life_of = Nampi_ns.core.starts_life_of

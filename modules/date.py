@@ -40,7 +40,7 @@ class Date(Node):
             super().__init__(graph, Nampi_type.Core.date)
             self.exact = exact_date
             self.add_relationship(
-                Nampi_type.Core.has_date_time_representation,
+                Nampi_type.Core.has_date_time,
                 Nampi_graph.date_time_literal(self.exact),
             )
         else:
@@ -48,13 +48,13 @@ class Date(Node):
             if earliest_date:
                 self.earliest = earliest_date
                 self.add_relationship(
-                    Nampi_type.Core.has_earliest_possible_date_time_representation,
+                    Nampi_type.Core.has_earliest_possible_date_time,
                     Nampi_graph.date_time_literal(self.earliest),
                 )
             if latest_date:
                 self.latest = latest_date
                 self.add_relationship(
-                    Nampi_type.Core.has_latest_possible_date_time_representation,
+                    Nampi_type.Core.has_latest_possible_date_time,
                     Nampi_graph.date_time_literal(self.latest),
                 )
 

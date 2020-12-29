@@ -47,5 +47,5 @@ class Appellation(Node):
 
         super().__init__(graph, type_uri)
         self.add_relationship(
-            Nampi_type.Core.has_string_representation, self._graph.string_literal(text)
+            Nampi_type.Core.has_string, self._graph.string_literal(text)
         )

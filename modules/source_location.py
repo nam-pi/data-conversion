@@ -23,6 +23,6 @@ class Source_location(Node):
         super().__init__(graph, Nampi_type.Core.source_location)
         self.add_relationship(Nampi_type.Core.has_source, source)
         self.add_relationship(
-            Nampi_type.Core.has_string_representation,
+            Nampi_type.Core.has_string,
             Nampi_graph.string_literal(location),
         )

@@ -68,9 +68,9 @@ class Birth(Event):
         if birth_family_group_label:
             family = Family(self._graph, birth_family_group_label)
             self.add_relationship(
-                Nampi_type.Core.adds_group_status_to, born_person)
+                Nampi_type.Core.adds_status_to, born_person)
             self.add_relationship(
-                Nampi_type.Core.adds_group_status_as, Nampi_type.Core.family_member)
+                Nampi_type.Core.adds_status_as, Nampi_type.Core.family_member)
             self.add_relationship(
-                Nampi_type.Core.adds_group_status_in, family
+                Nampi_type.Core.adds_status_in, family
             )

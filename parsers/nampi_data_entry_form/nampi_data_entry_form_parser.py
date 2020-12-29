@@ -141,20 +141,20 @@ class Nampi_data_entry_form_parser:
                 status = Status(self._graph, added_status_label)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.adds_group_status_to)
+                    obj=person, pred=Nampi_type.Core.adds_status_to)
                 e.add_relationship(
-                    obj=group, pred=Nampi_type.Core.adds_group_status_in)
+                    obj=group, pred=Nampi_type.Core.adds_status_in)
                 e.add_relationship(
-                    obj=status, pred=Nampi_type.Core.adds_group_status_as)
+                    obj=status, pred=Nampi_type.Core.adds_status_as)
             if group and removed_status_label:
                 status = Status(self._graph, removed_status_label)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.removes_group_status_from)
+                    obj=person, pred=Nampi_type.Core.removes_status_from)
                 e.add_relationship(
-                    obj=group, pred=Nampi_type.Core.removes_group_status_in)
+                    obj=group, pred=Nampi_type.Core.removes_status_in)
                 e.add_relationship(
-                    obj=status, pred=Nampi_type.Core.removes_group_status_as)
+                    obj=status, pred=Nampi_type.Core.removes_status_as)
             if started_occupation_label:
                 occupation = Occupation(self._graph, started_occupation_label)
                 e = merge_event()
@@ -230,11 +230,11 @@ class Nampi_data_entry_form_parser:
                 if family_group_name:
                     family = Family(self._graph, family_group_name)
                     become_member_event = Event(
-                        self._graph, person, Nampi_type.Core.adds_group_status_to, label="Become family member")
+                        self._graph, person, Nampi_type.Core.adds_status_to, label="Become family member")
                     become_member_event.add_relationship(
-                        Nampi_type.Core.adds_group_status_as, Nampi_type.Core.family_member)
+                        Nampi_type.Core.adds_status_as, Nampi_type.Core.family_member)
                     become_member_event.add_relationship(
-                        Nampi_type.Core.adds_group_status_in, family)
+                        Nampi_type.Core.adds_status_in, family)
                     self.__insert_di_act(become_member_event, row=row)
                     logging.debug("Added 'membership' in family '{}' for birthless person '{}'".format(
                         family.label, row[Column.name]))
