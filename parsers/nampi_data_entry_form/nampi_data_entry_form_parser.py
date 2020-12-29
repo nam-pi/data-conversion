@@ -355,7 +355,6 @@ class Nampi_data_entry_form_parser:
             if religious_name:
                 appellation = Appellation(
                     self._graph, appellation_type=Appellation_type.RELIGIOUS_NAME, text=religious_name)
-                print(person, person_label, investiture, appellation.node)
                 self._graph.add(
                     investiture, Nampi_type.Core.assigns_appellation, appellation.node)
                 self._graph.add(
