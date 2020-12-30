@@ -13,48 +13,60 @@ class Nampi_type:
     class Core:
         """The types in the NAMPI Core ontology."""
 
-        adds_status_as = Nampi_ns.core.adds_status_as
-        adds_status_in = Nampi_ns.core.adds_status_in
-        adds_status_to = Nampi_ns.core.adds_status_to
-        assigns_appellation = Nampi_ns.core.assigns_appellation
-        assigns_appellation_to = Nampi_ns.core.assigns_appellation_to
+        # Classes
+
         author = Nampi_ns.core.author
+        automated_agent = Nampi_ns.core.automated_agent
+        birth = Nampi_ns.core.birth
         date = Nampi_ns.core.date
+        death = Nampi_ns.core.death
         document_interpretation_act = Nampi_ns.core.document_interpretation_act
-        ends_life_of = Nampi_ns.core.ends_life_of
         event = Nampi_ns.core.event
         family = Nampi_ns.core.family
         family_member = Nampi_ns.core.family_member
         family_name = Nampi_ns.core.family_name
         given_name = Nampi_ns.core.given_name
-        has_interpretation = Nampi_ns.core.has_interpretation
-        has_source = Nampi_ns.core.has_source
-        has_source_location = Nampi_ns.core.has_source_location
-        has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
-        has_xsd_string = Nampi_ns.core.has_xsd_string
         identifier = Nampi_ns.core.identifier
-        is_authored_by = Nampi_ns.core.is_authored_by
-        is_authored_on = Nampi_ns.core.is_authored_on
         occupation = Nampi_ns.core.occupation
         person = Nampi_ns.core.person
         place = Nampi_ns.core.place
-        removes_status_as = Nampi_ns.core.removes_status_as
-        removes_status_from = Nampi_ns.core.removes_status_from
-        removes_status_in = Nampi_ns.core.removes_status_in
         source = Nampi_ns.core.source
         source_location = Nampi_ns.core.source_location
+        status = Nampi_ns.core.status
+        title = Nampi_ns.core.title
+
+        # Object properties
+
+        adds_status_as = Nampi_ns.core.adds_status_as
+        assigns_name = Nampi_ns.core.assigns_name
+        assigns_name_to = Nampi_ns.core.assigns_name_to
+        assigns_title = Nampi_ns.core.assigns_title
+        assigns_title_to = Nampi_ns.core.assigns_title_to
+        changes_occupation_by = Nampi_ns.core.changes_occupation_by
+        changes_occupation_of = Nampi_ns.core.changes_occupation_of
+        changes_status_in = Nampi_ns.core.changes_status_in
+        changes_status_of = Nampi_ns.core.changes_status_of
+        ends_life_of = Nampi_ns.core.ends_life_of
+        has_identifier = Nampi_ns.core.has_identifier
+        has_interpretation = Nampi_ns.core.has_interpretation
+        has_source = Nampi_ns.core.has_source
+        has_source_location = Nampi_ns.core.has_source_location
+        is_authored_by = Nampi_ns.core.is_authored_by
+        is_authored_on = Nampi_ns.core.is_authored_on
+        is_controlled_by = Nampi_ns.core.is_controlled_by
+        removes_status_as = Nampi_ns.core.removes_status_as
         starts_life_of = Nampi_ns.core.starts_life_of
         starts_occupation_as = Nampi_ns.core.starts_occupation_as
-        starts_occupation_by = Nampi_ns.core.starts_occupation_by
-        starts_occupation_of = Nampi_ns.core.stops_occupation_of
-        status = Nampi_ns.core.status
         stops_occupation_as = Nampi_ns.core.stops_occupation_as
-        stops_occupation_by = Nampi_ns.core.stops_occupation_by
-        stops_occupation_of = Nampi_ns.core.stops_occupation_of
         takes_place_at = Nampi_ns.core.takes_place_at
         takes_place_not_earlier_than = Nampi_ns.core.takes_place_not_earlier_than
         takes_place_not_later_than = Nampi_ns.core.takes_place_not_later_than
         takes_place_on = Nampi_ns.core.takes_place_on
+
+        # Data properties
+
+        has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
+        has_xsd_string = Nampi_ns.core.has_xsd_string
 
     class Mona:
         """The types in the Monastic Life ontology."""

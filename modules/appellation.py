@@ -12,12 +12,13 @@ from modules.node import Node
 
 
 class Appellation_type(Enum):
-    """The available apellation types."""
+    """The available appellation types."""
 
     IDENTIFIER = auto()
     FAMILY_NAME = auto()
     GIVEN_NAME = auto()
     RELIGIOUS_NAME = auto()
+    TITLE = auto()
 
 
 class Appellation(Node):
@@ -42,6 +43,8 @@ class Appellation(Node):
             type_uri = Nampi_type.Core.family_name
         elif appellation_type == Appellation_type.RELIGIOUS_NAME:
             type_uri = Nampi_type.Mona.religious_name
+        elif appellation_type == Appellation_type.TITLE:
+            type_uri = Nampi_type.Core.title
         else:
             type_uri = Nampi_type.Core.given_name
 

@@ -46,6 +46,7 @@ class Birth(Event):
             graph,
             born_person,
             Nampi_type.Core.starts_life_of,
+            event_type=Nampi_type.Core.birth,
             place=place,
             earliest_date=earliest_date,
             exact_date=exact_date,
@@ -57,23 +58,23 @@ class Birth(Event):
                 self._graph, family_name_label, Appellation_type.FAMILY_NAME
             )
             self.add_relationship(
-                obj=born_person, pred=Nampi_type.Core.assigns_appellation_to)
+                obj=born_person, pred=Nampi_type.Core.assigns_name_to)
             self.add_relationship(obj=birth_family_name,
-                                  pred=Nampi_type.Core.assigns_appellation)
+                                  pred=Nampi_type.Core.assigns_name)
         if given_name_label:
             birth_given_name = Appellation(
                 self._graph, given_name_label, Appellation_type.GIVEN_NAME
             )
             self.add_relationship(
-                obj=born_person, pred=Nampi_type.Core.assigns_appellation_to)
+                obj=born_person, pred=Nampi_type.Core.assigns_name_to)
             self.add_relationship(obj=birth_given_name,
-                                  pred=Nampi_type.Core.assigns_appellation)
+                                  pred=Nampi_type.Core.assigns_name)
         if family_group_label:
             family = Family(self._graph, family_group_label)
             self.add_relationship(
-                Nampi_type.Core.adds_status_to, born_person)
+                Nampi_type.Core.changes_status_of, born_person)
             self.add_relationship(
                 Nampi_type.Core.adds_status_as, Nampi_type.Core.family_member)
             self.add_relationship(
-                Nampi_type.Core.adds_status_in, family
+                Nampi_type.Core.changes_status_in, family
             )

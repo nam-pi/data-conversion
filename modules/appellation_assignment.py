@@ -27,11 +27,14 @@ class Appellation_assignment(Event):
             assignment_text: The text content of the assignment.
             appellation_type: The type of appellation to assign.
         """
-        super().__init__(
-            graph,
-            assignment_person,
-            Nampi_type.Core.assigns_appellation_to,
-            label="Assign appellation"
-        )
+
+        person_type = Nampi_type.Core.assigns_name_to
+        appell_type = Nampi_type.Core.assigns_name
+        if appellation_type == Appellation_type.TITLE:
+            person_type = Nampi_type.Core.assigns_title_to
+            appell_type = Nampi_type.Core.assigns_title_to
+        if appellation_type == Appellation_type.IDENTIFIER:
+            raise Exception("Identifiers cannot be assigned")
+        super().__init__(graph, assignment_person, person_type, label="Assign appellation")
         appellation = Appellation(graph, assignment_text, appellation_type)
-        self.add_relationship(Nampi_type.Core.assigns_appellation, appellation)
+        self.add_relationship(appell_type, appellation)

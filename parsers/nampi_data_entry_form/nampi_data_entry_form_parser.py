@@ -89,7 +89,7 @@ class Nampi_data_entry_form_parser:
                           Column.latest_date], family_name_label=family_names[2], given_name_label=given_name_label, family_group_label=family_group_label)
             self.__insert_di_act(birth, row=row)
             logging.debug(
-                "Added 'birth' for person '{}'".format(row[Column.person]))
+                "Added 'birth' for person '{}'".format(birth.main_person.label))
         logging.info("Parsed the births")
 
     def __add_complex_events(self):
@@ -127,40 +127,40 @@ class Nampi_data_entry_form_parser:
                 status = Status(self._graph, added_status_label)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.adds_status_to)
+                    obj=person, pred=Nampi_type.Core.changes_status_of)
                 e.add_relationship(
-                    obj=group, pred=Nampi_type.Core.adds_status_in)
+                    obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
                     obj=status, pred=Nampi_type.Core.adds_status_as)
             if group and removed_status_label:
                 status = Status(self._graph, removed_status_label)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.removes_status_from)
+                    obj=person, pred=Nampi_type.Core.changes_status_of)
                 e.add_relationship(
-                    obj=group, pred=Nampi_type.Core.removes_status_in)
+                    obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
                     obj=status, pred=Nampi_type.Core.removes_status_as)
             if started_occupation_label:
                 occupation = Occupation(self._graph, started_occupation_label)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.starts_occupation_of)
+                    obj=person, pred=Nampi_type.Core.changes_occupation_of)
                 e.add_relationship(
                     obj=occupation, pred=Nampi_type.Core.starts_occupation_as)
                 if group:
                     e.add_relationship(
-                        obj=group, pred=Nampi_type.Core.starts_occupation_by)
+                        obj=group, pred=Nampi_type.Core.changes_occupation_by)
             if stopped_occupation_label:
                 occupation = Occupation(self._graph, stopped_occupation_label)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.stops_occupation_of)
+                    obj=person, pred=Nampi_type.Core.changes_occupation_of)
                 e.add_relationship(
                     obj=occupation, pred=Nampi_type.Core.stops_occupation_as)
                 if group:
                     e.add_relationship(
-                        obj=group, pred=Nampi_type.Core.stops_occupation_by)
+                        obj=group, pred=Nampi_type.Core.changes_occupation_by)
             if event:
                 self.__insert_di_act(event, row=row)
             else:
@@ -199,8 +199,8 @@ class Nampi_data_entry_form_parser:
                     core:has_source_location ?source_node .
                 ?source_node core:has_source/rdfs:label ?source ;
                     core:has_xsd_string ?source_location .
-                ?event_node core:adds_status_in/rdfs:label ?group ;
-                    core:adds_status_to ?person_node .
+                ?event_node core:changes_status_in/rdfs:label ?group ;
+                    core:changes_status_of ?person_node .
                 ?person_node rdfs:label ?person .
                 OPTIONAL { ?event_node core:takes_place_at/rdfs:label ?place }
                 OPTIONAL { ?event_node core:takes_place_on/core:has_xsd_date_time ?exact_date }
@@ -213,7 +213,7 @@ class Nampi_data_entry_form_parser:
             PREFIX core: <https://purl.org/nampi/owl/core#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             ASK WHERE {{
-            ?event core:adds_status_to <{}> ;
+            ?event core:changes_status_of <{}> ;
                     rdfs:label ?label .
             FILTER ( CONTAINS(LCASE(?label), "investiture") )
             }}
@@ -222,31 +222,31 @@ class Nampi_data_entry_form_parser:
             has_investiture_event = bool(self._graph.graph.query(
                 has_investiture_event_query.format(row["person_node"])))
             if not has_investiture_event:
-                person = self.__get_person(row["person"])
+                person = self.__get_person(str(row["person"]))
                 if not person:
                     continue
                 status = Status(self._graph, "Novice")
-                author_label = row["author"]
-                interpretation_date_text = row["authoring_date"].partition("T")[
+                author_label = str(row["author"])
+                interpretation_date_text = str(row["authoring_date"]).partition("T")[
                     0]
                 source_label = str(row["source"])
-                source_location_label = row["source_location"]
+                source_location_label = str(row["source_location"])
                 group = Group(self._graph, str(row["group"]))
                 place = self.__get_place(str(row["place"]))
-                exact_date = row["exact_date"].partition(
+                exact_date = str(row["exact_date"]).partition(
                     "T")[0] if row["exact_date"] else None
-                earliest_date = row["earliest_date"].partition(
+                earliest_date = str(row["earliest_date"]).partition(
                     "T")[0] if row["earliest_date"] else None
-                latest_date = row["latest_date"].partition(
+                latest_date = str(row["latest_date"]).partition(
                     "T")[0] if row["latest_date"] else None
                 dates_sorted_by_specificity = [
                     exact_date, latest_date, earliest_date]
                 most_specific_date = next(
                     (s for s in dates_sorted_by_specificity if s), None)
-                event = Event(self._graph, person, main_person_relationship=Nampi_type.Core.adds_status_to,
+                event = Event(self._graph, person, main_person_relationship=Nampi_type.Core.changes_status_of,
                               place=place, latest_date=most_specific_date, label="Investiture")
                 event.add_relationship(
-                    obj=group, pred=Nampi_type.Core.adds_status_in)
+                    obj=group, pred=Nampi_type.Core.changes_status_in)
                 event.add_relationship(
                     obj=status, pred=Nampi_type.Core.adds_status_as)
                 self.__insert_di_act(event, author_label=author_label, source_label=source_label,
@@ -285,11 +285,11 @@ class Nampi_data_entry_form_parser:
                 if family_group_name:
                     family = Family(self._graph, family_group_name)
                     become_member_event = Event(
-                        self._graph, person, Nampi_type.Core.adds_status_to, label="Become family member")
+                        self._graph, person, Nampi_type.Core.changes_status_of, label="Become family member")
                     become_member_event.add_relationship(
                         Nampi_type.Core.adds_status_as, Nampi_type.Core.family_member)
                     become_member_event.add_relationship(
-                        Nampi_type.Core.adds_status_in, family)
+                        Nampi_type.Core.changes_status_in, family)
                     self.__insert_di_act(become_member_event, row=row)
                     logging.debug("Added 'membership' in family '{}' for birthless person '{}'".format(
                         family.label, row[Column.name]))
@@ -321,7 +321,7 @@ class Nampi_data_entry_form_parser:
             WHERE {
                 ?event a core:event ;
                     rdfs:label ?label ;
-                    core:adds_status_to ?person .
+                    core:changes_status_of ?person .
                 ?person rdfs:label ?person_label
                 FILTER (CONTAINS(LCASE(?label), "investiture"))
             }
@@ -337,9 +337,9 @@ class Nampi_data_entry_form_parser:
                 appellation = Appellation(
                     self._graph, appellation_type=Appellation_type.RELIGIOUS_NAME, text=religious_name)
                 self._graph.add(
-                    investiture, Nampi_type.Core.assigns_appellation, appellation.node)
+                    investiture, Nampi_type.Core.assigns_name, appellation.node)
                 self._graph.add(
-                    investiture, Nampi_type.Core.assigns_appellation_to, person)
+                    investiture, Nampi_type.Core.assigns_name_to, person)
                 logging.debug("Assigned religious name '{}' to '{}' in investiture".format(
                     religious_name, person_label))
         logging.info("Finished adding religious names to investitures")
