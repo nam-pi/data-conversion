@@ -22,6 +22,7 @@ class Nampi_graph:
         """Initialize the class."""
         self.graph = Graph()
         self.graph.bind("acts", Nampi_ns.acts)
+        self.graph.bind("authors", Nampi_ns.authors)
         self.graph.bind("core", Nampi_ns.core)
         self.graph.bind("events", Nampi_ns.events)
         self.graph.bind("groups", Nampi_ns.groups)

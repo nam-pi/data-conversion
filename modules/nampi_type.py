@@ -18,6 +18,7 @@ class Nampi_type:
         adds_status_to = Nampi_ns.core.adds_status_to
         assigns_appellation = Nampi_ns.core.assigns_appellation
         assigns_appellation_to = Nampi_ns.core.assigns_appellation_to
+        author = Nampi_ns.core.author
         date = Nampi_ns.core.date
         document_interpretation_act = Nampi_ns.core.document_interpretation_act
         ends_life_of = Nampi_ns.core.ends_life_of

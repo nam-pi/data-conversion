@@ -13,6 +13,7 @@ from modules.no_value import NoValue
 class Table(NoValue):
     """Names of the available tables."""
 
+    AUTHORS = "Authors"
     BIRTHS = "Births"
     COMPLEX_EVENTS = "Complex Events"
     DEATHS = "Deaths"

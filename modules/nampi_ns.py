@@ -15,6 +15,7 @@ class Nampi_ns:
     """A collection for namespaces to be used in the NAMPI input table conversion."""
 
     acts = _ns("documentInterpretationActs")
+    authors = _ns("authors")
     core = _ns("owl/core", hash_separator=True)
     events = _ns("events")
     groups = _ns("groups")

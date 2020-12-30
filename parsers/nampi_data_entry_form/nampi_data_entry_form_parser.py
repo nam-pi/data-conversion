@@ -9,6 +9,7 @@ from typing import Optional
 import pandas
 from modules.appellation import Appellation, Appellation_type
 from modules.appellation_assignment import Appellation_assignment
+from modules.author import Author
 from modules.birth import Birth
 from modules.date import Date
 from modules.death import Death
@@ -435,7 +436,7 @@ class Nampi_data_entry_form_parser:
             if Column.source_location in row
             else source_location_label
         )
-        author = self.__get_person(author_label)
+        author = Author(self._graph, author_label)
         if not author:
             return None
         source_location = self.__get_source_location(
