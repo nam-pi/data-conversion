@@ -27,7 +27,7 @@ class Nampi_type:
         family_member = Nampi_ns.mona.family_member
         family_name = Nampi_ns.core.family_name
         given_name = Nampi_ns.core.given_name
-        has_date_time = Nampi_ns.core.has_date_time
+        has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
         has_earliest_possible_date_time = (
             Nampi_ns.core.has_earliest_possible_date_time)
         has_interpretation = Nampi_ns.core.has_interpretation
@@ -35,7 +35,7 @@ class Nampi_type:
             Nampi_ns.core.has_latest_possible_date_time)
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
-        has_string = Nampi_ns.core.has_string
+        has_xsd_string = Nampi_ns.core.has_xsd_string
         identifier = Nampi_ns.core.identifier
         is_authored_by = Nampi_ns.core.is_authored_by
         is_authored_on = Nampi_ns.core.is_authored_on
@@ -55,9 +55,9 @@ class Nampi_type:
         stops_occupation_as = Nampi_ns.core.stops_occupation_as
         stops_occupation_by = Nampi_ns.core.stops_occupation_by
         stops_occupation_of = Nampi_ns.core.stops_occupation_of
-        takes_place_after = Nampi_ns.core.takes_place_after
+        takes_place_not_earlier_than = Nampi_ns.core.takes_place_not_earlier_than
         takes_place_at = Nampi_ns.core.takes_place_at
-        takes_place_before = Nampi_ns.core.takes_place_before
+        takes_place_not_later_than = Nampi_ns.core.takes_place_not_later_than
         takes_place_on = Nampi_ns.core.takes_place_on
         takes_place_sometime_between = Nampi_ns.core.takes_place_sometime_between
         unclear_date = Nampi_ns.core.unclear_date

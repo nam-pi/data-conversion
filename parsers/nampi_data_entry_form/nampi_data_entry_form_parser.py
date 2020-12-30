@@ -77,11 +77,6 @@ class Nampi_data_entry_form_parser:
             born_person = self.__get_person(row[Column.person])
             if not born_person:
                 continue
-            birth_date = self.__get_date(
-                row[Column.exact_date],
-                row[Column.earliest_date],
-                row[Column.latest_date],
-            )
             birth_place = self.__get_place(row[Column.event_place])
             family_names = [self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name_with_group), self.__sheet.get_from_table(
                 Table.PERSONS, Column.name, born_person.label, Column.family_name_gender_neutral), self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name)]
@@ -90,15 +85,8 @@ class Nampi_data_entry_form_parser:
             )
             family_group_label = next(
                 (s for s in family_names if s), None)
-            birth = Birth(
-                self._graph,
-                born_person,
-                birth_date,
-                birth_place,
-                birth_family_name_label=family_names[2],
-                birth_given_name_label=given_name_label,
-                birth_family_group_label=family_group_label
-            )
+            birth = Birth(self._graph, born_person, birth_place, exact_date=row[Column.exact_date], earliest_date=row[Column.earliest_date], latest_date=row[
+                          Column.latest_date], family_name_label=family_names[2], given_name_label=given_name_label, family_group_label=family_group_label)
             self.__insert_di_act(birth, row=row)
             logging.debug(
                 "Added 'birth' for person '{}'".format(row[Column.person]))
@@ -122,15 +110,10 @@ class Nampi_data_entry_form_parser:
                 nonlocal event, person, definition
                 if event:
                     return event
-                date = self.__get_date(
-                    row[Column.exact_date],
-                    row[Column.earliest_date],
-                    row[Column.latest_date],
-                )
                 place = self.__get_place(row[Column.event_place])
                 assert person is not None
-                event = Event(self._graph, person, date=date,
-                              place=place, label=definition)
+                event = Event(self._graph, person, place=place, earliest_date=row[Column.earliest_date],
+                              exact_date=row[Column.exact_date], latest_date=row[Column.latest_date], label=definition)
                 return event
             group_label = get_def_column(Column.status_occupation_in_group)
             group = Group(self._graph, group_label) if group_label else None
@@ -193,13 +176,9 @@ class Nampi_data_entry_form_parser:
             died_person = self.__get_person(row[Column.person])
             if not died_person:
                 continue
-            death_date = self.__get_date(
-                row[Column.exact_date],
-                row[Column.earliest_date],
-                row[Column.latest_date],
-            )
             death_place = self.__get_place(row[Column.event_place])
-            death = Death(self._graph, died_person, death_date, death_place)
+            death = Death(self._graph, died_person, place=death_place, earliest_date=row[Column.earliest_date],
+                          exact_date=row[Column.exact_date], latest_date=row[Column.latest_date])
             self.__insert_di_act(death, row=row)
         logging.info("Parsed the deaths")
 
@@ -216,17 +195,17 @@ class Nampi_data_entry_form_parser:
                     rdfs:label ?event_label .
                 ?dia_node core:has_interpretation ?event_node ;
                     core:is_authored_by/rdfs:label ?author ;
-                    core:is_authored_on/core:has_date_time ?authoring_date ;
+                    core:is_authored_on/core:has_xsd_date_time ?authoring_date ;
                     core:has_source_location ?source_node .
                 ?source_node core:has_source/rdfs:label ?source ;
-                    core:has_string ?source_location .
+                    core:has_xsd_string ?source_location .
                 ?event_node core:adds_status_in/rdfs:label ?group ;
                     core:adds_status_to ?person_node .
                 ?person_node rdfs:label ?person .
                 OPTIONAL { ?event_node core:takes_place_at/rdfs:label ?place }
-                OPTIONAL { ?event_node core:takes_place_on/core:has_date_time ?exact_date }
-                OPTIONAL { ?event_node ( core:takes_place_before | core:takes_place_sometime_between )/core:has_latest_possible_date_time ?latest_date }
-                OPTIONAL { ?event_node ( core:takes_place_after | core:takes_place_sometime_between )/core:has_earliest_possible_date_time ?earliest_date }
+                OPTIONAL { ?event_node core:takes_place_on/core:has_xsd_date_time ?exact_date }
+                OPTIONAL { ?event_node core:takes_place_not_later_than/core:has_xsd_date_time ?latest_date }
+                OPTIONAL { ?event_node core:takes_place_not_earlier_than/core:has_xsd_date_time ?earliest_date }
                 VALUES ?event_label { "Profession as choir monk in Astheim" "Profession as choir monk in Bistra" "Profession as choir monk in Gaming" "Profession as choir monk in Žiče" "Profession as choir nun in Imbach" "Profession as choir nun in St. Jakob" "Profession as converse in Gaming" "Profession as lay sister in Imbach" "Profession as priest monk in Gaming" }
             }
         """
@@ -260,11 +239,12 @@ class Nampi_data_entry_form_parser:
                     "T")[0] if row["earliest_date"] else None
                 latest_date = row["latest_date"].partition(
                     "T")[0] if row["latest_date"] else None
-                dates = [exact_date, latest_date, earliest_date]
-                date = self.__get_date(latest_date=next(
-                    (s for s in dates if s), None))
+                dates_sorted_by_specificity = [
+                    exact_date, latest_date, earliest_date]
+                most_specific_date = next(
+                    (s for s in dates_sorted_by_specificity if s), None)
                 event = Event(self._graph, person, main_person_relationship=Nampi_type.Core.adds_status_to,
-                              date=date, place=place, label="Investiture")
+                              place=place, latest_date=most_specific_date, label="Investiture")
                 event.add_relationship(
                     obj=group, pred=Nampi_type.Core.adds_status_in)
                 event.add_relationship(

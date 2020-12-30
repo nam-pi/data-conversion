@@ -46,12 +46,8 @@ class Di_act(Resource):
             Nampi_type.Core.document_interpretation_act,
             Nampi_ns.acts,
         )
-        date = Date(
-            graph,
-            interpretation_date_text
-            if interpretation_date_text
-            else datetime.datetime.now().strftime("%Y-%m-%d"),
-        )
+        date = Date(graph, interpretation_date_text if interpretation_date_text else datetime.datetime.now(
+        ).strftime("%Y-%m-%d"))
         self.add_relationship(Nampi_type.Core.has_interpretation, event)
         self.add_relationship(Nampi_type.Core.is_authored_by, author)
         self.add_relationship(
