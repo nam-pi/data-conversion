@@ -23,18 +23,14 @@ class Nampi_type:
         document_interpretation_act = Nampi_ns.core.document_interpretation_act
         ends_life_of = Nampi_ns.core.ends_life_of
         event = Nampi_ns.core.event
-        family = Nampi_ns.mona.family
-        family_member = Nampi_ns.mona.family_member
+        family = Nampi_ns.core.family
+        family_member = Nampi_ns.core.family_member
         family_name = Nampi_ns.core.family_name
         given_name = Nampi_ns.core.given_name
-        has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
-        has_earliest_possible_date_time = (
-            Nampi_ns.core.has_earliest_possible_date_time)
         has_interpretation = Nampi_ns.core.has_interpretation
-        has_latest_possible_date_time = (
-            Nampi_ns.core.has_latest_possible_date_time)
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
+        has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
         has_xsd_string = Nampi_ns.core.has_xsd_string
         identifier = Nampi_ns.core.identifier
         is_authored_by = Nampi_ns.core.is_authored_by
@@ -55,12 +51,10 @@ class Nampi_type:
         stops_occupation_as = Nampi_ns.core.stops_occupation_as
         stops_occupation_by = Nampi_ns.core.stops_occupation_by
         stops_occupation_of = Nampi_ns.core.stops_occupation_of
-        takes_place_not_earlier_than = Nampi_ns.core.takes_place_not_earlier_than
         takes_place_at = Nampi_ns.core.takes_place_at
+        takes_place_not_earlier_than = Nampi_ns.core.takes_place_not_earlier_than
         takes_place_not_later_than = Nampi_ns.core.takes_place_not_later_than
         takes_place_on = Nampi_ns.core.takes_place_on
-        takes_place_sometime_between = Nampi_ns.core.takes_place_sometime_between
-        unclear_date = Nampi_ns.core.unclear_date
 
     class Mona:
         """The types in the Monastic Life ontology."""
@@ -76,7 +70,6 @@ class Nampi_type:
         christian_parish = Nampi_ns.mona.christian_parish
         dominican_community = Nampi_ns.mona.dominican_community
         religious_name = Nampi_ns.mona.religious_name
-        religious_title = Nampi_ns.mona.religious_title
         roman_catholic_diocese = Nampi_ns.mona.roman_catholic_diocese
         roman_catholic_group = Nampi_ns.mona.roman_catholic_group
         roman_catholic_order = Nampi_ns.mona.roman_catholic_order
