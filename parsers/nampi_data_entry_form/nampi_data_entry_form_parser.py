@@ -11,7 +11,6 @@ from modules.appellation import Appellation, Appellation_type
 from modules.appellation_assignment import Appellation_assignment
 from modules.author import Author
 from modules.birth import Birth
-from modules.date import Date
 from modules.death import Death
 from modules.di_act import Di_act
 from modules.event import Event
@@ -131,7 +130,7 @@ class Nampi_data_entry_form_parser:
                 e.add_relationship(
                     obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
-                    obj=status, pred=Nampi_type.Core.adds_status_as)
+                    obj=status, pred=Nampi_type.Core.adds_status)
             if group and removed_status_label:
                 status = Status(self._graph, removed_status_label)
                 e = merge_event()
@@ -140,14 +139,14 @@ class Nampi_data_entry_form_parser:
                 e.add_relationship(
                     obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
-                    obj=status, pred=Nampi_type.Core.removes_status_as)
+                    obj=status, pred=Nampi_type.Core.removes_status)
             if started_occupation_label:
                 occupation = Occupation(self._graph, started_occupation_label)
                 e = merge_event()
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_occupation_of)
                 e.add_relationship(
-                    obj=occupation, pred=Nampi_type.Core.starts_occupation_as)
+                    obj=occupation, pred=Nampi_type.Core.starts_occupation)
                 if group:
                     e.add_relationship(
                         obj=group, pred=Nampi_type.Core.changes_occupation_by)
@@ -157,7 +156,7 @@ class Nampi_data_entry_form_parser:
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_occupation_of)
                 e.add_relationship(
-                    obj=occupation, pred=Nampi_type.Core.stops_occupation_as)
+                    obj=occupation, pred=Nampi_type.Core.stops_occupation)
                 if group:
                     e.add_relationship(
                         obj=group, pred=Nampi_type.Core.changes_occupation_by)
@@ -248,7 +247,7 @@ class Nampi_data_entry_form_parser:
                 event.add_relationship(
                     obj=group, pred=Nampi_type.Core.changes_status_in)
                 event.add_relationship(
-                    obj=status, pred=Nampi_type.Core.adds_status_as)
+                    obj=status, pred=Nampi_type.Core.adds_status)
                 self.__insert_di_act(event, author_label=author_label, source_label=source_label,
                                      source_location_label=source_location_label, interpretation_date_text=interpretation_date_text)
                 logging.debug(
@@ -287,7 +286,7 @@ class Nampi_data_entry_form_parser:
                     become_member_event = Event(
                         self._graph, person, Nampi_type.Core.changes_status_of, label="Become family member")
                     become_member_event.add_relationship(
-                        Nampi_type.Core.adds_status_as, Nampi_type.Core.family_member)
+                        Nampi_type.Core.adds_status, Nampi_type.Mona.family_member)
                     become_member_event.add_relationship(
                         Nampi_type.Core.changes_status_in, family)
                     self.__insert_di_act(become_member_event, row=row)
@@ -343,19 +342,6 @@ class Nampi_data_entry_form_parser:
                 logging.debug("Assigned religious name '{}' to '{}' in investiture".format(
                     religious_name, person_label))
         logging.info("Finished adding religious names to investitures")
-
-    def __get_date(
-        self,
-        exact_date: Optional[str] = None,
-        earliest_date: Optional[str] = None,
-        latest_date: Optional[str] = None,
-    ) -> Optional[Date]:
-        return Date.optional(
-            self._graph,
-            exact_date,
-            earliest_date,
-            latest_date,
-        )
 
     def __get_person(self, person_label: Optional[str]) -> Optional[Person]:
         gender_text = self.__sheet.get_from_table(

@@ -17,15 +17,9 @@ class Nampi_type:
 
         author = Nampi_ns.core.author
         automated_agent = Nampi_ns.core.automated_agent
-        birth = Nampi_ns.core.birth
         date = Nampi_ns.core.date
-        death = Nampi_ns.core.death
         document_interpretation_act = Nampi_ns.core.document_interpretation_act
         event = Nampi_ns.core.event
-        family = Nampi_ns.core.family
-        family_member = Nampi_ns.core.family_member
-        family_name = Nampi_ns.core.family_name
-        given_name = Nampi_ns.core.given_name
         identifier = Nampi_ns.core.identifier
         occupation = Nampi_ns.core.occupation
         person = Nampi_ns.core.person
@@ -37,7 +31,7 @@ class Nampi_type:
 
         # Object properties
 
-        adds_status_as = Nampi_ns.core.adds_status_as
+        adds_status = Nampi_ns.core.adds_status
         assigns_name = Nampi_ns.core.assigns_name
         assigns_name_to = Nampi_ns.core.assigns_name_to
         assigns_title = Nampi_ns.core.assigns_title
@@ -54,10 +48,10 @@ class Nampi_type:
         is_authored_by = Nampi_ns.core.is_authored_by
         is_authored_on = Nampi_ns.core.is_authored_on
         is_controlled_by = Nampi_ns.core.is_controlled_by
-        removes_status_as = Nampi_ns.core.removes_status_as
+        removes_status = Nampi_ns.core.removes_status
         starts_life_of = Nampi_ns.core.starts_life_of
-        starts_occupation_as = Nampi_ns.core.starts_occupation_as
-        stops_occupation_as = Nampi_ns.core.stops_occupation_as
+        starts_occupation = Nampi_ns.core.starts_occupation
+        stops_occupation = Nampi_ns.core.stops_occupation
         takes_place_at = Nampi_ns.core.takes_place_at
         takes_place_not_earlier_than = Nampi_ns.core.takes_place_not_earlier_than
         takes_place_not_later_than = Nampi_ns.core.takes_place_not_later_than
@@ -71,7 +65,10 @@ class Nampi_type:
     class Mona:
         """The types in the Monastic Life ontology."""
 
+        # Classes
+
         benedictine_community = Nampi_ns.mona.benedictine_community
+        birth = Nampi_ns.mona.birth
         canonesses_of_st_augustine = Nampi_ns.mona.canonesses_of_st_augustine
         canonesses_of_st_augustine_community = Nampi_ns.mona.canonesses_of_st_augustine_community
         carthusian_community = Nampi_ns.mona.carthusian_community
@@ -80,9 +77,16 @@ class Nampi_type:
         christian_diocese = Nampi_ns.mona.christian_diocese
         christian_order = Nampi_ns.mona.christian_order
         christian_parish = Nampi_ns.mona.christian_parish
+        death = Nampi_ns.mona.death
         dominican_community = Nampi_ns.mona.dominican_community
+        family = Nampi_ns.mona.family
+        family_member = Nampi_ns.mona.family_member
+        family_name = Nampi_ns.mona.family_name
+        given_name = Nampi_ns.mona.given_name
         religious_name = Nampi_ns.mona.religious_name
         roman_catholic_diocese = Nampi_ns.mona.roman_catholic_diocese
         roman_catholic_group = Nampi_ns.mona.roman_catholic_group
         roman_catholic_order = Nampi_ns.mona.roman_catholic_order
         roman_catholic_parish = Nampi_ns.mona.roman_catholic_parish
+
+        # Object properties

@@ -38,7 +38,7 @@ class Death(Event):
             graph,
             died_person,
             Nampi_type.Core.ends_life_of,
-            event_type=Nampi_type.Core.death,
+            event_type=Nampi_type.Mona.death,
             place=place,
             earliest_date=earliest_date,
             exact_date=exact_date,

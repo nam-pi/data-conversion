@@ -19,4 +19,4 @@ class Family(Group):
             graph: the RDF graph the family belongs to.
             label: The label for the family.
         """
-        super().__init__(graph, label=label, group_type=Nampi_type.Core.family)
+        super().__init__(graph, label=label, group_type=Nampi_type.Mona.family)

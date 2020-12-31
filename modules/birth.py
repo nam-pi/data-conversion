@@ -46,7 +46,7 @@ class Birth(Event):
             graph,
             born_person,
             Nampi_type.Core.starts_life_of,
-            event_type=Nampi_type.Core.birth,
+            event_type=Nampi_type.Mona.birth,
             place=place,
             earliest_date=earliest_date,
             exact_date=exact_date,
@@ -74,7 +74,7 @@ class Birth(Event):
             self.add_relationship(
                 Nampi_type.Core.changes_status_of, born_person)
             self.add_relationship(
-                Nampi_type.Core.adds_status_as, Nampi_type.Core.family_member)
+                Nampi_type.Core.adds_status, Nampi_type.Mona.family_member)
             self.add_relationship(
                 Nampi_type.Core.changes_status_in, family
             )
