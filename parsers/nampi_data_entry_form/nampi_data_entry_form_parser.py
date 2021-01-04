@@ -32,6 +32,18 @@ from parsers.nampi_data_entry_form.nampi_data_entry_form import \
     Nampi_data_entry_form as Sheet
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Table
 
+_group_types = {
+    "Christian denomination": Nampi_type.Mona.christian_denomination,
+    "Diocese": Nampi_type.Mona.diocese,
+    "Family": Nampi_type.Mona.family,
+    "Monastic community": Nampi_type.Mona.monastic_community,
+    "Parish": Nampi_type.Mona.parish,
+    "Polity": Nampi_type.Mona.polity,
+    "Religious denomination": Nampi_type.Mona.religious_denomination,
+    "Religious order": Nampi_type.Mona.religious_order,
+    "Religious polity": Nampi_type.Mona.religious_polity
+}
+
 
 class Nampi_data_entry_form_parser:
     """A parser that parses the NAMPI input tables and transforms the data to an RDF graph."""
@@ -115,7 +127,7 @@ class Nampi_data_entry_form_parser:
                               exact_date=row[Column.exact_date], latest_date=row[Column.latest_date], label=definition)
                 return event
             group_label = get_def_column(Column.status_occupation_in_group)
-            group = Group(self._graph, group_label) if group_label else None
+            group = self.__get_group(group_label)
             added_status_label = get_def_column(Column.added_status)
             removed_status_label = get_def_column(Column.removed_status)
             started_occupation_label = get_def_column(
@@ -226,11 +238,12 @@ class Nampi_data_entry_form_parser:
                     continue
                 status = Status(self._graph, "Novice")
                 author_label = str(row["author"])
-                interpretation_date_text = str(row["authoring_date"]).partition("T")[
-                    0]
+                interpretation_date_text = str(
+                    row["authoring_date"]).partition("T")[0]
                 source_label = str(row["source"])
                 source_location_label = str(row["source_location"])
-                group = Group(self._graph, str(row["group"]))
+                group = self.__get_group(str(row["group"]))
+                assert group is not None
                 place = self.__get_place(str(row["place"]))
                 exact_date = str(row["exact_date"]).partition(
                     "T")[0] if row["exact_date"] else None
@@ -342,6 +355,21 @@ class Nampi_data_entry_form_parser:
                 logging.debug("Assigned religious name '{}' to '{}' in investiture".format(
                     religious_name, person_label))
         logging.info("Finished adding religious names to investitures")
+
+    def __get_group(self, group_label: Optional[str]) -> Optional[Group]:
+        if not group_label:
+            return None
+        is_a_label = self.__sheet.get_from_table(
+            Table.GROUPS, Column.name, group_label, Column.is_a)
+        part_of_label = self.__sheet.get_from_table(
+            Table.GROUPS, Column.name, group_label, Column.part_of)
+        group_type = _group_types[is_a_label] if is_a_label else Nampi_type.Core.group
+        part_of_group = self.__get_group(
+            part_of_label) if part_of_label else None
+        group = Group(self._graph, group_label, group_type)
+        if part_of_group:
+            group.add_relationship(Nampi_type.Core.is_part_of, part_of_group)
+        return group
 
     def __get_person(self, person_label: Optional[str]) -> Optional[Person]:
         gender_text = self.__sheet.get_from_table(

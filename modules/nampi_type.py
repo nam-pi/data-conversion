@@ -20,6 +20,7 @@ class Nampi_type:
         date = Nampi_ns.core.date
         document_interpretation_act = Nampi_ns.core.document_interpretation_act
         event = Nampi_ns.core.event
+        group = Nampi_ns.core.group
         identifier = Nampi_ns.core.identifier
         occupation = Nampi_ns.core.occupation
         person = Nampi_ns.core.person
@@ -48,6 +49,7 @@ class Nampi_type:
         is_authored_by = Nampi_ns.core.is_authored_by
         is_authored_on = Nampi_ns.core.is_authored_on
         is_controlled_by = Nampi_ns.core.is_controlled_by
+        is_part_of = Nampi_ns.core.is_part_of
         removes_status = Nampi_ns.core.removes_status
         starts_life_of = Nampi_ns.core.starts_life_of
         starts_occupation = Nampi_ns.core.starts_occupation
@@ -67,26 +69,18 @@ class Nampi_type:
 
         # Classes
 
-        benedictine_community = Nampi_ns.mona.benedictine_community
-        birth = Nampi_ns.mona.birth
-        canonesses_of_st_augustine = Nampi_ns.mona.canonesses_of_st_augustine
-        canonesses_of_st_augustine_community = Nampi_ns.mona.canonesses_of_st_augustine_community
-        carthusian_community = Nampi_ns.mona.carthusian_community
-        christian_community = Nampi_ns.mona.christian_community
         christian_denomination = Nampi_ns.mona.christian_denomination
-        christian_diocese = Nampi_ns.mona.christian_diocese
-        christian_order = Nampi_ns.mona.christian_order
-        christian_parish = Nampi_ns.mona.christian_parish
-        death = Nampi_ns.mona.death
-        dominican_community = Nampi_ns.mona.dominican_community
+        diocese = Nampi_ns.mona.diocese
         family = Nampi_ns.mona.family
         family_member = Nampi_ns.mona.family_member
         family_name = Nampi_ns.mona.family_name
         given_name = Nampi_ns.mona.given_name
+        monastic_community = Nampi_ns.mona.monastic_community
+        parish = Nampi_ns.mona.parish
+        polity = Nampi_ns.mona.polity
+        religious_denomination = Nampi_ns.mona.religious_denomination
         religious_name = Nampi_ns.mona.religious_name
-        roman_catholic_diocese = Nampi_ns.mona.roman_catholic_diocese
-        roman_catholic_group = Nampi_ns.mona.roman_catholic_group
-        roman_catholic_order = Nampi_ns.mona.roman_catholic_order
-        roman_catholic_parish = Nampi_ns.mona.roman_catholic_parish
+        religious_order = Nampi_ns.mona.religious_order
+        religious_polity = Nampi_ns.mona.religious_polity
 
         # Object properties

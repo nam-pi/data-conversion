@@ -46,7 +46,6 @@ class Birth(Event):
             graph,
             born_person,
             Nampi_type.Core.starts_life_of,
-            event_type=Nampi_type.Mona.birth,
             place=place,
             earliest_date=earliest_date,
             exact_date=exact_date,
