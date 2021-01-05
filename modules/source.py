@@ -27,6 +27,10 @@ class Source(Resource):
             label: The sources label.
             source_type: The source type.
         """
-        super().__init__(graph, Nampi_type.Core.source, Nampi_ns.sources, label)
-        if type:
-            self.source_type = source_type
+        self.source_type = source_type
+        source_rdf_type = Nampi_type.Core.source
+        if source_type == Source_type.ONLINE_RESOURCE:
+            source_rdf_type = Nampi_type.Core.online_source
+        elif source_type == Source_type.MANUSCRIPT:
+            source_rdf_type = Nampi_type.Mona.manuscript
+        super().__init__(graph, source_rdf_type, Nampi_ns.sources, label)

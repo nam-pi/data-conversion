@@ -23,6 +23,8 @@ class Nampi_type:
         group = Nampi_ns.core.group
         identifier = Nampi_ns.core.identifier
         occupation = Nampi_ns.core.occupation
+        online_source = Nampi_ns.core.online_source
+        online_resource = Nampi_ns.core.online_resource
         person = Nampi_ns.core.person
         place = Nampi_ns.core.place
         source = Nampi_ns.core.source
@@ -44,6 +46,7 @@ class Nampi_type:
         ends_life_of = Nampi_ns.core.ends_life_of
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
+        has_online_source = Nampi_ns.core.has_online_source
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
         is_authored_by = Nampi_ns.core.is_authored_by
@@ -63,9 +66,15 @@ class Nampi_type:
 
         has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
         has_xsd_string = Nampi_ns.core.has_xsd_string
+        has_url = Nampi_ns.core.has_url
 
     class Mona:
         """The types in the Monastic Life ontology."""
+
+        # Other classes
+
+        manuscript = Nampi_ns.mona.manuscript
+        page = Nampi_ns.mona.page
 
         # Names
 
@@ -110,3 +119,9 @@ class Nampi_type:
         rule_of_a_community = Nampi_ns.mona.rule_of_a_community
 
         # Object properties
+
+        has_paged_source = Nampi_ns.mona.has_paged_source
+
+        # Data properties
+
+        has_page_number = Nampi_ns.mona.has_page_number
