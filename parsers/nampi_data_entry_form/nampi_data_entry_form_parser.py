@@ -233,6 +233,7 @@ class Nampi_data_entry_form_parser:
         """
         professions_query = """
             PREFIX core: <https://purl.org/nampi/owl/core#>
+            PREFIX mona: <https://purl.org/nampi/owl/monastic-life#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT ?author ?authoring_date ?source ?source_location ?group ?person_node ?person ?place ?exact_date ?earliest_date ?latest_date
             WHERE {
@@ -242,8 +243,8 @@ class Nampi_data_entry_form_parser:
                     core:is_authored_by/rdfs:label ?author ;
                     core:is_authored_on/core:has_xsd_date_time ?authoring_date ;
                     core:has_source_location ?source_node .
-                ?source_node core:has_source/rdfs:label ?source ;
-                    core:has_xsd_string ?source_location .
+                ?source_node (core:has_source|core:has_online_source|mona:has_paged_source)/rdfs:label ?source ;
+                    (core:has_xsd_string|core:has_url|mona:has_page_number) ?source_location .
                 ?event_node core:changes_status_in/rdfs:label ?group ;
                     core:changes_status_of ?person_node .
                 ?person_node rdfs:label ?person .
