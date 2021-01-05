@@ -30,7 +30,8 @@ from pandas import Series
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Column
 from parsers.nampi_data_entry_form.nampi_data_entry_form import \
     Nampi_data_entry_form as Sheet
-from parsers.nampi_data_entry_form.nampi_data_entry_form import Table
+from parsers.nampi_data_entry_form.nampi_data_entry_form import (
+    Table, added_investiture_label, family_member_label)
 
 _group_types = {
     "Christian denomination": Nampi_type.Mona.christian_denomination,
@@ -42,6 +43,30 @@ _group_types = {
     "Religious denomination": Nampi_type.Mona.religious_denomination,
     "Religious order": Nampi_type.Mona.religious_order,
     "Religious polity": Nampi_type.Mona.religious_polity
+}
+
+_status_types = {
+    "Academic degree": Nampi_type.Mona.academic_degree,
+    "Clergy": Nampi_type.Mona.clergy,
+    "Community hospes": Nampi_type.Mona.community_hospes,
+    "Community subsacristan": Nampi_type.Mona.community_subsacristan,
+    "Community superior": Nampi_type.Mona.community_superior,
+    "Member of a religious community": Nampi_type.Mona.community_member,
+    "Member with manual focus": Nampi_type.Mona.member_with_manual_focus,
+    "Member with spiritual focus": Nampi_type.Mona.member_with_spiritual_focus,
+    "Procurator": Nampi_type.Mona.procurator,
+    "Professed member of a religious community": Nampi_type.Mona.professed_member,
+    "Vice community superior": Nampi_type.Mona.vice_community_superior,
+    "Visitator": Nampi_type.Mona.visitator,
+}
+
+_occupation_types = {
+    "Administration of a community": Nampi_type.Mona.administration_of_a_community,
+    "Associated parish clergy": Nampi_type.Mona.associated_parish_clergy,
+    "clergy": Nampi_type.Mona.clergy,
+    "Official": Nampi_type.Mona.official,
+    "Profession": Nampi_type.Mona.profession,
+    "Rule of a community": Nampi_type.Mona.rule_of_a_community,
 }
 
 
@@ -126,6 +151,7 @@ class Nampi_data_entry_form_parser:
                 event = Event(self._graph, person, place=place, earliest_date=row[Column.earliest_date],
                               exact_date=row[Column.exact_date], latest_date=row[Column.latest_date], label=definition)
                 return event
+
             group_label = get_def_column(Column.status_occupation_in_group)
             group = self.__get_group(group_label)
             added_status_label = get_def_column(Column.added_status)
@@ -134,26 +160,32 @@ class Nampi_data_entry_form_parser:
                 Column.started_occupation)
             stopped_occupation_label = get_def_column(
                 Column.stopped_occupation)
-            if group and added_status_label:
-                status = Status(self._graph, added_status_label)
+            if added_status_label:
+                type = self.__get_status_type(added_status_label)
+                status = Status(self._graph, added_status_label, type)
                 e = merge_event()
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_status_of)
-                e.add_relationship(
-                    obj=group, pred=Nampi_type.Core.changes_status_in)
+                if group:
+                    e.add_relationship(
+                        obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
                     obj=status, pred=Nampi_type.Core.adds_status)
-            if group and removed_status_label:
-                status = Status(self._graph, removed_status_label)
+            if removed_status_label:
+                type = self.__get_status_type(removed_status_label)
+                status = Status(self._graph, removed_status_label, type)
                 e = merge_event()
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_status_of)
-                e.add_relationship(
-                    obj=group, pred=Nampi_type.Core.changes_status_in)
+                if group:
+                    e.add_relationship(
+                        obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
                     obj=status, pred=Nampi_type.Core.removes_status)
             if started_occupation_label:
-                occupation = Occupation(self._graph, started_occupation_label)
+                type = self.__get_occupation_type(started_occupation_label)
+                occupation = Occupation(
+                    self._graph, started_occupation_label, type)
                 e = merge_event()
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_occupation_of)
@@ -163,7 +195,9 @@ class Nampi_data_entry_form_parser:
                     e.add_relationship(
                         obj=group, pred=Nampi_type.Core.changes_occupation_by)
             if stopped_occupation_label:
-                occupation = Occupation(self._graph, stopped_occupation_label)
+                type = self.__get_occupation_type(stopped_occupation_label)
+                occupation = Occupation(
+                    self._graph, stopped_occupation_label, type)
                 e = merge_event()
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_occupation_of)
@@ -236,7 +270,9 @@ class Nampi_data_entry_form_parser:
                 person = self.__get_person(str(row["person"]))
                 if not person:
                     continue
-                status = Status(self._graph, "Novice")
+                status_type = self.__get_status_type(added_investiture_label)
+                status = Status(
+                    self._graph, added_investiture_label, status_type)
                 author_label = str(row["author"])
                 interpretation_date_text = str(
                     row["authoring_date"]).partition("T")[0]
@@ -296,10 +332,11 @@ class Nampi_data_entry_form_parser:
                 # Add family name group membership
                 if family_group_name:
                     family = Family(self._graph, family_group_name)
+                    status = Status(self._graph, family_member_label)
                     become_member_event = Event(
                         self._graph, person, Nampi_type.Core.changes_status_of, label="Become family member")
                     become_member_event.add_relationship(
-                        Nampi_type.Core.adds_status, Nampi_type.Mona.family_member)
+                        Nampi_type.Core.adds_status, status)
                     become_member_event.add_relationship(
                         Nampi_type.Core.changes_status_in, family)
                     self.__insert_di_act(become_member_event, row=row)
@@ -359,11 +396,11 @@ class Nampi_data_entry_form_parser:
     def __get_group(self, group_label: Optional[str]) -> Optional[Group]:
         if not group_label:
             return None
-        is_a_label = self.__sheet.get_from_table(
-            Table.GROUPS, Column.name, group_label, Column.is_a)
+        group_type_label = self.__sheet.get_from_table(
+            Table.GROUPS, Column.name, group_label, Column.type)
         part_of_label = self.__sheet.get_from_table(
             Table.GROUPS, Column.name, group_label, Column.part_of)
-        group_type = _group_types[is_a_label] if is_a_label else Nampi_type.Core.group
+        group_type = _group_types[group_type_label] if group_type_label else Nampi_type.Core.group
         part_of_group = self.__get_group(
             part_of_label) if part_of_label else None
         group = Group(self._graph, group_label, group_type)
@@ -413,6 +450,28 @@ class Nampi_data_entry_form_parser:
             )
         source = Source(self._graph, source_label, source_type)
         return Source_location(self._graph, source, location_text)
+
+    def __get_status_type(self, status_label):
+        type_label = self.__sheet.get_from_table(
+            Table.STATUSES, Column.name, status_label, Column.type)
+        if type_label:
+            if type_label in _status_types:
+                return _status_types[type_label]
+            else:
+                logging.warning(
+                    "No status type defined for label '{}'".format(type_label))
+        return None
+
+    def __get_occupation_type(self, occupation_label):
+        type_label = self.__sheet.get_from_table(
+            Table.OCCUPATIONS, Column.name, occupation_label, Column.type)
+        if type_label:
+            if type_label in _occupation_types:
+                return _occupation_types[type_label]
+            else:
+                logging.warning(
+                    "No occupation type defined for label '{}'".format(type_label))
+        return None
 
     def __insert_di_act(
         self,

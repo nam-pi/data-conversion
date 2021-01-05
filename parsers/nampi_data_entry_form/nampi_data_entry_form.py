@@ -9,6 +9,9 @@ Classes:
 from modules.google_sheet import Google_sheet
 from modules.no_value import NoValue
 
+family_member_label = "Family member"
+added_investiture_label = "Novice"
+
 
 class Table(NoValue):
     """Names of the available tables."""
@@ -19,13 +22,16 @@ class Table(NoValue):
     DEATHS = "Deaths"
     EVENT_DEFINITIONS = "Event Definitions"
     GROUPS = "Groups"
+    GROUP_TYPES = "Group Types"
     OBJECT_CREATIONS = "Object Creations"
     OBJECTS = "Objects"
     OCCUPATIONS = "Occupations"
+    OCCUPATION_TYPES = "Occupation Types"
     PERSONS = "Persons"
     PLACES = "Places"
     SOURCES = "Sources"
     STATUSES = "Statuses"
+    STATUS_TYPES = "Status Types"
     TITLES = "Titles"
 
 
@@ -49,7 +55,6 @@ class Column:
     given_name = "Given name"
     gnd_id = "GND ID"
     interpretation_date = "Interpretation Date"
-    is_a = "Is a"
     latest_date = "Latest Possible Date"
     name = "Name"
     part_of = "Part of"

@@ -67,20 +67,46 @@ class Nampi_type:
     class Mona:
         """The types in the Monastic Life ontology."""
 
-        # Classes
+        # Names
+
+        family_name = Nampi_ns.mona.family_name
+        given_name = Nampi_ns.mona.given_name
+        religious_name = Nampi_ns.mona.religious_name
+
+        # Groups
 
         christian_denomination = Nampi_ns.mona.christian_denomination
         diocese = Nampi_ns.mona.diocese
         family = Nampi_ns.mona.family
-        family_member = Nampi_ns.mona.family_member
-        family_name = Nampi_ns.mona.family_name
-        given_name = Nampi_ns.mona.given_name
         monastic_community = Nampi_ns.mona.monastic_community
         parish = Nampi_ns.mona.parish
         polity = Nampi_ns.mona.polity
         religious_denomination = Nampi_ns.mona.religious_denomination
-        religious_name = Nampi_ns.mona.religious_name
         religious_order = Nampi_ns.mona.religious_order
         religious_polity = Nampi_ns.mona.religious_polity
+
+        # Status types
+
+        academic_degree = Nampi_ns.mona.academic_degree
+        clergy = Nampi_ns.mona.clergy
+        community_hospes = Nampi_ns.mona.community_hospes
+        community_subsacristan = Nampi_ns.mona.community_subsacristan
+        community_superior = Nampi_ns.mona.community_superior
+        community_member = Nampi_ns.mona.community_member
+        member_with_manual_focus = Nampi_ns.mona.member_with_manual_focus
+        member_with_spiritual_focus = Nampi_ns.mona.member_with_spiritual_focus
+        procurator = Nampi_ns.mona.procurator
+        professed_member = Nampi_ns.mona.professed_member
+        vice_community_superior = Nampi_ns.mona.vice_community_superior
+        visitator = Nampi_ns.mona.visitator
+
+        # Occupation types
+
+        administration_of_a_community = Nampi_ns.mona.administration_of_a_community
+        associated_parish_clergy = Nampi_ns.mona.associated_parish_clergy
+        clergy = Nampi_ns.mona.clergy_occupation
+        official = Nampi_ns.mona.official
+        profession = Nampi_ns.mona.profession
+        rule_of_a_community = Nampi_ns.mona.rule_of_a_community
 
         # Object properties
