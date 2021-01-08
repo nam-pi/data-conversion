@@ -75,6 +75,7 @@ class Nampi_type:
 
         manuscript = Nampi_ns.mona.manuscript
         page = Nampi_ns.mona.page
+        religious_title = Nampi_ns.mona.religious_title
 
         # Names
 
@@ -87,12 +88,14 @@ class Nampi_type:
         christian_denomination = Nampi_ns.mona.christian_denomination
         diocese = Nampi_ns.mona.diocese
         family = Nampi_ns.mona.family
+        historical_diocese = Nampi_ns.mona.historical_diocese
         monastic_community = Nampi_ns.mona.monastic_community
         parish = Nampi_ns.mona.parish
         polity = Nampi_ns.mona.polity
         religious_denomination = Nampi_ns.mona.religious_denomination
         religious_order = Nampi_ns.mona.religious_order
         religious_polity = Nampi_ns.mona.religious_polity
+        historic_diocese = Nampi_ns.mona.historic_diocese
 
         # Status types
 

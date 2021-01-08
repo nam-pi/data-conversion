@@ -42,7 +42,8 @@ _group_types = {
     "Polity": Nampi_type.Mona.polity,
     "Religious denomination": Nampi_type.Mona.religious_denomination,
     "Religious order": Nampi_type.Mona.religious_order,
-    "Religious polity": Nampi_type.Mona.religious_polity
+    "Religious polity": Nampi_type.Mona.religious_polity,
+    "Historic diocese": Nampi_type.Mona.historic_diocese
 }
 
 _status_types = {
