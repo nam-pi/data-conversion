@@ -5,6 +5,7 @@ Classes:
 """
 from typing import Optional
 
+from rdflib.namespace import RDF
 from rdflib.term import URIRef
 
 from modules.nampi_graph import Nampi_graph
@@ -19,3 +20,6 @@ class Status(Resource):
     def __init__(self, graph: Nampi_graph, label: Optional[str], type: Optional[URIRef] = None) -> None:
         super().__init__(graph, type if type else Nampi_type.Core.status,
                          Nampi_ns.statuses, label=label)
+        if type == Nampi_type.Mona.member_with_manual_focus or type == Nampi_type.Mona.member_with_spiritual_focus:
+            self.add_relationship(
+                obj=Nampi_type.Mona.professed_member, pred=RDF.type)
