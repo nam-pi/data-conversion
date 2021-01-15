@@ -22,10 +22,12 @@ from modules.nampi_type import Nampi_type
 from modules.occupation import Occupation
 from modules.person import Person
 from modules.place import Place
+from modules.resource import Resource
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
 from modules.status import Status
+from modules.title import Title
 from pandas import Series
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Column
 from parsers.nampi_data_entry_form.nampi_data_entry_form import \
@@ -100,7 +102,8 @@ class Nampi_data_entry_form_parser:
         self.__add_deaths()
         self.__add_complex_events()
         self.__add_investiture_events_for_professions()
-        self.__add_religious_name()
+        self.__add_religious_names()
+        self.__add_independent_titles()
 
         logging.info(
             "Finished parsing the data for '{}'".format(
@@ -162,6 +165,16 @@ class Nampi_data_entry_form_parser:
                 Column.started_occupation)
             stopped_occupation_label = get_def_column(
                 Column.stopped_occupation)
+            religious_title_text = get_def_column(
+                Column.assigned_religious_title)
+            if religious_title_text:
+                e = merge_event()
+                title = Title(self._graph, religious_title_text,
+                              Nampi_type.Mona.religious_title)
+                e.add_relationship(
+                    obj=person, pred=Nampi_type.Core.assigns_title_to)
+                e.add_relationship(
+                    obj=title, pred=Nampi_type.Core.assigns_title)
             if added_status_label:
                 type = self.__get_status_type(added_status_label)
                 status = Status(self._graph, added_status_label, type)
@@ -228,6 +241,42 @@ class Nampi_data_entry_form_parser:
                           exact_date=row[Column.exact_date], latest_date=row[Column.latest_date])
             self.__insert_di_act(death, row=row)
         logging.info("Parsed the deaths")
+
+    def __add_independent_titles(self):
+        title_query = """
+            PREFIX core: <https://purl.org/nampi/owl/core#>
+            PREFIX mona: <https://purl.org/nampi/owl/monastic-life#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?person
+            WHERE {{
+                ?title a mona:religious_title ;
+                    core:has_xsd_string ?text .
+                ?event a core:event ;
+                    core:assigns_title ?title ;
+                    core:assigns_title_to ?person .
+                ?person a core:person ;
+                    rdfs:label "{}" .
+            }}
+        """
+        for _, row in self.__sheet.get_table(Table.PERSONS).iterrows():
+            religious_title = row[Column.religious_title]
+            person_label = row[Column.name]
+            if religious_title:
+                has_existing_title = bool(self._graph.graph.query(
+                    title_query.format(person_label)))
+                if not has_existing_title:
+                    person = self.__get_person(person_label)
+                    if person:
+                        event = Event(self._graph, person, label="Title assignment",
+                                      main_person_relationship=Nampi_type.Core.assigns_title_to)
+                        title = Title(self._graph, religious_title,
+                                      Nampi_type.Mona.religious_title)
+                        event.add_relationship(
+                            Nampi_type.Core.assigns_title, title)
+                        self.__insert_di_act(event, row)
+                        logging.debug("Assigns title '{}' to '{}'".format(
+                            religious_title, person_label))
+        logging.info("Finish adding independent titles")
 
     def __add_investiture_events_for_professions(self):
         """
@@ -365,7 +414,7 @@ class Nampi_data_entry_form_parser:
                     "Added 'names' for birthless person '{}'".format(row[Column.name]))
         logging.info("Parsed the persons")
 
-    def __add_religious_name(self):
+    def __add_religious_names(self):
         query = """
             PREFIX core: <https://purl.org/nampi/owl/core#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

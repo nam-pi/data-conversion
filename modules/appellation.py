@@ -18,7 +18,6 @@ class Appellation_type(Enum):
     FAMILY_NAME = auto()
     GIVEN_NAME = auto()
     RELIGIOUS_NAME = auto()
-    TITLE = auto()
 
 
 class Appellation(Node):
@@ -43,8 +42,6 @@ class Appellation(Node):
             type_uri = Nampi_type.Mona.family_name
         elif appellation_type == Appellation_type.RELIGIOUS_NAME:
             type_uri = Nampi_type.Mona.religious_name
-        elif appellation_type == Appellation_type.TITLE:
-            type_uri = Nampi_type.Core.title
         else:
             type_uri = Nampi_type.Mona.given_name
 

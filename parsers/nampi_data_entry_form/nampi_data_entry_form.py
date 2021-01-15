@@ -39,6 +39,7 @@ class Column:
     """Headings for the columns in the available tables."""
 
     added_status = "Added Status"
+    assigned_religious_title = "Assigned Religious Title"
     author = "Author"
     comment = "Comment"
     community_astheim = "Community Astheim"
@@ -60,6 +61,7 @@ class Column:
     part_of = "Part of"
     person = "Person"
     religious_name = "Religious name"
+    religious_title = "Religious title"
     removed_status = "Removed Status"
     source = "Source"
     source_location = "Source Location"
