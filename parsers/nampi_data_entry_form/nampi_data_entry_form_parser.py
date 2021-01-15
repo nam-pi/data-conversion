@@ -59,6 +59,7 @@ _status_types = {
     "Professed member of a religious community": Nampi_type.Mona.professed_member,
     "Vice community superior": Nampi_type.Mona.vice_community_superior,
     "Visitator": Nampi_type.Mona.visitator,
+    "Monastic office": Nampi_type.Mona.monastic_office
 }
 
 _occupation_types = {

@@ -107,6 +107,7 @@ class Nampi_type:
         community_member = Nampi_ns.mona.community_member
         member_with_manual_focus = Nampi_ns.mona.member_with_manual_focus
         member_with_spiritual_focus = Nampi_ns.mona.member_with_spiritual_focus
+        monastic_office = Nampi_ns.mona.monastic_office
         procurator = Nampi_ns.mona.procurator
         professed_member = Nampi_ns.mona.professed_member
         vice_community_superior = Nampi_ns.mona.vice_community_superior
