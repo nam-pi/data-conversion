@@ -13,6 +13,7 @@ Command-Line Parameters:
 Paths:
     By default, the cache and output paths are located in the script root directory
 """
+import datetime
 import errno
 import getopt
 import logging
@@ -21,9 +22,8 @@ import sys
 from os import getcwd, path, remove
 
 from modules.nampi_graph import Nampi_graph
-from parsers.nampi_data_entry_form.nampi_data_entry_form_parser import (
-    Nampi_data_entry_form_parser,
-)
+from parsers.nampi_data_entry_form.nampi_data_entry_form_parser import \
+    Nampi_data_entry_form_parser
 
 """Read command line arguments"""
 argv = sys.argv[1:]
@@ -33,7 +33,8 @@ cache_path = opts["-p"] if "-p" in opts else path.join(getcwd(), "cache/csv")
 google_cred_path = (
     opts["-g"] if "-g" in opts else path.join(getcwd(), ".credentials.json")
 )
-out_path = opts["-o"] if "-o" in opts else path.join(getcwd(), "out", "nampi_data.ttl")
+out_path = opts["-o"] if "-o" in opts else path.join(
+    getcwd(), "out", "nampi_data_" + datetime.datetime.now().isoformat() + ".ttl")
 out_format = opts["-f"] if "-f" in opts else "turtle"
 log_file = opts["-l"] if "-l" in opts else "conversion.log"
 
