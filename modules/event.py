@@ -54,7 +54,7 @@ class Event(Resource):
         super().__init__(
             graph,
             event_type if event_type else Nampi_type.Core.event,
-            Nampi_ns.events,
+            Nampi_ns.event,
             label,
             distinct=True
         )

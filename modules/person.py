@@ -35,7 +35,7 @@ class Person(Resource):
             gender: The persons gender.
             gnd_id: The id of the person in the GND.
         """
-        super().__init__(graph, Nampi_type.Core.person, Nampi_ns.persons, label=label)
+        super().__init__(graph, Nampi_type.Core.person, Nampi_ns.person, label=label)
         self.gender = gender
         self.gnd_id = gnd_id
 

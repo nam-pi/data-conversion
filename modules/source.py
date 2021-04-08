@@ -33,4 +33,4 @@ class Source(Resource):
             source_rdf_type = Nampi_type.Core.online_source
         elif source_type == Source_type.MANUSCRIPT:
             source_rdf_type = Nampi_type.Mona.manuscript
-        super().__init__(graph, source_rdf_type, Nampi_ns.sources, label)
+        super().__init__(graph, source_rdf_type, Nampi_ns.source, label)

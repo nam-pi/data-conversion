@@ -25,4 +25,4 @@ class Author(Resource):
             graph: The RDF graph the author belongs to.
             label: The authors label.
         """
-        super().__init__(graph, Nampi_type.Core.author, Nampi_ns.authors, label=label)
+        super().__init__(graph, Nampi_type.Core.author, Nampi_ns.author, label=label)

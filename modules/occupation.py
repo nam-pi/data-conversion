@@ -18,4 +18,4 @@ class Occupation(Resource):
 
     def __init__(self, graph: Nampi_graph, label: Optional[str], type: Optional[URIRef] = None) -> None:
         super().__init__(graph, type if type else Nampi_type.Core.occupation,
-                         Nampi_ns.occupations, label=label)
+                         Nampi_ns.occupation, label=label)

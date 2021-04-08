@@ -34,7 +34,7 @@ class Place(Resource):
             geoname_id: The geoname id.
             wikidata_id: The wikidata id.
         """
-        super().__init__(graph, Nampi_type.Core.place, Nampi_ns.places, label)
+        super().__init__(graph, Nampi_type.Core.place, Nampi_ns.place, label)
         self.geoname_id = geoname_id
         self.wikidata_id = wikidata_id
 

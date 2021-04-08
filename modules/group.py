@@ -35,6 +35,6 @@ class Group(Resource):
         super().__init__(
             graph,
             group_type if group_type else Nampi_type.Core.group,
-            Nampi_ns.groups,
+            Nampi_ns.group,
             label,
         )
