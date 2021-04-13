@@ -48,7 +48,7 @@ class Nampi_graph:
         Returns:
             A datetime Literal.
         """
-        return Literal(datetime.strptime(date_string, "%Y-%m-%d"))
+        return Literal(datetime.strptime(date_string, "%Y-%m-%d"), datatype=XSD.dateTime)
 
     @staticmethod
     def string_literal(string: str) -> Literal:
