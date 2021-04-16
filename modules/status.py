@@ -20,6 +20,6 @@ class Status(Resource):
     def __init__(self, graph: Nampi_graph, label: Optional[str], type: Optional[URIRef] = None) -> None:
         super().__init__(graph, type if type else Nampi_type.Core.status,
                          Nampi_ns.status, label=label)
-        if type == Nampi_type.Mona.member_with_manual_focus or type == Nampi_type.Mona.member_with_spiritual_focus:
+        if type == Nampi_type.Mona.member_of_a_religious_community_with_manual_focus or type == Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus:
             self.add_relationship(
-                obj=Nampi_type.Mona.professed_member, pred=RDF.type)
+                obj=Nampi_type.Mona.professed_member_of_a_religious_community, pred=RDF.type)

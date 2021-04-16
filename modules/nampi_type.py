@@ -101,17 +101,21 @@ class Nampi_type:
 
         academic_degree = Nampi_ns.mona.academic_degree
         clergy = Nampi_ns.mona.clergy
-        community_hospes = Nampi_ns.mona.community_hospes
         community_subsacristan = Nampi_ns.mona.community_subsacristan
         community_superior = Nampi_ns.mona.community_superior
-        community_member = Nampi_ns.mona.community_member
-        member_with_manual_focus = Nampi_ns.mona.member_with_manual_focus
-        member_with_spiritual_focus = Nampi_ns.mona.member_with_spiritual_focus
-        monastic_office = Nampi_ns.mona.monastic_office
+        member_of_a_religious_community = Nampi_ns.mona.member_of_a_religious_community
+        member_of_a_religious_community_with_manual_focus = Nampi_ns.mona.member_of_a_religious_community_with_manual_focus
+        member_of_a_religious_community_with_spiritual_focus = Nampi_ns.mona.member_of_a_religious_community_with_spiritual_focus
         procurator = Nampi_ns.mona.procurator
-        professed_member = Nampi_ns.mona.professed_member
+        professed_member_of_a_religious_community = Nampi_ns.mona.professed_member_of_a_religious_community
         vice_community_superior = Nampi_ns.mona.vice_community_superior
         visitator = Nampi_ns.mona.visitator
+        monastic_office_with_spiritual_focus = Nampi_ns.mona.monastic_office_with_spiritual_focus
+        monastic_office_with_manual_focus = Nampi_ns.mona.monastic_office_with_manual_focus
+        monastic_office = Nampi_ns.mona.monastic_office
+        member_of_a_religious_community_visiting = Nampi_ns.mona.member_of_a_religious_community_visiting
+        religious_life_outside_a_community = Nampi_ns.mona.religious_life_outside_a_community
+        office_in_a_diocese = Nampi_ns.mona.office_in_a_diocese
 
         # Occupation types
 

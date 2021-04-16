@@ -98,7 +98,9 @@ class Google_sheet:
         cache_file_path = os.path.join(cache_folder, table_name + ".csv")
         if self.__use_cache(cache_file_path):
             logging.info("Read {} from cache".format(table_name))
-            return pd.read_csv(cache_file_path, dtype=str, keep_default_na=False)
+            return pd.read_csv(
+                filepath_or_buffer=cache_file_path,  # type: ignore
+                dtype=str, keep_default_na=False)
         else:
             logging.info("Read {} from Google".format(table_name))
             worksheet = self.__spreadsheet.worksheet(table_name)

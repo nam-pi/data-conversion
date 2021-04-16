@@ -51,17 +51,21 @@ _group_types = {
 _status_types = {
     "Academic degree": Nampi_type.Mona.academic_degree,
     "Clergy": Nampi_type.Mona.clergy,
-    "Community hospes": Nampi_type.Mona.community_hospes,
     "Community subsacristan": Nampi_type.Mona.community_subsacristan,
     "Community superior": Nampi_type.Mona.community_superior,
-    "Member of a religious community": Nampi_type.Mona.community_member,
-    "Member with manual focus": Nampi_type.Mona.member_with_manual_focus,
-    "Member with spiritual focus": Nampi_type.Mona.member_with_spiritual_focus,
+    "Member of a religious community": Nampi_type.Mona.member_of_a_religious_community,
+    "Member of a religious community with manual focus": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Member of a religious community with spiritual focus": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
     "Procurator": Nampi_type.Mona.procurator,
-    "Professed member of a religious community": Nampi_type.Mona.professed_member,
+    "Professed member of a religious community": Nampi_type.Mona.professed_member_of_a_religious_community,
     "Vice community superior": Nampi_type.Mona.vice_community_superior,
     "Visitator": Nampi_type.Mona.visitator,
-    "Monastic office": Nampi_type.Mona.monastic_office
+    "Monastic office with spiritual focus": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Monastic office with manual focus": Nampi_type.Mona.monastic_office_with_manual_focus,
+    "Monastic office": Nampi_type.Mona.monastic_office,
+    "Member of a religious community visiting": Nampi_type.Mona.member_of_a_religious_community_visiting,
+    "Religious life outside a community": Nampi_type.Mona.religious_life_outside_a_community,
+    "Office in a diocese": Nampi_type.Mona.office_in_a_diocese
 }
 
 _occupation_types = {
@@ -72,6 +76,10 @@ _occupation_types = {
     "Profession": Nampi_type.Mona.profession,
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
 }
+
+
+def safe_str(row: Series, column: str) -> Optional[str]:
+    return str(row[column]) if column in row else None
 
 
 class Nampi_data_entry_form_parser:
@@ -115,10 +123,10 @@ class Nampi_data_entry_form_parser:
             Add all births from the births table including names and family group memberships.
         """
         for _, row in self.__sheet.get_table(Table.BIRTHS).iterrows():
-            born_person = self.__get_person(row[Column.person])
+            born_person = self.__get_person(safe_str(row, Column.person))
             if not born_person:
                 continue
-            birth_place = self.__get_place(row[Column.event_place])
+            birth_place = self.__get_place(safe_str(row, Column.event_place))
             family_names = [self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name_with_group), self.__sheet.get_from_table(
                 Table.PERSONS, Column.name, born_person.label, Column.family_name_gender_neutral), self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name)]
             given_name_label = self.__sheet.get_from_table(
@@ -126,8 +134,8 @@ class Nampi_data_entry_form_parser:
             )
             family_group_label = next(
                 (s for s in family_names if s), None)
-            birth = Birth(self._graph, born_person, birth_place, exact_date=row[Column.exact_date], earliest_date=row[Column.earliest_date], latest_date=row[
-                          Column.latest_date], family_name_label=family_names[2], given_name_label=given_name_label, family_group_label=family_group_label)
+            birth = Birth(self._graph, born_person, birth_place, exact_date=safe_str(row, Column.exact_date), earliest_date=safe_str(row, Column.earliest_date), latest_date=safe_str(
+                row, Column.latest_date), family_name_label=family_names[2], given_name_label=given_name_label, family_group_label=family_group_label)
             self.__insert_di_act(birth, row=row)
             logging.debug(
                 "Added 'birth' for person '{}'".format(birth.main_person.label))
@@ -138,10 +146,10 @@ class Nampi_data_entry_form_parser:
             Add all complex events from the complex events table.
         """
         for _, row in self.__sheet.get_table(Table.COMPLEX_EVENTS).iterrows():
-            person = self.__get_person(row[Column.person])
+            person = self.__get_person(safe_str(row, Column.person))
             if not person:
                 continue
-            definition = row[Column.event_definition]
+            definition = safe_str(row, Column.event_definition)
             event = None
 
             def get_def_column(column: str):
@@ -151,10 +159,10 @@ class Nampi_data_entry_form_parser:
                 nonlocal event, person, definition
                 if event:
                     return event
-                place = self.__get_place(row[Column.event_place])
+                place = self.__get_place(safe_str(row, Column.event_place))
                 assert person is not None
-                event = Event(self._graph, person, place=place, earliest_date=row[Column.earliest_date],
-                              exact_date=row[Column.exact_date], latest_date=row[Column.latest_date], label=definition)
+                event = Event(self._graph, person, place=place, earliest_date=safe_str(row, Column.earliest_date),
+                              exact_date=safe_str(row, Column.exact_date), latest_date=safe_str(row, Column.latest_date), label=str(definition))
                 return event
 
             group_label = get_def_column(Column.status_occupation_in_group)
@@ -233,12 +241,12 @@ class Nampi_data_entry_form_parser:
             Add all death events from the deaths table.
         """
         for _, row in self.__sheet.get_table(Table.DEATHS).iterrows():
-            died_person = self.__get_person(row[Column.person])
+            died_person = self.__get_person(safe_str(row, Column.person))
             if not died_person:
                 continue
-            death_place = self.__get_place(row[Column.event_place])
-            death = Death(self._graph, died_person, place=death_place, earliest_date=row[Column.earliest_date],
-                          exact_date=row[Column.exact_date], latest_date=row[Column.latest_date])
+            death_place = self.__get_place(safe_str(row, Column.event_place))
+            death = Death(self._graph, died_person, place=death_place, earliest_date=safe_str(row, Column.earliest_date),
+                          exact_date=safe_str(row, Column.exact_date), latest_date=safe_str(row, Column.latest_date))
             self.__insert_di_act(death, row=row)
         logging.info("Parsed the deaths")
 
@@ -259,8 +267,8 @@ class Nampi_data_entry_form_parser:
             }}
         """
         for _, row in self.__sheet.get_table(Table.PERSONS).iterrows():
-            religious_title = row[Column.religious_title]
-            person_label = row[Column.name]
+            religious_title = safe_str(row, Column.religious_title)
+            person_label = safe_str(row, Column.name)
             if religious_title:
                 has_existing_title = bool(self._graph.graph.query(
                     title_query.format(person_label)))
@@ -365,19 +373,19 @@ class Nampi_data_entry_form_parser:
                 logging.warning(
                     "No source entry for 'person' table row '{}'".format(row[Column.name]))
                 continue
-            person_label = row[Column.name]
+            person_label = safe_str(row, Column.name)
             has_birth_event = self.__sheet.table_has_value(
                 Table.BIRTHS,
                 Column.person,
                 person_label,
             )
-            person = self.__get_person(row[Column.name])
+            person = self.__get_person(safe_str(row, Column.name))
             if not person:
                 continue
             if not has_birth_event:
                 # Get all family name variants from the person table
-                family_names = [row[Column.family_name_with_group],
-                                row[Column.family_name_gender_neutral], row[Column.family_name]]
+                family_names = [safe_str(row, Column.family_name_with_group),
+                                safe_str(row, Column.family_name_gender_neutral), safe_str(row, Column.family_name)]
                 # Get the official family name by looking through the ordered family_names list and picking the first match
                 family_group_name = next(
                     (s for s in family_names if s), None)
@@ -407,7 +415,8 @@ class Nampi_data_entry_form_parser:
                 if row[Column.given_name]:
                     # Add given name
                     gn_assignment = Appellation_assignment(
-                        self._graph, person, row[Column.given_name]
+                        self._graph, person, str(
+                            safe_str(row, Column.given_name))
                     )
                     self.__insert_di_act(gn_assignment, row=row)
                 logging.debug(
