@@ -15,6 +15,7 @@ class Nampi_type:
 
         # Classes
 
+        aspect = Nampi_ns.core.aspect
         author = Nampi_ns.core.author
         automated_agent = Nampi_ns.core.automated_agent
         date = Nampi_ns.core.date
@@ -22,14 +23,12 @@ class Nampi_type:
         event = Nampi_ns.core.event
         group = Nampi_ns.core.group
         identifier = Nampi_ns.core.identifier
-        occupation = Nampi_ns.core.occupation
         online_source = Nampi_ns.core.online_source
         online_resource = Nampi_ns.core.online_resource
         person = Nampi_ns.core.person
         place = Nampi_ns.core.place
         source = Nampi_ns.core.source
         source_location = Nampi_ns.core.source_location
-        status = Nampi_ns.core.status
         title = Nampi_ns.core.title
 
         # Object properties
@@ -97,7 +96,7 @@ class Nampi_type:
         religious_polity = Nampi_ns.mona.religious_polity
         historic_diocese = Nampi_ns.mona.historic_diocese
 
-        # Status types
+        # Aspect types
 
         academic_degree = Nampi_ns.mona.academic_degree
         clergy = Nampi_ns.mona.clergy
@@ -117,11 +116,8 @@ class Nampi_type:
         religious_life_outside_a_community = Nampi_ns.mona.religious_life_outside_a_community
         office_in_a_diocese = Nampi_ns.mona.office_in_a_diocese
 
-        # Occupation types
-
         administration_of_a_community = Nampi_ns.mona.administration_of_a_community
         associated_parish_clergy = Nampi_ns.mona.associated_parish_clergy
-        clergy = Nampi_ns.mona.clergy_occupation
         official = Nampi_ns.mona.official
         profession = Nampi_ns.mona.profession
         rule_of_a_community = Nampi_ns.mona.rule_of_a_community

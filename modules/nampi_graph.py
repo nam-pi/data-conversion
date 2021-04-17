@@ -22,17 +22,16 @@ class Nampi_graph:
         """Initialize the class."""
         self.graph = Graph()
         self.graph.bind("act", Nampi_ns.act)
+        self.graph.bind("aspect", Nampi_ns.aspect)
         self.graph.bind("author", Nampi_ns.author)
         self.graph.bind("core", Nampi_ns.core)
         self.graph.bind("event", Nampi_ns.event)
         self.graph.bind("group", Nampi_ns.group)
         self.graph.bind("mona", Nampi_ns.mona)
         self.graph.bind("object", Nampi_ns.object)
-        self.graph.bind("occupation", Nampi_ns.occupation)
         self.graph.bind("person", Nampi_ns.person)
         self.graph.bind("place", Nampi_ns.place)
         self.graph.bind("source", Nampi_ns.source)
-        self.graph.bind("status", Nampi_ns.status)
 
     def __create_entity(self, ns: Namespace) -> URIRef:
         """Create an entity to be added to the graph. The URI is a combination of the provided namespace and random identifier."""

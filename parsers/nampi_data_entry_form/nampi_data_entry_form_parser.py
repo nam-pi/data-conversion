@@ -4,11 +4,12 @@ Classes:
     Nampi_data_entry_form
 """
 import logging
-from typing import Optional
+from typing import List, Optional
 
 import pandas
 from modules.appellation import Appellation, Appellation_type
 from modules.appellation_assignment import Appellation_assignment
+from modules.aspect import Aspect
 from modules.author import Author
 from modules.birth import Birth
 from modules.death import Death
@@ -19,14 +20,12 @@ from modules.gender import Gender
 from modules.group import Group
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
-from modules.occupation import Occupation
 from modules.person import Person
 from modules.place import Place
 from modules.resource import Resource
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
-from modules.status import Status
 from modules.title import Title
 from pandas import Series
 from parsers.nampi_data_entry_form.nampi_data_entry_form import Column
@@ -34,6 +33,7 @@ from parsers.nampi_data_entry_form.nampi_data_entry_form import \
     Nampi_data_entry_form as Sheet
 from parsers.nampi_data_entry_form.nampi_data_entry_form import (
     Table, added_investiture_label, family_member_label)
+from rdflib.term import URIRef
 
 _group_types = {
     "Christian denomination": Nampi_type.Mona.christian_denomination,
@@ -71,7 +71,7 @@ _status_types = {
 _occupation_types = {
     "Administration of a community": Nampi_type.Mona.administration_of_a_community,
     "Associated parish clergy": Nampi_type.Mona.associated_parish_clergy,
-    "clergy": Nampi_type.Mona.clergy,
+    "Clergy": Nampi_type.Mona.clergy,
     "Official": Nampi_type.Mona.official,
     "Profession": Nampi_type.Mona.profession,
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
@@ -175,6 +175,7 @@ class Nampi_data_entry_form_parser:
                 Column.stopped_occupation)
             religious_title_text = get_def_column(
                 Column.assigned_religious_title)
+
             if religious_title_text:
                 e = merge_event()
                 title = Title(self._graph, religious_title_text,
@@ -183,9 +184,18 @@ class Nampi_data_entry_form_parser:
                     obj=person, pred=Nampi_type.Core.assigns_title_to)
                 e.add_relationship(
                     obj=title, pred=Nampi_type.Core.assigns_title)
-            if added_status_label:
-                type = self.__get_status_type(added_status_label)
-                status = Status(self._graph, added_status_label, type)
+
+            if (added_status_label or started_occupation_label) and added_status_label == started_occupation_label:
+                aspect_label = added_status_label
+                status_type = self.__get_status_type(added_status_label)
+                occupation_type = self.__get_occupation_type(
+                    started_occupation_label)
+                types: List[URIRef] = []
+                if status_type:
+                    types.append(status_type)
+                if occupation_type:
+                    types.append(occupation_type)
+                aspect = Aspect(self._graph, aspect_label, types)
                 e = merge_event()
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_status_of)
@@ -193,10 +203,45 @@ class Nampi_data_entry_form_parser:
                     e.add_relationship(
                         obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
-                    obj=status, pred=Nampi_type.Core.adds_status)
-            if removed_status_label:
-                type = self.__get_status_type(removed_status_label)
-                status = Status(self._graph, removed_status_label, type)
+                    obj=aspect, pred=Nampi_type.Core.adds_status)
+                e.add_relationship(
+                    obj=aspect, pred=Nampi_type.Core.starts_occupation)
+            else:
+                if added_status_label:
+                    type = self.__get_status_type(added_status_label)
+                    aspect = Aspect(self._graph, added_status_label, type)
+                    e = merge_event()
+                    e.add_relationship(
+                        obj=person, pred=Nampi_type.Core.changes_status_of)
+                    if group:
+                        e.add_relationship(
+                            obj=group, pred=Nampi_type.Core.changes_status_in)
+                    e.add_relationship(
+                        obj=aspect, pred=Nampi_type.Core.adds_status)
+                if started_occupation_label:
+                    type = self.__get_occupation_type(started_occupation_label)
+                    aspect = Aspect(
+                        self._graph, started_occupation_label, type)
+                    e = merge_event()
+                    e.add_relationship(
+                        obj=person, pred=Nampi_type.Core.changes_occupation_of)
+                    e.add_relationship(
+                        obj=aspect, pred=Nampi_type.Core.starts_occupation)
+                    if group:
+                        e.add_relationship(
+                            obj=group, pred=Nampi_type.Core.changes_occupation_by)
+
+            if (removed_status_label or stopped_occupation_label) and removed_status_label == stopped_occupation_label:
+                aspect_label = removed_status_label
+                status_type = self.__get_status_type(removed_status_label)
+                occupation_type = self.__get_occupation_type(
+                    stopped_occupation_label)
+                types: List[URIRef] = []
+                if status_type:
+                    types.append(status_type)
+                if occupation_type:
+                    types.append(occupation_type)
+                aspect = Aspect(self._graph, aspect_label, types)
                 e = merge_event()
                 e.add_relationship(
                     obj=person, pred=Nampi_type.Core.changes_status_of)
@@ -204,31 +249,34 @@ class Nampi_data_entry_form_parser:
                     e.add_relationship(
                         obj=group, pred=Nampi_type.Core.changes_status_in)
                 e.add_relationship(
-                    obj=status, pred=Nampi_type.Core.removes_status)
-            if started_occupation_label:
-                type = self.__get_occupation_type(started_occupation_label)
-                occupation = Occupation(
-                    self._graph, started_occupation_label, type)
-                e = merge_event()
+                    obj=aspect, pred=Nampi_type.Core.removes_status)
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.changes_occupation_of)
-                e.add_relationship(
-                    obj=occupation, pred=Nampi_type.Core.starts_occupation)
-                if group:
+                    obj=aspect, pred=Nampi_type.Core.stops_occupation)
+            else:
+                if removed_status_label:
+                    type = self.__get_status_type(removed_status_label)
+                    aspect = Aspect(self._graph, removed_status_label, type)
+                    e = merge_event()
                     e.add_relationship(
-                        obj=group, pred=Nampi_type.Core.changes_occupation_by)
-            if stopped_occupation_label:
-                type = self.__get_occupation_type(stopped_occupation_label)
-                occupation = Occupation(
-                    self._graph, stopped_occupation_label, type)
-                e = merge_event()
-                e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.changes_occupation_of)
-                e.add_relationship(
-                    obj=occupation, pred=Nampi_type.Core.stops_occupation)
-                if group:
+                        obj=person, pred=Nampi_type.Core.changes_status_of)
+                    if group:
+                        e.add_relationship(
+                            obj=group, pred=Nampi_type.Core.changes_status_in)
                     e.add_relationship(
-                        obj=group, pred=Nampi_type.Core.changes_occupation_by)
+                        obj=aspect, pred=Nampi_type.Core.removes_status)
+                if stopped_occupation_label:
+                    type = self.__get_occupation_type(stopped_occupation_label)
+                    aspect = Aspect(
+                        self._graph, stopped_occupation_label, type)
+                    e = merge_event()
+                    e.add_relationship(
+                        obj=person, pred=Nampi_type.Core.changes_occupation_of)
+                    e.add_relationship(
+                        obj=aspect, pred=Nampi_type.Core.stops_occupation)
+                    if group:
+                        e.add_relationship(
+                            obj=group, pred=Nampi_type.Core.changes_occupation_by)
+
             if event:
                 self.__insert_di_act(event, row=row)
             else:
@@ -255,15 +303,11 @@ class Nampi_data_entry_form_parser:
             PREFIX core: <https://purl.org/nampi/owl/core#>
             PREFIX mona: <https://purl.org/nampi/owl/monastic-life#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT ?person
+            SELECT ?text
             WHERE {{
-                ?title a mona:religious_title ;
-                    core:has_xsd_string ?text .
-                ?event a core:event ;
-                    core:assigns_title ?title ;
-                    core:assigns_title_to ?person .
-                ?person a core:person ;
-                    rdfs:label "{}" .
+  	            ?event a core:event ;
+                    core:assigns_title/core:has_xsd_string ?text ;
+                    core:assigns_title_to/rdfs:label "{}" .
             }}
         """
         for _, row in self.__sheet.get_table(Table.PERSONS).iterrows():
@@ -331,7 +375,7 @@ class Nampi_data_entry_form_parser:
                 if not person:
                     continue
                 status_type = self.__get_status_type(added_investiture_label)
-                status = Status(
+                aspect = Aspect(
                     self._graph, added_investiture_label, status_type)
                 author_label = str(row["author"])
                 interpretation_date_text = str(
@@ -356,7 +400,7 @@ class Nampi_data_entry_form_parser:
                 event.add_relationship(
                     obj=group, pred=Nampi_type.Core.changes_status_in)
                 event.add_relationship(
-                    obj=status, pred=Nampi_type.Core.adds_status)
+                    obj=aspect, pred=Nampi_type.Core.adds_status)
                 self.__insert_di_act(event, author_label=author_label, source_label=source_label,
                                      source_location_label=source_location_label, interpretation_date_text=interpretation_date_text)
                 logging.debug(
@@ -392,11 +436,11 @@ class Nampi_data_entry_form_parser:
                 # Add family name group membership
                 if family_group_name:
                     family = Family(self._graph, family_group_name)
-                    status = Status(self._graph, family_member_label)
+                    aspect = Aspect(self._graph, family_member_label)
                     become_member_event = Event(
                         self._graph, person, Nampi_type.Core.changes_status_of, label="Become family member")
                     become_member_event.add_relationship(
-                        Nampi_type.Core.adds_status, status)
+                        Nampi_type.Core.adds_status, aspect)
                     become_member_event.add_relationship(
                         Nampi_type.Core.changes_status_in, family)
                     self.__insert_di_act(become_member_event, row=row)

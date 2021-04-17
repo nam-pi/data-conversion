@@ -4,7 +4,7 @@ Classes:
     Resource
 """
 
-from typing import Optional
+from typing import List, Optional, Union
 
 from rdflib import Namespace, URIRef
 
@@ -20,7 +20,7 @@ class Resource(Node):
     def __init__(
         self,
         graph: Nampi_graph,
-        type_uri: URIRef,
+        type_uri: Union[List[URIRef], URIRef],
         ns: Optional[Namespace] = None,
         label: Optional[str] = None,
         distinct: Optional[bool] = False

@@ -9,13 +9,13 @@ from parsers.nampi_data_entry_form.nampi_data_entry_form import \
     family_member_label
 
 from modules.appellation import Appellation, Appellation_type
+from modules.aspect import Aspect
 from modules.event import Event
 from modules.family import Family
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
 from modules.person import Person
 from modules.place import Place
-from modules.status import Status
 
 
 class Birth(Event):
@@ -74,11 +74,11 @@ class Birth(Event):
                                   pred=Nampi_type.Core.assigns_name)
         if family_group_label:
             family = Family(self._graph, family_group_label)
-            status = Status(self._graph, family_member_label)
+            aspect = Aspect(self._graph, family_member_label)
             self.add_relationship(
                 Nampi_type.Core.changes_status_of, born_person)
             self.add_relationship(
-                Nampi_type.Core.adds_status, status)
+                Nampi_type.Core.adds_status, aspect)
             self.add_relationship(
                 Nampi_type.Core.changes_status_in, family
             )

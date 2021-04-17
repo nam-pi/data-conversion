@@ -20,14 +20,13 @@ def _purl_ns(resource: str, hash_separator: bool = False) -> Namespace:
 class Nampi_ns:
     """A collection for namespaces to be used in the NAMPI input table conversion."""
     act = _base_ns("documentInterpretationAct")
+    aspect = _base_ns("aspect")
     author = _base_ns("author")
     core = _purl_ns("owl/core", hash_separator=True)
     event = _base_ns("event")
     group = _base_ns("group")
     mona = _purl_ns("owl/monastic-life", hash_separator=True)
     object = _base_ns("object")
-    occupation = _base_ns("occupation")
     person = _base_ns("person")
     place = _base_ns("place")
     source = _base_ns("source")
-    status = _base_ns("status")
