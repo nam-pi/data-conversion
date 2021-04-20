@@ -33,15 +33,9 @@ class Nampi_type:
 
         # Object properties
 
-        adds_status = Nampi_ns.core.adds_status
-        assigns_name = Nampi_ns.core.assigns_name
-        assigns_name_to = Nampi_ns.core.assigns_name_to
-        assigns_title = Nampi_ns.core.assigns_title
-        assigns_title_to = Nampi_ns.core.assigns_title_to
-        changes_occupation_by = Nampi_ns.core.changes_occupation_by
-        changes_occupation_of = Nampi_ns.core.changes_occupation_of
-        changes_status_in = Nampi_ns.core.changes_status_in
-        changes_status_of = Nampi_ns.core.changes_status_of
+        adds_aspect = Nampi_ns.core.adds_aspect
+        changes_aspect_related_to = Nampi_ns.core.changes_aspect_related_to
+        changes_aspect_of = Nampi_ns.core.changes_aspect_of
         ends_life_of = Nampi_ns.core.ends_life_of
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
@@ -52,10 +46,8 @@ class Nampi_type:
         is_authored_on = Nampi_ns.core.is_authored_on
         is_controlled_by = Nampi_ns.core.is_controlled_by
         is_part_of = Nampi_ns.core.is_part_of
-        removes_status = Nampi_ns.core.removes_status
+        removes_aspect = Nampi_ns.core.removes_aspect
         starts_life_of = Nampi_ns.core.starts_life_of
-        starts_occupation = Nampi_ns.core.starts_occupation
-        stops_occupation = Nampi_ns.core.stops_occupation
         takes_place_at = Nampi_ns.core.takes_place_at
         takes_place_not_earlier_than = Nampi_ns.core.takes_place_not_earlier_than
         takes_place_not_later_than = Nampi_ns.core.takes_place_not_later_than

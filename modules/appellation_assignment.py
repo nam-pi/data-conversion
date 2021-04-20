@@ -28,8 +28,8 @@ class Appellation_assignment(Event):
             appellation_type: The type of appellation to assign.
         """
 
-        person_type = Nampi_type.Core.assigns_name_to
-        appell_type = Nampi_type.Core.assigns_name
+        person_type = Nampi_type.Core.changes_aspect_of
+        appell_type = Nampi_type.Core.adds_aspect
         if appellation_type == Appellation_type.IDENTIFIER:
             raise Exception("Identifiers cannot be assigned")
         super().__init__(graph, assignment_person, person_type, label="Assign appellation")

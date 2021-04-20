@@ -61,24 +61,24 @@ class Birth(Event):
                 self._graph, family_name_label, Appellation_type.FAMILY_NAME
             )
             self.add_relationship(
-                obj=born_person, pred=Nampi_type.Core.assigns_name_to)
+                obj=born_person, pred=Nampi_type.Core.changes_aspect_of)
             self.add_relationship(obj=birth_family_name,
-                                  pred=Nampi_type.Core.assigns_name)
+                                  pred=Nampi_type.Core.adds_aspect)
         if given_name_label:
             birth_given_name = Appellation(
                 self._graph, given_name_label, Appellation_type.GIVEN_NAME
             )
             self.add_relationship(
-                obj=born_person, pred=Nampi_type.Core.assigns_name_to)
+                obj=born_person, pred=Nampi_type.Core.changes_aspect_of)
             self.add_relationship(obj=birth_given_name,
-                                  pred=Nampi_type.Core.assigns_name)
+                                  pred=Nampi_type.Core.adds_aspect)
         if family_group_label:
             family = Family(self._graph, family_group_label)
             aspect = Aspect(self._graph, family_member_label)
             self.add_relationship(
-                Nampi_type.Core.changes_status_of, born_person)
+                Nampi_type.Core.changes_aspect_of, born_person)
             self.add_relationship(
-                Nampi_type.Core.adds_status, aspect)
+                Nampi_type.Core.adds_aspect, aspect)
             self.add_relationship(
-                Nampi_type.Core.changes_status_in, family
+                Nampi_type.Core.changes_aspect_related_to, family
             )
