@@ -30,8 +30,6 @@ class Appellation_assignment(Event):
 
         person_type = Nampi_type.Core.changes_aspect_of
         appell_type = Nampi_type.Core.adds_aspect
-        if appellation_type == Appellation_type.IDENTIFIER:
-            raise Exception("Identifiers cannot be assigned")
         super().__init__(graph, assignment_person, person_type, label="Assign appellation")
         appellation = Appellation(graph, assignment_text, appellation_type)
         self.add_relationship(appell_type, appellation)
