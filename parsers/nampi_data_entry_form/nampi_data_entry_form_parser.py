@@ -350,7 +350,7 @@ class Nampi_data_entry_form_parser:
                 OPTIONAL { ?event_node core:takes_place_on/core:has_xsd_date_time ?exact_date }
                 OPTIONAL { ?event_node core:takes_place_not_later_than/core:has_xsd_date_time ?latest_date }
                 OPTIONAL { ?event_node core:takes_place_not_earlier_than/core:has_xsd_date_time ?earliest_date }
-                VALUES ?event_label { "Profession as choir monk in Astheim" "Profession as choir monk in Bistra" "Profession as choir monk in Gaming" "Profession as choir monk in Žiče" "Profession as choir nun in Imbach" "Profession as choir nun in St. Jakob" "Profession as converse in Gaming" "Profession as lay sister in Imbach" "Profession as priest monk in Gaming" }
+                VALUES ?event_label { "Profession as choir monk in Astheim" "Profession as choir monk in Bistra" "Profession as choir monk in Gaming" "Profession as choir monk in Žiče" "Profession as choir nun in Imbach" "Profession as choir nun in St. Jakob" "Profession as converse in Gaming" "Profession as lay sister in Imbach" "Profession as priest monk in Gaming" "Profession as choir nun in St. Laurenz" "Profession as choir monk in Brno" "Second profession as choir nun in Imbach" "Secret profession as choir nun in Imbach" }
             }
         """
         has_investiture_event_query = """
