@@ -343,8 +343,8 @@ class Nampi_data_entry_form_parser:
                     core:has_source_location ?source_node .
                 ?source_node (core:has_source|core:has_online_source|mona:has_paged_source)/rdfs:label ?source ;
                     (core:has_xsd_string|core:has_url|mona:has_page_number) ?source_location .
-                ?event_node core:changes_status_in/rdfs:label ?group ;
-                    core:changes_status_of ?person_node .
+                ?event_node core:changes_aspect_related_to/rdfs:label ?group ;
+                    core:changes_aspect_of ?person_node .
                 ?person_node rdfs:label ?person .
                 OPTIONAL { ?event_node core:takes_place_at/rdfs:label ?place }
                 OPTIONAL { ?event_node core:takes_place_on/core:has_xsd_date_time ?exact_date }
@@ -357,7 +357,7 @@ class Nampi_data_entry_form_parser:
             PREFIX core: <https://purl.org/nampi/owl/core#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             ASK WHERE {{
-            ?event core:changes_status_of <{}> ;
+            ?event core:changes_aspect_of <{}> ;
                     rdfs:label ?label .
             FILTER ( CONTAINS(LCASE(?label), "investiture") )
             }}
