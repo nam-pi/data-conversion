@@ -7,14 +7,12 @@ from __future__ import annotations
 
 from typing import Optional
 
-from rdflib import OWL
-
 from modules.gender import Gender
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
 from modules.nampi_type import Nampi_type
+from modules.other_ns import Other_ns
 from modules.resource import Resource
-from modules.sameas_type import Sameas
 
 
 class Person(Resource):
@@ -42,7 +40,8 @@ class Person(Resource):
         self.gender = gender
         if gnd_id:
             self.gnd_id = gnd_id
-            self.add_relationship(OWL.sameAs, Sameas.gnd(gnd_id))
+            self.add_relationship(
+                Other_ns.schemaOrg.sameAs, Other_ns.gnd[gnd_id])
 
     @classmethod
     def optional(

@@ -11,6 +11,7 @@ from typing import Union
 from rdflib import RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
 
 from modules.nampi_ns import Nampi_ns
+from modules.other_ns import Other_ns
 
 
 class Nampi_graph:
@@ -32,7 +33,7 @@ class Nampi_graph:
         self.graph.bind("person", Nampi_ns.person)
         self.graph.bind("place", Nampi_ns.place)
         self.graph.bind("source", Nampi_ns.source)
-        self.graph.bind("owl", "http://www.w3.org/2002/07/owl#")
+        self.graph.bind("schema", Other_ns.schemaOrg)
 
     def __create_entity(self, ns: Namespace) -> URIRef:
         """Create an entity to be added to the graph. The URI is a combination of the provided namespace and random identifier."""
