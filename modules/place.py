@@ -7,10 +7,13 @@ from __future__ import annotations
 
 from typing import Optional
 
+from rdflib import OWL
+
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
 from modules.nampi_type import Nampi_type
 from modules.resource import Resource
+from modules.sameas_type import Sameas
 
 
 class Place(Resource):
@@ -35,8 +38,12 @@ class Place(Resource):
             wikidata_id: The wikidata id.
         """
         super().__init__(graph, Nampi_type.Core.place, Nampi_ns.place, label)
-        self.geoname_id = geoname_id
-        self.wikidata_id = wikidata_id
+        if wikidata_id:
+            self.wikidata_id = wikidata_id
+            self.add_relationship(OWL.sameAs, Sameas.wikidata(wikidata_id))
+        if geoname_id:
+            self.geoname_id = geoname_id
+            self.add_relationship(OWL.sameAs, Sameas.geonames(geoname_id))
 
     @classmethod
     def optional(

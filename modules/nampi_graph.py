@@ -32,6 +32,7 @@ class Nampi_graph:
         self.graph.bind("person", Nampi_ns.person)
         self.graph.bind("place", Nampi_ns.place)
         self.graph.bind("source", Nampi_ns.source)
+        self.graph.bind("owl", "http://www.w3.org/2002/07/owl#")
 
     def __create_entity(self, ns: Namespace) -> URIRef:
         """Create an entity to be added to the graph. The URI is a combination of the provided namespace and random identifier."""
