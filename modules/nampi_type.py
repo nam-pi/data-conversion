@@ -15,16 +15,16 @@ class Nampi_type:
 
         # Classes
 
+        act = Nampi_ns.core.act
         aspect = Nampi_ns.core.aspect
         author = Nampi_ns.core.author
         automated_agent = Nampi_ns.core.automated_agent
         date = Nampi_ns.core.date
-        document_interpretation_act = Nampi_ns.core.document_interpretation_act
         event = Nampi_ns.core.event
         group = Nampi_ns.core.group
         identifier = Nampi_ns.core.identifier
-        online_source = Nampi_ns.core.online_source
         online_resource = Nampi_ns.core.online_resource
+        online_source = Nampi_ns.core.online_source
         person = Nampi_ns.core.person
         place = Nampi_ns.core.place
         source = Nampi_ns.core.source

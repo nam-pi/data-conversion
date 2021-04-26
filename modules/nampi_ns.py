@@ -19,7 +19,7 @@ def _purl_ns(resource: str, hash_separator: bool = False) -> Namespace:
 
 class Nampi_ns:
     """A collection for namespaces to be used in the NAMPI input table conversion."""
-    act = _base_ns("documentInterpretationAct")
+    act = _base_ns("act")
     aspect = _base_ns("aspect")
     author = _base_ns("author")
     core = _purl_ns("owl/core", hash_separator=True)

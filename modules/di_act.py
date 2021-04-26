@@ -41,11 +41,8 @@ class Di_act(Resource):
             comment_text: The event comment.
 
         """
-        super().__init__(
-            graph,
-            Nampi_type.Core.document_interpretation_act,
-            Nampi_ns.act,
-        )
+        super().__init__(graph, Nampi_type.Core.act,
+                         Nampi_ns.act, "Document Interpretation Act", True)
         date = Date(graph, interpretation_date_text if interpretation_date_text else datetime.datetime.now(
         ).strftime("%Y-%m-%d"))
         self.add_relationship(Nampi_type.Core.has_interpretation, event)
