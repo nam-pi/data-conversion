@@ -29,6 +29,7 @@ class Appellation(Node):
         graph: Nampi_graph,
         text: str,
         appellation_type: Optional[Appellation_type] = Appellation_type.GIVEN_NAME,
+        lang: Optional[str] = None
     ):
         """Initialize the class.
 
@@ -36,6 +37,7 @@ class Appellation(Node):
             graph: The graph.
             text: The text content of the appellation.
             appellation_type: The type of appellation.
+            lang: An optional language string for the text value.
         """
         if appellation_type == Appellation_type.IDENTIFIER:
             type_uri = Nampi_type.Core.identifier
@@ -52,5 +54,5 @@ class Appellation(Node):
 
         super().__init__(graph, type_uri, Nampi_ns.aspect, label, True)
         self.add_relationship(
-            Nampi_type.Core.has_xsd_string, self._graph.string_literal(text)
+            Nampi_type.Core.has_text, self._graph.string_literal(text, lang)
         )

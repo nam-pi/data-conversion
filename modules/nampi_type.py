@@ -47,6 +47,7 @@ class Nampi_type:
         is_controlled_by = Nampi_ns.core.is_controlled_by
         is_part_of = Nampi_ns.core.is_part_of
         removes_aspect = Nampi_ns.core.removes_aspect
+        same_as = Nampi_ns.core.same_as
         starts_life_of = Nampi_ns.core.starts_life_of
         takes_place_at = Nampi_ns.core.takes_place_at
         takes_place_not_earlier_than = Nampi_ns.core.takes_place_not_earlier_than
@@ -55,9 +56,13 @@ class Nampi_type:
 
         # Data properties
 
-        has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
-        has_xsd_string = Nampi_ns.core.has_xsd_string
+        has_value = Nampi_ns.core.has_value
+        has_text = Nampi_ns.core.has_text
+        has_date_time = Nampi_ns.core.has_date_time
         has_url = Nampi_ns.core.has_url
+
+        #has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
+        #has_xsd_string = Nampi_ns.core.has_xsd_string
 
     class Mona:
         """The types in the Monastic Life ontology."""

@@ -32,4 +32,4 @@ class Date(Node):
         literal = Nampi_graph.date_time_literal(value)
         self.value = value
         self.dateTime = str(literal)
-        self.add_relationship(Nampi_type.Core.has_xsd_date_time, literal)
+        self.add_relationship(Nampi_type.Core.has_date_time, literal)

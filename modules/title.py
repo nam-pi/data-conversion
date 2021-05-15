@@ -34,4 +34,4 @@ class Title(Resource):
             label = "Religious title"
         super().__init__(graph, title_type, Nampi_ns.aspect, label, True)
         self.add_relationship(obj=self._graph.string_literal(
-            text), pred=Nampi_type.Core.has_xsd_string)
+            text), pred=Nampi_type.Core.has_text)

@@ -23,7 +23,7 @@ class Source_location(Node):
         """
         rdf_source_location = Nampi_type.Core.source_location
         rdf_source_type = Nampi_type.Core.has_source
-        rdf_data_type = Nampi_type.Core.has_xsd_string
+        rdf_data_type = Nampi_type.Core.has_value
         if source.source_type == Source_type.ONLINE_RESOURCE:
             rdf_source_location = Nampi_type.Core.online_resource
             rdf_source_type = Nampi_type.Core.has_online_source

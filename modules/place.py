@@ -39,10 +39,10 @@ class Place(Resource):
         if wikidata_id:
             self.wikidata_id = wikidata_id
             self.add_relationship(
-                Other_ns.schemaOrg.sameAs, Other_ns.wikidata[wikidata_id])
+                Nampi_ns.core.same_as, Other_ns.wikidata[wikidata_id])
         if geoname_id:
             self.geoname_id = geoname_id
-            self.add_relationship(Other_ns.schemaOrg.sameAs,
+            self.add_relationship(Nampi_ns.core.same_as,
                                   Other_ns.geonames[geoname_id])
 
     @classmethod

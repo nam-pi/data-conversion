@@ -6,12 +6,11 @@ Classes:
 """
 import uuid
 from datetime import datetime
-from typing import Union
+from typing import Optional, Union
 
 from rdflib import RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
 
 from modules.nampi_ns import Nampi_ns
-from modules.other_ns import Other_ns
 
 
 class Nampi_graph:
@@ -33,7 +32,6 @@ class Nampi_graph:
         self.graph.bind("person", Nampi_ns.person)
         self.graph.bind("place", Nampi_ns.place)
         self.graph.bind("source", Nampi_ns.source)
-        self.graph.bind("schema", Other_ns.schemaOrg)
 
     def __create_entity(self, ns: Namespace) -> URIRef:
         """Create an entity to be added to the graph. The URI is a combination of the provided namespace and random identifier."""
@@ -52,16 +50,17 @@ class Nampi_graph:
         return Literal(datetime.strptime(date_string, "%Y-%m-%d"), datatype=XSD.dateTime)
 
     @staticmethod
-    def string_literal(string: str) -> Literal:
+    def string_literal(string: str, lang: Optional[str] = None) -> Literal:
         """Transform a string into an rdflib literal.
 
         Parameters:
             string: The string to transform.
+            lang: An optional language string
 
         Returns:
             A rdflib literal.
         """
-        return Literal(string, datatype=XSD.string)
+        return Literal(string, lang)
 
     def add(
         self,

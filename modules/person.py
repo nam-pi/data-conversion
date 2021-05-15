@@ -41,7 +41,7 @@ class Person(Resource):
         if gnd_id:
             self.gnd_id = gnd_id
             self.add_relationship(
-                Other_ns.schemaOrg.sameAs, Other_ns.gnd[gnd_id])
+                Nampi_ns.core.same_as, Other_ns.gnd[gnd_id])
 
     @classmethod
     def optional(
