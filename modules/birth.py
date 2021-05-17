@@ -3,7 +3,7 @@
 Classes:
     Birth
 """
-from typing import Optional
+from typing import List, Optional
 
 from parsers.nampi_data_entry_form.nampi_data_entry_form import \
     family_member_label
@@ -21,6 +21,17 @@ from modules.place import Place
 class Birth(Event):
     """A birth event RDF resource."""
 
+    @classmethod
+    def __init_other_persons(cls, mother: Optional[Person], father: Optional[Person]) -> List[Event.Person_definition]:
+        definitions: List[Event.Person_definition] = []
+        if mother:
+            definitions.append(
+                {'person': mother, 'relationship': Nampi_type.Mona.has_parent})
+        if father:
+            definitions.append(
+                {'person': father, 'relationship': Nampi_type.Mona.has_parent})
+        return definitions
+
     def __init__(
         self,
         graph: Nampi_graph,
@@ -31,7 +42,9 @@ class Birth(Event):
         latest_date: Optional[str] = None,
         family_name_label: Optional[str] = None,
         given_name_label: Optional[str] = None,
-        family_group_label: Optional[str] = None
+        family_group_label: Optional[str] = None,
+        mother: Optional[Person] = None,
+        father: Optional[Person] = None
     ) -> None:
         """Initialize the class.
 
@@ -45,6 +58,8 @@ class Birth(Event):
             family_name_label: An optional family name.
             given_name_label: An optional given name.
             family_group_label: An optional label for the family group
+            mother: An optional person that is the born persons mother
+            mother: An optional person that is the born persons father
         """
         super().__init__(
             graph,
@@ -54,7 +69,8 @@ class Birth(Event):
             earliest_date=earliest_date,
             exact_date=exact_date,
             latest_date=latest_date,
-            label="Birth"
+            label="Birth",
+            other_participants=Birth.__init_other_persons(mother, father)
         )
         if family_name_label:
             birth_family_name = Appellation(

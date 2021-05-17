@@ -40,6 +40,7 @@ class Nampi_type:
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
         has_online_source = Nampi_ns.core.has_online_source
+        has_participant = Nampi_ns.core.has_participant
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
         is_authored_by = Nampi_ns.core.is_authored_by
@@ -122,6 +123,7 @@ class Nampi_type:
         # Object properties
 
         has_paged_source = Nampi_ns.mona.has_paged_source
+        has_parent = Nampi_ns.mona.has_parent
 
         # Data properties
 

@@ -5,7 +5,7 @@ Classes:
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import List, Optional, TypedDict
 
 from rdflib import URIRef
 
@@ -25,6 +25,10 @@ class Event(Resource):
     main_person: Person
     place: Optional[Place] = None
 
+    class Person_definition(TypedDict, total=False):
+        person: Person
+        relationship: URIRef
+
     def __init__(
         self,
         graph: Nampi_graph,
@@ -36,6 +40,7 @@ class Event(Resource):
         exact_date: Optional[str] = None,
         earliest_date: Optional[str] = None,
         latest_date: Optional[str] = None,
+        other_participants: Optional[List[Person_definition]] = None
     ):
         """Initialize the class.
 
@@ -50,6 +55,7 @@ class Event(Resource):
             exact_date: An optional string in the format of YYYY-MM-DD that represents the exact date.
             earliest_date: An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
             latest_date: An optional string in the format of YYYY-MM-DD that represents the latest possible date.
+            other_participants: An optional list with other participants and their and relationship type in the event.
         """
         super().__init__(
             graph,
@@ -78,3 +84,12 @@ class Event(Resource):
                 if latest_date:
                     self.add_relationship(
                         Nampi_type.Core.takes_place_not_later_than, Date(graph, latest_date))
+
+        if other_participants:
+            for participant_def in other_participants:
+                participant = participant_def["person"] if "person" in participant_def else None
+                if not participant:
+                    continue
+                relationship_type = participant_def["relationship"] if "relationship" in participant_def else Nampi_type.Core.has_participant
+                assert isinstance(relationship_type, URIRef)
+                self.add_relationship(relationship_type, participant)

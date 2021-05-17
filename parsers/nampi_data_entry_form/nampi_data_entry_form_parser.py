@@ -125,6 +125,8 @@ class Nampi_data_entry_form_parser:
             born_person = self.__get_person(safe_str(row, Column.person))
             if not born_person:
                 continue
+            mother = self.__get_person(safe_str(row, Column.mother))
+            father = self.__get_person(safe_str(row, Column.father))
             birth_place = self.__get_place(safe_str(row, Column.event_place))
             family_names = [self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name_with_group), self.__sheet.get_from_table(
                 Table.PERSONS, Column.name, born_person.label, Column.family_name_gender_neutral), self.__sheet.get_from_table(Table.PERSONS, Column.name, born_person.label, Column.family_name)]
@@ -134,7 +136,7 @@ class Nampi_data_entry_form_parser:
             family_group_label = next(
                 (s for s in family_names if s), None)
             birth = Birth(self._graph, born_person, birth_place, exact_date=safe_str(row, Column.exact_date), earliest_date=safe_str(row, Column.earliest_date), latest_date=safe_str(
-                row, Column.latest_date), family_name_label=family_names[2], given_name_label=given_name_label, family_group_label=family_group_label)
+                row, Column.latest_date), family_name_label=family_names[2], given_name_label=given_name_label, family_group_label=family_group_label, mother=mother, father=father)
             self.__insert_di_act(birth, row=row)
             logging.debug(
                 "Added 'birth' for person '{}'".format(birth.main_person.label))
@@ -145,23 +147,45 @@ class Nampi_data_entry_form_parser:
             Add all complex events from the complex events table.
         """
         for _, row in self.__sheet.get_table(Table.COMPLEX_EVENTS).iterrows():
-            person = self.__get_person(safe_str(row, Column.person))
-            if not person:
+            main_person = self.__get_person(safe_str(row, Column.person))
+            if not main_person:
                 continue
             definition = safe_str(row, Column.event_definition)
             event = None
+
+            other_participant_labels: List[str] = []
+            if Column.other_person_1 in row:
+                other_participant_labels.append(
+                    str(row[Column.other_person_1]))
+            if Column.other_person_2 in row:
+                other_participant_labels.append(
+                    str(row[Column.other_person_2]))
+            if Column.other_person_3 in row:
+                other_participant_labels.append(
+                    str(row[Column.other_person_3]))
+            if Column.other_person_4 in row:
+                other_participant_labels.append(
+                    str(row[Column.other_person_4]))
+            if Column.other_person_5 in row:
+                other_participant_labels.append(
+                    str(row[Column.other_person_5]))
+            other_participants: List[Event.Person_definition] = []
+            for label in other_participant_labels:
+                person = self.__get_person(label)
+                if person:
+                    other_participants.append({'person': person})
 
             def get_def_column(column: str):
                 return self.__sheet.get_from_table(Table.EVENT_DEFINITIONS, Column.name, definition, column)
 
             def merge_event():
-                nonlocal event, person, definition
+                nonlocal event, main_person, definition
                 if event:
                     return event
                 place = self.__get_place(safe_str(row, Column.event_place))
-                assert person is not None
-                event = Event(self._graph, person, place=place, earliest_date=safe_str(row, Column.earliest_date),
-                              exact_date=safe_str(row, Column.exact_date), latest_date=safe_str(row, Column.latest_date), label=str(definition))
+                assert main_person is not None
+                event = Event(self._graph, main_person, place=place, earliest_date=safe_str(row, Column.earliest_date), exact_date=safe_str(
+                    row, Column.exact_date), latest_date=safe_str(row, Column.latest_date), label=str(definition), other_participants=other_participants)
                 return event
 
             group_label = get_def_column(Column.status_occupation_in_group)
@@ -180,7 +204,7 @@ class Nampi_data_entry_form_parser:
                 title = Title(self._graph, religious_title_text,
                               Nampi_type.Mona.religious_title)
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.changes_aspect_of)
+                    obj=main_person, pred=Nampi_type.Core.changes_aspect_of)
                 e.add_relationship(
                     obj=title, pred=Nampi_type.Core.adds_aspect)
 
@@ -197,7 +221,7 @@ class Nampi_data_entry_form_parser:
                 aspect = Aspect(self._graph, aspect_label, types)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.changes_aspect_of)
+                    obj=main_person, pred=Nampi_type.Core.changes_aspect_of)
                 if group:
                     e.add_relationship(
                         obj=group, pred=Nampi_type.Core.changes_aspect_related_to)
@@ -209,7 +233,7 @@ class Nampi_data_entry_form_parser:
                     aspect = Aspect(self._graph, added_status_label, type)
                     e = merge_event()
                     e.add_relationship(
-                        obj=person, pred=Nampi_type.Core.changes_aspect_of)
+                        obj=main_person, pred=Nampi_type.Core.changes_aspect_of)
                     if group:
                         e.add_relationship(
                             obj=group, pred=Nampi_type.Core.changes_aspect_related_to)
@@ -221,7 +245,7 @@ class Nampi_data_entry_form_parser:
                         self._graph, started_occupation_label, type)
                     e = merge_event()
                     e.add_relationship(
-                        obj=person, pred=Nampi_type.Core.changes_aspect_of)
+                        obj=main_person, pred=Nampi_type.Core.changes_aspect_of)
                     e.add_relationship(
                         obj=aspect, pred=Nampi_type.Core.adds_aspect)
                     if group:
@@ -241,7 +265,7 @@ class Nampi_data_entry_form_parser:
                 aspect = Aspect(self._graph, aspect_label, types)
                 e = merge_event()
                 e.add_relationship(
-                    obj=person, pred=Nampi_type.Core.changes_aspect_of)
+                    obj=main_person, pred=Nampi_type.Core.changes_aspect_of)
                 if group:
                     e.add_relationship(
                         obj=group, pred=Nampi_type.Core.changes_aspect_related_to)
@@ -253,7 +277,7 @@ class Nampi_data_entry_form_parser:
                     aspect = Aspect(self._graph, removed_status_label, type)
                     e = merge_event()
                     e.add_relationship(
-                        obj=person, pred=Nampi_type.Core.changes_aspect_of)
+                        obj=main_person, pred=Nampi_type.Core.changes_aspect_of)
                     if group:
                         e.add_relationship(
                             obj=group, pred=Nampi_type.Core.changes_aspect_related_to)
@@ -265,7 +289,7 @@ class Nampi_data_entry_form_parser:
                         self._graph, stopped_occupation_label, type)
                     e = merge_event()
                     e.add_relationship(
-                        obj=person, pred=Nampi_type.Core.changes_aspect_of)
+                        obj=main_person, pred=Nampi_type.Core.changes_aspect_of)
                     e.add_relationship(
                         obj=aspect, pred=Nampi_type.Core.removes_aspect)
                     if group:
@@ -276,7 +300,7 @@ class Nampi_data_entry_form_parser:
                 self.__insert_di_act(event, row=row)
             else:
                 logging.warn("Skip event '{}' for person '{}'".format(
-                    definition, person.label))
+                    definition, main_person.label))
         logging.info("Parsed the complex events")
 
     def __add_deaths(self):
