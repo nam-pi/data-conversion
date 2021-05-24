@@ -37,6 +37,7 @@ class Nampi_type:
         changes_aspect_related_to = Nampi_ns.core.changes_aspect_related_to
         changes_aspect_of = Nampi_ns.core.changes_aspect_of
         ends_life_of = Nampi_ns.core.ends_life_of
+        has_as_parent = Nampi_ns.core.has_as_parent
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
         has_online_source = Nampi_ns.core.has_online_source
@@ -123,7 +124,6 @@ class Nampi_type:
         # Object properties
 
         has_paged_source = Nampi_ns.mona.has_paged_source
-        has_parent = Nampi_ns.mona.has_parent
 
         # Data properties
 

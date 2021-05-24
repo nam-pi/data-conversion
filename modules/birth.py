@@ -26,10 +26,10 @@ class Birth(Event):
         definitions: List[Event.Person_definition] = []
         if mother:
             definitions.append(
-                {'person': mother, 'relationship': Nampi_type.Mona.has_parent})
+                {'person': mother, 'relationship': Nampi_type.Core.has_as_parent})
         if father:
             definitions.append(
-                {'person': father, 'relationship': Nampi_type.Mona.has_parent})
+                {'person': father, 'relationship': Nampi_type.Core.has_as_parent})
         return definitions
 
     def __init__(
