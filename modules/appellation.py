@@ -41,18 +41,14 @@ class Appellation(Node):
         """
         if appellation_type == Appellation_type.IDENTIFIER:
             type_uri = Nampi_type.Core.identifier
-            label = "Identifier"
         elif appellation_type == Appellation_type.FAMILY_NAME:
             type_uri = Nampi_type.Mona.family_name
-            label = "Family name"
         elif appellation_type == Appellation_type.RELIGIOUS_NAME:
             type_uri = Nampi_type.Mona.religious_name
-            label = "Religious name"
         else:
             type_uri = Nampi_type.Mona.given_name
-            label = "Given name"
 
-        super().__init__(graph, type_uri, Nampi_ns.aspect, label, True)
+        super().__init__(graph, type_uri, Nampi_ns.aspect, text, True)
         self.add_relationship(
             Nampi_type.Core.has_text, self._graph.string_literal(text, lang)
         )

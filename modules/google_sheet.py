@@ -149,7 +149,7 @@ class Google_sheet:
         try:
             row = indexed.loc[index_value]
             result = row[output_column]
-            return str(result) if result else None
+            return str(result).strip() if result else None
         except:
             logging.warning(
                 "'{}' is not existing in table '{}' and column '{}'".format(

@@ -29,9 +29,6 @@ class Title(Resource):
             text: The text for the title.
             title_type: The optional URI of the title type.
         """
-        label = "Title"
-        if title_type == Nampi_type.Mona.religious_title:
-            label = "Religious title"
-        super().__init__(graph, title_type, Nampi_ns.aspect, label, True)
+        super().__init__(graph, title_type, Nampi_ns.aspect, text, True)
         self.add_relationship(obj=self._graph.string_literal(
             text), pred=Nampi_type.Core.has_text)

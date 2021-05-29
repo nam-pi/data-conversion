@@ -338,7 +338,8 @@ class Nampi_data_entry_form_parser:
                 if not has_existing_title:
                     person = self.__get_person(person_label)
                     if person:
-                        event = Event(self._graph, person, label="Title assignment",
+                        assert person_label
+                        event = Event(self._graph, person, label="Assign religious title " + religious_title,
                                       main_person_relationship=Nampi_type.Core.changes_aspect_of)
                         title = Title(self._graph, religious_title,
                                       Nampi_type.Mona.religious_title)
