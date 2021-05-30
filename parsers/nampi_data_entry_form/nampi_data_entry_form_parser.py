@@ -364,17 +364,17 @@ class Nampi_data_entry_form_parser:
                     rdfs:label ?event_label .
                 ?dia_node core:has_interpretation ?event_node ;
                     core:is_authored_by/rdfs:label ?author ;
-                    core:is_authored_on/core:has_xsd_date_time ?authoring_date ;
+                    core:is_authored_on/core:has_date_time ?authoring_date ;
                     core:has_source_location ?source_node .
                 ?source_node (core:has_source|core:has_online_source|mona:has_paged_source)/rdfs:label ?source ;
-                    (core:has_xsd_string|core:has_url|mona:has_page_number) ?source_location .
+                    (core:has_value|core:has_text|core:has_url|mona:has_page_number) ?source_location .
                 ?event_node core:changes_aspect_related_to/rdfs:label ?group ;
                     core:changes_aspect_of ?person_node .
                 ?person_node rdfs:label ?person .
                 OPTIONAL { ?event_node core:takes_place_at/rdfs:label ?place }
-                OPTIONAL { ?event_node core:takes_place_on/core:has_xsd_date_time ?exact_date }
-                OPTIONAL { ?event_node core:takes_place_not_later_than/core:has_xsd_date_time ?latest_date }
-                OPTIONAL { ?event_node core:takes_place_not_earlier_than/core:has_xsd_date_time ?earliest_date }
+                OPTIONAL { ?event_node core:takes_place_on/core:has_date_time ?exact_date }
+                OPTIONAL { ?event_node core:takes_place_not_later_than/core:has_date_time ?latest_date }
+                OPTIONAL { ?event_node core:takes_place_not_earlier_than/core:has_date_time ?earliest_date }
                 VALUES ?event_label { "Profession as choir monk in Astheim" "Profession as choir monk in Bistra" "Profession as choir monk in Gaming" "Profession as choir monk in Žiče" "Profession as choir nun in Imbach" "Profession as choir nun in St. Jakob" "Profession as converse in Gaming" "Profession as lay sister in Imbach" "Profession as priest monk in Gaming" "Profession as choir nun in St. Laurenz" "Profession as choir monk in Brno" "Second profession as choir nun in Imbach" "Secret profession as choir nun in Imbach" }
             }
         """
@@ -416,7 +416,7 @@ class Nampi_data_entry_form_parser:
                 most_specific_date = next(
                     (s for s in dates_sorted_by_specificity if s), None)
                 event = Event(self._graph, person, main_person_relationship=Nampi_type.Core.changes_aspect_of,
-                              place=place, latest_date=most_specific_date, label="Investiture")
+                              place=place, latest_date=most_specific_date, label="Investiture in " + str(group.label))
                 event.add_relationship(
                     obj=group, pred=Nampi_type.Core.changes_aspect_related_to)
                 event.add_relationship(
@@ -495,7 +495,7 @@ class Nampi_data_entry_form_parser:
             WHERE {
                 ?event a core:event ;
                     rdfs:label ?label ;
-                    core:changes_status_of ?person .
+                    core:changes_aspect_of ?person .
                 ?person rdfs:label ?person_label
                 FILTER (CONTAINS(LCASE(?label), "investiture"))
             }
