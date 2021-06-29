@@ -28,7 +28,7 @@ class Di_act(Resource):
         author: Author,
         source_location: Source_location,
         interpretation_date_text: Optional[str],
-        comment_text: Optional[str],
+        comment_text: Optional[str] = None,
     ) -> None:
         """Initialize the class.
 

@@ -626,11 +626,12 @@ class Nampi_data_entry_form_parser:
             else interpretation_date_text
         )
         comment = row[Column.comment] if Column.comment in row else None
+        if comment:
+            event.add_comment(comment)
         Di_act(
             self._graph,
             event,
             author,
             source_location,
             interpretation_date,
-            comment,
         )

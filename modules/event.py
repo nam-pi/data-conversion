@@ -5,9 +5,9 @@ Classes:
 """
 from __future__ import annotations
 
-from typing import List, Optional, TypedDict
+from typing import List, Literal, Optional, TypedDict
 
-from rdflib import URIRef
+from rdflib import RDF, RDFS, URIRef
 
 from modules.date import Date
 from modules.nampi_graph import Nampi_graph
@@ -28,6 +28,15 @@ class Event(Resource):
     class Person_definition(TypedDict, total=False):
         person: Person
         relationship: URIRef
+
+    def add_comment(self, comment: str):
+        """"Add a comment to the event
+
+        Parameters:
+            comment: The comment to add.
+        """
+        self.add_relationship(
+            RDFS.comment, self._graph.string_literal(comment))
 
     def __init__(
         self,
