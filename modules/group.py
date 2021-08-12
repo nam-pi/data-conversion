@@ -5,13 +5,14 @@ Classes:
 """
 from __future__ import annotations
 
-from typing import Optional, Dict
-from modules.resource import Resource
-from modules.person import Person
+from typing import Optional
+
+from rdflib import URIRef
+
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
 from modules.nampi_type import Nampi_type
-from rdflib import URIRef
+from modules.resource import Resource
 
 
 class Group(Resource):
@@ -20,19 +21,20 @@ class Group(Resource):
     def __init__(
         self,
         graph: Nampi_graph,
-        group_type: URIRef,
         label: str,
+        group_type: Optional[URIRef] = None,
     ):
         """Initialize the class.
 
         Parameters:
             graph: The RDF graph the group belongs to.
-            group_type: The URI of the group
-            label
+            label: The label for the group.
+            group_type: The optional URI of the group.
         """
+
         super().__init__(
             graph,
-            group_type,
-            Nampi_ns.groups,
+            group_type if group_type else Nampi_type.Core.group,
+            Nampi_ns.group,
             label,
         )

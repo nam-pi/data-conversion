@@ -3,3 +3,9 @@
 cache
 __pycache__
 out
+*.log
+.vscode
+.devcontainer
+.mypy_cache
+tmp_queries
+jupyter

@@ -11,6 +11,7 @@ from modules.gender import Gender
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
 from modules.nampi_type import Nampi_type
+from modules.other_ns import Other_ns
 from modules.resource import Resource
 
 
@@ -35,9 +36,12 @@ class Person(Resource):
             gender: The persons gender.
             gnd_id: The id of the person in the GND.
         """
-        super().__init__(graph, Nampi_type.Core.person, Nampi_ns.persons, label=label)
+        super().__init__(graph, Nampi_type.Core.person, Nampi_ns.person, label=label)
         self.gender = gender
-        self.gnd_id = gnd_id
+        if gnd_id:
+            self.gnd_id = gnd_id
+            self.add_relationship(
+                Nampi_ns.core.same_as, Other_ns.gnd[gnd_id])
 
     @classmethod
     def optional(

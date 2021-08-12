@@ -10,6 +10,7 @@ from typing import Optional
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
 from modules.nampi_type import Nampi_type
+from modules.other_ns import Other_ns
 from modules.resource import Resource
 
 
@@ -34,9 +35,15 @@ class Place(Resource):
             geoname_id: The geoname id.
             wikidata_id: The wikidata id.
         """
-        super().__init__(graph, Nampi_type.Core.place, Nampi_ns.places, label)
-        self.geoname_id = geoname_id
-        self.wikidata_id = wikidata_id
+        super().__init__(graph, Nampi_type.Core.place, Nampi_ns.place, label)
+        if wikidata_id:
+            self.wikidata_id = wikidata_id
+            self.add_relationship(
+                Nampi_ns.core.same_as, Other_ns.wikidata[wikidata_id])
+        if geoname_id:
+            self.geoname_id = geoname_id
+            self.add_relationship(Nampi_ns.core.same_as,
+                                  Other_ns.geonames[geoname_id])
 
     @classmethod
     def optional(

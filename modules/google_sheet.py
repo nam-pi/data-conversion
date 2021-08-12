@@ -6,15 +6,17 @@ Classes:
 
 import errno
 import json
+import logging
 import os
 import time
 from typing import Dict, Optional, Type
 
 import gspread
 import pandas as pd
-from modules.no_value import NoValue
 from oauth2client.service_account import ServiceAccountCredentials
 from pandas import DataFrame
+
+from modules.no_value import NoValue
 
 
 class Google_sheet:
@@ -47,7 +49,7 @@ class Google_sheet:
         self.__cache_validity_days = cache_validity_days
         self.sheet_name = sheet_name
 
-        print("\nRead Google Sheet data for '{}'".format(sheet_name))
+        logging.info("Read Google Sheet data for '{}'".format(sheet_name))
 
         # Open spreadsheet
         credentials = self.__load_credentials(credentials_path)
@@ -58,7 +60,8 @@ class Google_sheet:
         for _, member in Tables.__members__.items():
             self._tables[member] = self._get_data(member.value)
 
-        print("Finished reading Google Sheet data '{}'".format(sheet_name))
+        logging.info(
+            "Finished reading Google Sheet data '{}'".format(sheet_name))
 
     def __use_cache(self, file: str) -> bool:
         if not os.path.exists(file):
@@ -94,10 +97,12 @@ class Google_sheet:
                 raise
         cache_file_path = os.path.join(cache_folder, table_name + ".csv")
         if self.__use_cache(cache_file_path):
-            print("\tRead {} from cache".format(table_name))
-            return pd.read_csv(cache_file_path, dtype=str, keep_default_na=False)
+            logging.info("Read {} from cache".format(table_name))
+            return pd.read_csv(
+                filepath_or_buffer=cache_file_path,  # type: ignore
+                dtype=str, keep_default_na=False)
         else:
-            print("\tRead {} from Google".format(table_name))
+            logging.info("Read {} from Google".format(table_name))
             worksheet = self.__spreadsheet.worksheet(table_name)
             df: DataFrame = DataFrame(
                 worksheet.get_all_records(
@@ -141,9 +146,16 @@ class Google_sheet:
             return None
         df = self._tables[table]
         indexed = df.set_index(index_column)
-        row = indexed.loc[index_value]
-        result = row[output_column]
-        return result if result else None
+        try:
+            row = indexed.loc[index_value]
+            result = row[output_column]
+            return str(result).strip() if result else None
+        except:
+            logging.warning(
+                "'{}' is not existing in table '{}' and column '{}'".format(
+                    index_value, table.value, index_column
+                )
+            )
 
     def table_has_value(
         self, table: NoValue, column: str, value: Optional[str]

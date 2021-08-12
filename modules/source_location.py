@@ -7,6 +7,7 @@ from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
 from modules.node import Node
 from modules.source import Source
+from modules.source_type import Source_type
 
 
 class Source_location(Node):
@@ -20,9 +21,18 @@ class Source_location(Node):
             source: The source the location belongs to.
             location: The location string (page name, url or similar).
         """
-        super().__init__(graph, Nampi_type.Core.source_location)
-        self.add_relationship(Nampi_type.Core.has_source, source)
+        rdf_source_location = Nampi_type.Core.source_location
+        rdf_source_type = Nampi_type.Core.has_source
+        rdf_data_type = Nampi_type.Core.has_value
+        if source.source_type == Source_type.ONLINE_RESOURCE:
+            rdf_source_location = Nampi_type.Core.online_resource
+            rdf_source_type = Nampi_type.Core.has_online_source
+            rdf_data_type = Nampi_type.Core.has_url
+        elif source.source_type == Source_type.MANUSCRIPT:
+            rdf_source_location = Nampi_type.Mona.page
+            rdf_source_type = Nampi_type.Mona.has_paged_source
+            rdf_data_type = Nampi_type.Mona.has_page_number
+        super().__init__(graph, rdf_source_location)
+        self.add_relationship(rdf_source_type, source)
         self.add_relationship(
-            Nampi_type.Core.has_string_representation,
-            Nampi_graph.string_literal(location),
-        )
+            rdf_data_type, Nampi_graph.string_literal(location))

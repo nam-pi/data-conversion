@@ -5,7 +5,6 @@ Classes:
 """
 from typing import Optional
 
-from modules.date import Date
 from modules.event import Event
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_type import Nampi_type
@@ -20,21 +19,28 @@ class Death(Event):
         self,
         graph: Nampi_graph,
         died_person: Person,
-        death_date: Optional[Date] = None,
-        death_place: Optional[Place] = None,
+        place: Optional[Place] = None,
+        exact_date: Optional[str] = None,
+        earliest_date: Optional[str] = None,
+        latest_date: Optional[str] = None,
     ) -> None:
         """Initialize the class.
 
         Parameters:
             graph: The RDF graph the death belongs to.
             died_person: The person that died in the event.
-            death_date: The death date.
-            death_place: The death place.
+            place: The death place.
+            exact_date: An optional string in the format of YYYY-MM-DD that represents the exact date.
+            earliest_date: An optional string in the format of YYYY-MM-DD that represents the earliest possible date.
+            latest_date: An optional string in the format of YYYY-MM-DD that represents the latest possible date.
         """
         super().__init__(
             graph,
             died_person,
             Nampi_type.Core.ends_life_of,
-            date=death_date,
-            place=death_place,
+            place=place,
+            earliest_date=earliest_date,
+            exact_date=exact_date,
+            latest_date=latest_date,
+            label="Death"
         )
