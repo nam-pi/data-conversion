@@ -58,7 +58,9 @@ if path.isfile(Env.out_path):
     remove(Env.out_path)
     logging.info("Old output file removed at '{}'".format(Env.out_path))
 file = open(Env.out_path, "w")
-file.write(nampi_graph.graph.serialize(format=Env.out_format).decode("utf-8"))
+file.write(
+    nampi_graph.graph.serialize(format=Env.out_format, encoding="utf-8").decode("utf-8")
+)
 logging.info("New output file written at '{}'".format(Env.out_path))
 file.close()
 
