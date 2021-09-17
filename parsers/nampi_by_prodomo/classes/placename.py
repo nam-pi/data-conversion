@@ -1,4 +1,4 @@
-import Place
+from place import Place
 
 class PlaceName(Place):
     def __init__(self):
@@ -9,7 +9,6 @@ class PlaceName(Place):
     def Ana(self):
         return self._ana
 
-    
     @Ana.setter  
-    def Id(self, ana):
+    def Ana(self, ana):
         self._ana = ana

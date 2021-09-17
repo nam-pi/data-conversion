@@ -1,14 +1,15 @@
-from classes.time import Time
+
 from lxml import etree
 import glob
 import sys
 import os
 import requests
 import xmltodict
+from classes.place import Place
 from classes.person import Person
 from classes.date import Dates
-from classes.place import Place
 from classes.placename import PlaceName
+from classes.time import Time
 
 # prepare dicts
 ns = dict(
@@ -111,7 +112,9 @@ for person in dict_data.get("exist:result").get("exist:value"):
                 for entry in place:
                     placeObject = Place()
                     placeObject.persId = personID 
+                    
                     typ = entry.get("@type")
+                    
                     if entry.get("@subtype"):
                         subtype = (entry.get("@subtype"))
                     else:
@@ -141,14 +144,24 @@ for person in dict_data.get("exist:result").get("exist:value"):
                 for entry in placename:
                     placenameObject = PlaceName()
                     placenameObject.persId = personID 
+
                     typ = entry.get("@type")
+
                     if entry.get("@subtype"):
                         subtype = (entry.get("@subtype"))
                     else:
                         subtype = ""
-                    ana = entry.get("@ana")
-                    when = entry.get("@when")
-                   
+
+                    if entry.get("@ana"):
+                        ana = entry.get("@ana")
+                    else:
+                        ana = ""
+
+                    if entry.get("@when"):
+                        when = entry.get("@when")
+                    else:
+                        when = ""
+
                     placenameObject.Ana = ana
                     placenameObject.Type = typ
                     placenameObject.Subtype = subtype
@@ -164,11 +177,14 @@ for person in dict_data.get("exist:result").get("exist:value"):
                 for entry in time:
                     personTime = Time()
                     personTime.persId = personID 
+                    
                     typ = entry.get("@type")
+                    
                     if entry.get("@subtype"):
                         subtype = (entry.get("@subtype"))
                     else:
                         subtype = ""
+                    
                     text = entry.get("#text")
                     when = entry.get("@when")
                    

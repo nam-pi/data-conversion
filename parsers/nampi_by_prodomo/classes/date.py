@@ -1,4 +1,4 @@
-class Date:
+class Dates:
     def __init__(self):
         super()
         self._id = ""
