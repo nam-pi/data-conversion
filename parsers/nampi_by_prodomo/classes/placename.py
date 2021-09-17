@@ -1,3 +1,5 @@
+import Place
+
 class PlaceName(Place):
     def __init__(self):
         super()

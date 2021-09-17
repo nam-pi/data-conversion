@@ -7,6 +7,10 @@ class Date:
         self._text = ""
         self._type = ""
         self._subtype = ""
+        self._from = ""
+        self._to = ""
+        self._notAfter = ""
+        self._notBefore = ""
     
     @property
     def Id(self):
@@ -32,6 +36,26 @@ class Date:
     def Subtype(self):
         return self._subtype
 
+    @property
+    def When(self):
+        return self._when
+
+    @property
+    def From(self):
+        return self._from
+
+    @property
+    def To(self):
+        return self._to
+
+    @property
+    def NotAfter(self):
+        return self._notAfter
+
+    @property
+    def NotBefore(self):
+        return self._notBefore
+
     @Id.setter  
     def Id(self, id):
         self._id = id
@@ -55,3 +79,23 @@ class Date:
     @Subtype.setter 
     def Subtype(self,subtype):
         self._subtype = subtype
+
+    @When.setter 
+    def When(self,when):
+        self._when = when
+
+    @From.setter 
+    def From(self,from_):
+        self._from = from_
+
+    @To.setter 
+    def To(self,to):
+        self._to = to
+
+    @NotAfter.setter 
+    def When(self,notafter):
+        self._notAfter = notafter
+
+    @NotBefore.setter 
+    def NotBefore(self,notbefore):
+        self._notBefore = notbefore
