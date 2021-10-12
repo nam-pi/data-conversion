@@ -38,11 +38,15 @@ class Appellation_assignment(Event):
         elif appellation_type == Appellation_type.RELIGIOUS_NAME:
             appellation_name = "religious name"
 
-        person_type = Nampi_type.Core.changes_aspect_of
+        person_type = Nampi_type.Core.has_main_participant
         appell_type = Nampi_type.Core.adds_aspect
         person_label = assignment_person.label
         assert person_label
-        super().__init__(graph, assignment_person, person_type,
-                         label="Assign " + appellation_name + " " + assignment_text)
+        super().__init__(
+            graph,
+            assignment_person,
+            person_type,
+            label="Assign " + appellation_name + " " + assignment_text,
+        )
         appellation = Appellation(graph, assignment_text, appellation_type)
         self.add_relationship(appell_type, appellation)
