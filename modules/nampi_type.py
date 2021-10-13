@@ -35,11 +35,11 @@ class Nampi_type:
 
         adds_aspect = Nampi_ns.core.adds_aspect
         changes_aspect_related_to = Nampi_ns.core.changes_aspect_related_to
-        changes_aspect_of = Nampi_ns.core.changes_aspect_of
         ends_life_of = Nampi_ns.core.ends_life_of
         has_as_parent = Nampi_ns.core.has_as_parent
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
+        has_main_participant = Nampi_ns.core.has_main_participant
         has_online_source = Nampi_ns.core.has_online_source
         has_participant = Nampi_ns.core.has_participant
         has_source = Nampi_ns.core.has_source
@@ -63,8 +63,8 @@ class Nampi_type:
         has_date_time = Nampi_ns.core.has_date_time
         has_url = Nampi_ns.core.has_url
 
-        #has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
-        #has_xsd_string = Nampi_ns.core.has_xsd_string
+        # has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
+        # has_xsd_string = Nampi_ns.core.has_xsd_string
 
     class Mona:
         """The types in the Monastic Life ontology."""
@@ -102,17 +102,31 @@ class Nampi_type:
         community_subsacristan = Nampi_ns.mona.community_subsacristan
         community_superior = Nampi_ns.mona.community_superior
         member_of_a_religious_community = Nampi_ns.mona.member_of_a_religious_community
-        member_of_a_religious_community_with_manual_focus = Nampi_ns.mona.member_of_a_religious_community_with_manual_focus
-        member_of_a_religious_community_with_spiritual_focus = Nampi_ns.mona.member_of_a_religious_community_with_spiritual_focus
+        member_of_a_religious_community_with_manual_focus = (
+            Nampi_ns.mona.member_of_a_religious_community_with_manual_focus
+        )
+        member_of_a_religious_community_with_spiritual_focus = (
+            Nampi_ns.mona.member_of_a_religious_community_with_spiritual_focus
+        )
         procurator = Nampi_ns.mona.procurator
-        professed_member_of_a_religious_community = Nampi_ns.mona.professed_member_of_a_religious_community
+        professed_member_of_a_religious_community = (
+            Nampi_ns.mona.professed_member_of_a_religious_community
+        )
         vice_community_superior = Nampi_ns.mona.vice_community_superior
         visitator = Nampi_ns.mona.visitator
-        monastic_office_with_spiritual_focus = Nampi_ns.mona.monastic_office_with_spiritual_focus
-        monastic_office_with_manual_focus = Nampi_ns.mona.monastic_office_with_manual_focus
+        monastic_office_with_spiritual_focus = (
+            Nampi_ns.mona.monastic_office_with_spiritual_focus
+        )
+        monastic_office_with_manual_focus = (
+            Nampi_ns.mona.monastic_office_with_manual_focus
+        )
         monastic_office = Nampi_ns.mona.monastic_office
-        member_of_a_religious_community_visiting = Nampi_ns.mona.member_of_a_religious_community_visiting
-        religious_life_outside_a_community = Nampi_ns.mona.religious_life_outside_a_community
+        member_of_a_religious_community_visiting = (
+            Nampi_ns.mona.member_of_a_religious_community_visiting
+        )
+        religious_life_outside_a_community = (
+            Nampi_ns.mona.religious_life_outside_a_community
+        )
         office_in_a_diocese = Nampi_ns.mona.office_in_a_diocese
 
         administration_of_a_community = Nampi_ns.mona.administration_of_a_community
