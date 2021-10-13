@@ -59,7 +59,7 @@ class Birth(Event):
             given_name_label: An optional given name.
             family_group_label: An optional label for the family group
             mother: An optional person that is the born persons mother
-            mother: An optional person that is the born persons father
+            father: An optional person that is the born persons father
         """
         super().__init__(
             graph,
