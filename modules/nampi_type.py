@@ -98,6 +98,7 @@ class Nampi_type:
         # Aspect types
 
         academic_degree = Nampi_ns.mona.academic_degree
+        burial = Nampi_ns.mona.burial
         clergy = Nampi_ns.mona.clergy
         community_subsacristan = Nampi_ns.mona.community_subsacristan
         community_superior = Nampi_ns.mona.community_superior
