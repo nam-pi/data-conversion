@@ -36,7 +36,7 @@ class Nampi_type:
         adds_aspect = Nampi_ns.core.adds_aspect
         changes_aspect_related_to = Nampi_ns.core.changes_aspect_related_to
         ends_life_of = Nampi_ns.core.ends_life_of
-        has_as_parent = Nampi_ns.core.has_as_parent
+        has_parent = Nampi_ns.core.has_parent
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
         has_main_participant = Nampi_ns.core.has_main_participant
