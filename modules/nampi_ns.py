@@ -19,7 +19,7 @@ def _base_ns(resource: str) -> Namespace:
 
 def _purl_ns(resource: str, hash_separator: bool = False) -> Namespace:
     return Namespace(
-        "https://purl.org/nampi/{}{}".format(resource, "#" if hash_separator else "/")
+        "http://purl.org/nampi/{}{}".format(resource, "#" if hash_separator else "/")
     )
 
 
