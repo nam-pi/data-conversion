@@ -99,6 +99,6 @@ class Event(Resource):
                 participant = participant_def["person"] if "person" in participant_def else None
                 if not participant:
                     continue
-                relationship_type = participant_def["relationship"] if "relationship" in participant_def else Nampi_type.Core.has_participant
+                relationship_type = participant_def["relationship"] if "relationship" in participant_def else Nampi_type.Core.has_other_participant
                 assert isinstance(relationship_type, URIRef)
                 self.add_relationship(relationship_type, participant)

@@ -363,8 +363,8 @@ class Nampi_data_entry_form_parser:
 
     def __add_independent_titles(self):
         title_query = """
-            PREFIX core: <https://purl.org/nampi/owl/core#>
-            PREFIX mona: <https://purl.org/nampi/owl/monastic-life#>
+            PREFIX core: <http://purl.org/nampi/owl/core#>
+            PREFIX mona: <http://purl.org/nampi/owl/monastic-life#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT ?text
             WHERE {{
@@ -409,8 +409,8 @@ class Nampi_data_entry_form_parser:
         Add investiture events for persons that have specific profession events
         """
         professions_query = """
-            PREFIX core: <https://purl.org/nampi/owl/core#>
-            PREFIX mona: <https://purl.org/nampi/owl/monastic-life#>
+            PREFIX core: <http://purl.org/nampi/owl/core#>
+            PREFIX mona: <http://purl.org/nampi/owl/monastic-life#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT ?author ?authoring_date ?source ?source_location ?group ?person_node ?person ?place ?exact_date ?earliest_date ?latest_date
             WHERE {
@@ -433,7 +433,7 @@ class Nampi_data_entry_form_parser:
             }
         """
         has_investiture_event_query = """
-            PREFIX core: <https://purl.org/nampi/owl/core#>
+            PREFIX core: <http://purl.org/nampi/owl/core#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             ASK WHERE {{
             ?event core:has_main_participant <{}> ;
@@ -581,7 +581,7 @@ class Nampi_data_entry_form_parser:
 
     def __add_religious_names(self):
         query = """
-            PREFIX core: <https://purl.org/nampi/owl/core#>
+            PREFIX core: <http://purl.org/nampi/owl/core#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT ?event ?person ?person_label
             WHERE {
