@@ -36,12 +36,12 @@ class Nampi_type:
         adds_aspect = Nampi_ns.core.adds_aspect
         changes_aspect_related_to = Nampi_ns.core.changes_aspect_related_to
         ends_life_of = Nampi_ns.core.ends_life_of
-        has_parent = Nampi_ns.core.has_parent
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
         has_main_participant = Nampi_ns.core.has_main_participant
         has_online_source = Nampi_ns.core.has_online_source
-        has_participant = Nampi_ns.core.has_participant
+        has_other_participant = Nampi_ns.core.has_other_participant
+        has_parent = Nampi_ns.core.has_parent
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
         is_authored_by = Nampi_ns.core.is_authored_by
