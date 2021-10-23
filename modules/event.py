@@ -83,13 +83,14 @@ class Event(Resource):
             self.add_relationship(Nampi_type.Core.takes_place_at, place)
 
         if exact_date or earliest_date or latest_date:
-            if exact_date is not None:
+            if exact_date:
                 self.add_relationship(
                     Nampi_type.Core.takes_place_on, Date(graph, exact_date))
-            elif earliest_date is not None:
+            else:
+                if earliest_date:
                     self.add_relationship(
                         Nampi_type.Core.takes_place_not_earlier_than, Date(graph, earliest_date))
-            elif latest_date is not None:
+                if latest_date:
                     self.add_relationship(
                         Nampi_type.Core.takes_place_not_later_than, Date(graph, latest_date))
 
@@ -98,6 +99,7 @@ class Event(Resource):
                 participant = participant_def["person"] if "person" in participant_def else None
                 if not participant:
                     continue
-                relationship_type = participant_def["relationship"] if "relationship" in participant_def else Nampi_type.Core.has_participant
+                relationship_type = participant_def["relationship"] if "relationship" in participant_def else Nampi_type.Core.has_other_participant
                 assert isinstance(relationship_type, URIRef)
                 self.add_relationship(relationship_type, participant)
+

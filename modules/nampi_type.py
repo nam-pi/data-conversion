@@ -39,7 +39,7 @@ class Nampi_type:
         has_interpretation = Nampi_ns.core.has_interpretation
         has_main_participant = Nampi_ns.core.has_main_participant
         has_online_source = Nampi_ns.core.has_online_source
-        has_participant = Nampi_ns.core.has_participant
+        has_other_participant = Nampi_ns.core.has_other_participant
         has_source = Nampi_ns.core.has_source
         has_source_location = Nampi_ns.core.has_source_location
         is_authored_by = Nampi_ns.core.is_authored_by
