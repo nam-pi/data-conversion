@@ -14,7 +14,6 @@ class Nampi_type:
         """The types in the NAMPI Core ontology."""
 
         # Classes
-
         act = Nampi_ns.core.act
         aspect = Nampi_ns.core.aspect
         author = Nampi_ns.core.author
@@ -32,7 +31,6 @@ class Nampi_type:
         title = Nampi_ns.core.title
 
         # Object properties
-
         adds_aspect = Nampi_ns.core.adds_aspect
         changes_aspect_related_to = Nampi_ns.core.changes_aspect_related_to
         ends_life_of = Nampi_ns.core.ends_life_of
@@ -57,7 +55,6 @@ class Nampi_type:
         takes_place_on = Nampi_ns.core.takes_place_on
 
         # Data properties
-
         has_value = Nampi_ns.core.has_value
         has_text = Nampi_ns.core.has_text
         has_date_time = Nampi_ns.core.has_date_time

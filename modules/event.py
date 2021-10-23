@@ -83,14 +83,13 @@ class Event(Resource):
             self.add_relationship(Nampi_type.Core.takes_place_at, place)
 
         if exact_date or earliest_date or latest_date:
-            if exact_date:
+            if exact_date is not None:
                 self.add_relationship(
                     Nampi_type.Core.takes_place_on, Date(graph, exact_date))
-            else:
-                if earliest_date:
+            elif earliest_date is not None:
                     self.add_relationship(
                         Nampi_type.Core.takes_place_not_earlier_than, Date(graph, earliest_date))
-                if latest_date:
+            elif latest_date is not None:
                     self.add_relationship(
                         Nampi_type.Core.takes_place_not_later_than, Date(graph, latest_date))
 
