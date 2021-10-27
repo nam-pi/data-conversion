@@ -23,7 +23,6 @@ class Nampi_type:
         event = Nampi_ns.core.event
         group = Nampi_ns.core.group
         identifier = Nampi_ns.core.identifier
-        online_resource = Nampi_ns.core.online_resource
         online_source = Nampi_ns.core.online_source
         person = Nampi_ns.core.person
         place = Nampi_ns.core.place
@@ -39,7 +38,6 @@ class Nampi_type:
         has_identifier = Nampi_ns.core.has_identifier
         has_interpretation = Nampi_ns.core.has_interpretation
         has_main_participant = Nampi_ns.core.has_main_participant
-        has_online_source = Nampi_ns.core.has_online_source
         has_other_participant = Nampi_ns.core.has_other_participant
         has_parent = Nampi_ns.core.has_parent
         has_source = Nampi_ns.core.has_source
@@ -61,7 +59,6 @@ class Nampi_type:
         has_value = Nampi_ns.core.has_value
         has_text = Nampi_ns.core.has_text
         has_date_time = Nampi_ns.core.has_date_time
-        has_url = Nampi_ns.core.has_url
 
         # has_xsd_date_time = Nampi_ns.core.has_xsd_date_time
         # has_xsd_string = Nampi_ns.core.has_xsd_string
@@ -72,7 +69,6 @@ class Nampi_type:
         # Other classes
 
         manuscript = Nampi_ns.mona.manuscript
-        page = Nampi_ns.mona.page
         religious_title = Nampi_ns.mona.religious_title
 
         # Names
@@ -134,11 +130,3 @@ class Nampi_type:
         official = Nampi_ns.mona.official
         profession = Nampi_ns.mona.profession
         rule_of_a_community = Nampi_ns.mona.rule_of_a_community
-
-        # Object properties
-
-        has_paged_source = Nampi_ns.mona.has_paged_source
-
-        # Data properties
-
-        has_page_number = Nampi_ns.mona.has_page_number

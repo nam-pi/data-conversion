@@ -5,9 +5,9 @@ Classes:
 """
 from __future__ import annotations
 
-from typing import List, Literal, Optional, TypedDict
+from typing import List, Optional, TypedDict
 
-from rdflib import RDF, RDFS, URIRef
+from rdflib import RDFS, URIRef
 
 from modules.date import Date
 from modules.nampi_graph import Nampi_graph
@@ -30,13 +30,12 @@ class Event(Resource):
         relationship: URIRef
 
     def add_comment(self, comment: str):
-        """"Add a comment to the event
+        """Add a comment to the event
 
         Parameters:
             comment: The comment to add.
         """
-        self.add_relationship(
-            RDFS.comment, self._graph.string_literal(comment))
+        self.add_relationship(RDFS.comment, self._graph.string_literal(comment))
 
     def __init__(
         self,
@@ -49,7 +48,7 @@ class Event(Resource):
         exact_date: Optional[str] = None,
         earliest_date: Optional[str] = None,
         latest_date: Optional[str] = None,
-        other_participants: Optional[List[Person_definition]] = None
+        other_participants: Optional[List[Person_definition]] = None,
     ):
         """Initialize the class.
 
@@ -71,7 +70,7 @@ class Event(Resource):
             event_type if event_type else Nampi_type.Core.event,
             Nampi_ns.event,
             label,
-            distinct=True
+            distinct=True,
         )
         self.main_person = main_person
 
@@ -85,20 +84,31 @@ class Event(Resource):
         if exact_date or earliest_date or latest_date:
             if exact_date:
                 self.add_relationship(
-                    Nampi_type.Core.takes_place_on, Date(graph, exact_date))
+                    Nampi_type.Core.takes_place_on, Date(graph, exact_date)
+                )
             else:
                 if earliest_date:
                     self.add_relationship(
-                        Nampi_type.Core.takes_place_not_earlier_than, Date(graph, earliest_date))
+                        Nampi_type.Core.takes_place_not_earlier_than,
+                        Date(graph, earliest_date),
+                    )
                 if latest_date:
                     self.add_relationship(
-                        Nampi_type.Core.takes_place_not_later_than, Date(graph, latest_date))
+                        Nampi_type.Core.takes_place_not_later_than,
+                        Date(graph, latest_date),
+                    )
 
         if other_participants:
             for participant_def in other_participants:
-                participant = participant_def["person"] if "person" in participant_def else None
+                participant = (
+                    participant_def["person"] if "person" in participant_def else None
+                )
                 if not participant:
                     continue
-                relationship_type = participant_def["relationship"] if "relationship" in participant_def else Nampi_type.Core.has_other_participant
+                relationship_type = (
+                    participant_def["relationship"]
+                    if "relationship" in participant_def
+                    else Nampi_type.Core.has_other_participant
+                )
                 assert isinstance(relationship_type, URIRef)
                 self.add_relationship(relationship_type, participant)
