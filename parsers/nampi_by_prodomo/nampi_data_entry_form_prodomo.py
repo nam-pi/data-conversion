@@ -644,7 +644,7 @@ class Nampi_data_entry_form_parser_prodomo:
         source_location_label: str = "",
         interpretation_date_text: Optional[str] = None,
     ):
-        author_label = author_label
+        author_label = authors
         source_label = source_label
         source_location_label = source_location_label
 
