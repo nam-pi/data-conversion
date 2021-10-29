@@ -1,14 +1,13 @@
-class Person:
+from parsers.nampi_by_prodomo.classes.base import Base
+
+class Person(Base):
     def __init__(self):
         super()
-        self._id = ""
         self._forename = ""
         self._surname = ""
         self._name = ""
-    
-    @property
-    def Id(self):
-        return self._id
+        self._mother = ""
+        self._father = ""
 
     @property
     def Forename(self):
@@ -22,9 +21,13 @@ class Person:
     def Name(self):
         return self._forename + " " + self._surname
 
-    @Id.setter  
-    def Id(self, id):
-        self._id = id
+    @property
+    def Mother(self):
+        return self._mother
+
+    @property
+    def Father(self):
+        return self._father
 
     @Forename.setter 
     def Forename(self,forename):
@@ -33,3 +36,11 @@ class Person:
     @Surname.setter 
     def Surname(self,surname):
         self._surname = surname
+
+    @Mother.setter 
+    def Mother(self,mother):
+        self._mother = mother
+
+    @Father.setter 
+    def Father(self,father):
+        self._father = father

@@ -1,16 +1,12 @@
-class Place:
+from parsers.nampi_by_prodomo.classes.base import Base
+class Place(Base):
     def __init__(self):
         super()
-        self._id = ""
         self._persId = ""
         self._text = ""
         self._type = ""
         self._subtype = ""
         self._key = ""
-
-    @property
-    def Id(self):
-        return self._id
 
     @property
     def persId(self):
@@ -31,10 +27,6 @@ class Place:
     @property
     def Key(self):
         return self._key
-
-    @Id.setter
-    def Id(self, id):
-        self._id = id
 
     @persId.setter
     def persId(self, persId):

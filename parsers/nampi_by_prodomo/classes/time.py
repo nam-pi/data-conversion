@@ -1,4 +1,4 @@
-from date import Dates
+from parsers.nampi_by_prodomo.classes.date import Dates
 class Time(Dates):
     def __init__(self):
         super()

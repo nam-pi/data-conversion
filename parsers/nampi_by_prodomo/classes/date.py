@@ -1,4 +1,4 @@
-class Dates:
+class Dates():
     def __init__(self):
         super()
         self._id = ""
@@ -11,13 +11,16 @@ class Dates:
         self._to = ""
         self._notAfter = ""
         self._notBefore = ""
-    
+        self._reference = ""
+        self._semanticstm = ""
+        self._placename = ""
+
     @property
     def Id(self):
         return self._id
 
     @property
-    def persId(self):
+    def PersId(self):
         return self._persId
 
     @property
@@ -56,46 +59,71 @@ class Dates:
     def NotBefore(self):
         return self._notBefore
 
-    @Id.setter  
+    @property
+    def SemanticStm(self):
+        return self._semanticstm
+
+    @property
+    def Reference(self):
+        return self._reference
+
+    @property
+    def PlaceName(self):
+        return self._placename
+
+    @Id.setter
     def Id(self, id):
         self._id = id
 
-    @persId.setter  
+    @PersId.setter
     def persId(self, persId):
         self._persId = persId
 
-    @When.setter 
-    def When(self,when):
+    @When.setter
+    def When(self, when):
         self._when = when
 
-    @Text.setter 
-    def Text(self,text):
+    @Text.setter
+    def Text(self, text):
         self._text = text
 
-    @Type.setter 
-    def Type(self,type_):
+    @Type.setter
+    def Type(self, type_):
         self._type = type_
 
-    @Subtype.setter 
-    def Subtype(self,subtype):
+    @Subtype.setter
+    def Subtype(self, subtype):
         self._subtype = subtype
 
-    @When.setter 
-    def When(self,when):
+    @When.setter
+    def When(self, when):
         self._when = when
 
-    @From.setter 
-    def From(self,from_):
+    @From.setter
+    def From(self, from_):
         self._from = from_
 
-    @To.setter 
-    def To(self,to):
+    @To.setter
+    def To(self, to):
         self._to = to
 
-    @NotAfter.setter 
-    def When(self,notafter):
+    @NotAfter.setter
+    def When(self, notafter):
         self._notAfter = notafter
 
-    @NotBefore.setter 
-    def NotBefore(self,notbefore):
+    @NotBefore.setter
+    def NotBefore(self, notbefore):
         self._notBefore = notbefore
+
+    @SemanticStm.setter
+    def SemanticStm(self, semanticstm):
+        self._semanticstm = semanticstm
+
+    @Reference.setter
+    def Reference(self, reference):
+        self._reference = reference
+
+    @PlaceName.setter
+    def PlaceName(self, placename):
+        self._placename = placename
+

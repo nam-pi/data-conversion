@@ -1,4 +1,5 @@
-from place import Place
+from parsers.nampi_by_prodomo.classes.place import Place
+
 
 class PlaceName(Place):
     def __init__(self):

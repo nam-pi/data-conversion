@@ -4,3 +4,4 @@ pandas>=1.1.5
 rdflib>=5.0.0
 sparqlwrapper>=1.8.5
 xmltodict
+black
