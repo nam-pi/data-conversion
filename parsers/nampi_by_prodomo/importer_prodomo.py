@@ -419,8 +419,8 @@ class Importer_prodomo:
                 for birthday in birthdays:
 
                     bday = self._buildDate(birthday)
-                    print("GEBURTSTAG")
-                    print(bday)
+                    #print("GEBURTSTAG")
+                    #print(bday)
                     ids["Geburt"] = birthday.Id
                     break
                     
@@ -430,8 +430,8 @@ class Importer_prodomo:
             else:
                 bday = ""
 
-            print("GEBURTSTAG")
-            print(bday)
+            # print("GEBURTSTAG")
+            # print(bday)
 
             if birthplace:
                 bplace = birthplace._text
@@ -451,7 +451,7 @@ class Importer_prodomo:
                 for death in deaths:
                     deathday = self._buildDate(death)
                     ids["Tod"] = death.Id
-                    print(death.Id)
+                    #print(death.Id)
                   
             elif type(deaths) is Dates:
                 deathday = self._buildDate(deaths)

@@ -101,6 +101,11 @@ _occupation_types = {
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
 }
 
+authors = [
+    "Stephan Makowski",
+    "Irene Rabl",
+    "Patrick Fiska"
+]
 
 def safe_str(row: Series, column: str) -> Optional[str]:
     return str(row[column]) if column in row else None
@@ -193,7 +198,7 @@ class Nampi_data_entry_form_parser_prodomo:
                 self.__insert_di_act(
                     birth,
                     (),
-                    "Stephan Makowski",
+                    authors,
                     "ProDomo",
                     "https://prodomo.icar-us.eu/aspect/" + id,
                     self._d1,
@@ -223,7 +228,7 @@ class Nampi_data_entry_form_parser_prodomo:
             self.__insert_di_act(
                 burial_ev,
                 (),
-                "Stephan Makowski",
+                authors,
                 "ProDomo",
                 "https://prodomo.icar-us.eu/aspect/" + burialID,
                 self._d1,
@@ -245,7 +250,7 @@ class Nampi_data_entry_form_parser_prodomo:
             self.__insert_di_act(
                 death,
                 (),
-                "Stephan Makowski",
+                authors,
                 "ProDomo",
                 "https://prodomo.icar-us.eu/aspect/" + ids["Tod"],
                 self._d1,
@@ -380,7 +385,7 @@ class Nampi_data_entry_form_parser_prodomo:
         self.__insert_di_act(
             PlainEvent,
             (),
-            "Stephan Makowski",
+            authors,
             "ProDomo",
             "https://prodomo.icar-us.eu/aspect/" + id,
             self._d1,
@@ -444,7 +449,7 @@ class Nampi_data_entry_form_parser_prodomo:
         self.__insert_di_act(
             investiture,
             (),
-            "Stephan Makowski",
+            authors,
             "ProDomo",
             "https://prodomo.icar-us.eu/aspect/" + invest_date.Id,
             self._d1,
@@ -494,7 +499,7 @@ class Nampi_data_entry_form_parser_prodomo:
                 self.__insert_di_act(
                     become_member_event,
                     (),
-                    "Stephan Makowski",
+                    authors,
                     "ProDomo",
                     "https://prodomo.icar-us.eu/person/" + persondata.Id,
                     self._d1,
@@ -518,7 +523,7 @@ class Nampi_data_entry_form_parser_prodomo:
                 self.__insert_di_act(
                     become_member_event_mother,
                     (),
-                    "Stephan Makowski",
+                    authors,
                     "ProDomo",
                     "https://prodomo.icar-us.eu/aspekt/" + ids["Mutter"],
                     self._d1,
@@ -542,7 +547,7 @@ class Nampi_data_entry_form_parser_prodomo:
                 self.__insert_di_act(
                     become_member_event_father,
                     (),
-                    "Stephan Makowski",
+                    authors,
                     "ProDomo",
                     "https://prodomo.icar-us.eu/aspekt/" + ids["Vater"],
                     self._d1,
@@ -560,7 +565,7 @@ class Nampi_data_entry_form_parser_prodomo:
                 self.__insert_di_act(
                     fn_assignment,
                     (),
-                    "Stephan Makowski",
+                    authors,
                     "ProDomo",
                     "https://prodomo.icar-us.eu/person/" + persondata.Id,
                     self._d1,
@@ -634,7 +639,7 @@ class Nampi_data_entry_form_parser_prodomo:
         self,
         event: Event,
         row: Series = pandas.Series(),
-        author_label: str = "",
+        authors: str = "",
         source_label: str = "",
         source_location_label: str = "",
         interpretation_date_text: Optional[str] = None,
@@ -643,7 +648,7 @@ class Nampi_data_entry_form_parser_prodomo:
         source_label = source_label
         source_location_label = source_location_label
 
-        author = Author(self._graph, author_label)
+        author =authors #Author(self._graph, author_label)
         if not author:
             return None
         source_location = self.__get_source_location(

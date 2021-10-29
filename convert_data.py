@@ -47,15 +47,15 @@ logging.info("************************************")
 nampi_graph = Nampi_graph()
 
 """Parse the various data sources to RDF"""
-# Nampi_data_entry_form_parser(
-#      nampi_graph, Env.cache_path, Env.google_cred_path, Env.cache_validity_days
-# )
+Nampi_data_entry_form_parser(
+     nampi_graph, Env.cache_path, Env.google_cred_path, Env.cache_validity_days
+)
 
 """ Importer ProDomo"""
 Importer_prodomo(nampi_graph)
 
 """ Importer Josephis"""
-# Importer_Josephis(nampi_graph)
+Importer_Josephis(nampi_graph)
 
 
 """Write RDF graph to file"""
