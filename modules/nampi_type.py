@@ -128,3 +128,6 @@ class Nampi_type:
         official = Nampi_ns.mona.official
         profession = Nampi_ns.mona.profession
         rule_of_a_community = Nampi_ns.mona.rule_of_a_community
+
+        #unspecified
+        unspecified_aspect = Nampi_ns.mona.unspecified_aspect

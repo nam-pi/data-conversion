@@ -10,6 +10,7 @@ from typing import List, Optional
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import pandas
+import calendar
 from modules.appellation import Appellation, Appellation_type
 from modules.appellation_assignment import Appellation_assignment
 from modules.aspect import Aspect
@@ -21,6 +22,8 @@ from modules.death import Death
 from modules.di_act import Di_act
 from modules.event import Event
 from modules.family import Family
+
+from modules.gettypesandstati import GetTypesAndStati
 
 # from modules.gender import Gender
 from modules.group import Group
@@ -90,6 +93,7 @@ _status_types = {
     "Member of a religious community visiting": Nampi_type.Mona.member_of_a_religious_community_visiting,
     "Religious life outside a community": Nampi_type.Mona.religious_life_outside_a_community,
     "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
+    "Unspecified" : Nampi_type.Mona.unspecified_aspect
 }
 
 _occupation_types = {
@@ -121,17 +125,10 @@ class Nampi_data_entry_form_parser_prodomo:
 
     # Get all Entries from Group_Entities Spreadsheet
     def getEntities(self):
-        # use creds to create a client to interact with the Google Drive API
-        # scope = ['https://spreadsheets.google.com/feeds']
-        creds = ServiceAccountCredentials.from_json_keyfile_name(".credentials.json")
-        client = gspread.authorize(creds)
 
-        # Find a workbook by name and open the first sheet
-        # Make sure you use the right name here.
-        sheet = client.open("Group_Entities").sheet1
 
         # Extract and print all of the values
-        list_of_hashes = sheet.get_all_records()
+        list_of_hashes = GetTypesAndStati("Group Entities").getData()
         print("--Start analyzing Group_Entities--")
         
         for i in list_of_hashes:
@@ -271,10 +268,13 @@ class Nampi_data_entry_form_parser_prodomo:
         name: Optional[str],
         participant: Optional[str],
         id: Optional[str],
-        place: Optional[str]
+        place: Optional[str],
+        datefrom: Optional[str],
+        dateto:Optional[str]
     ):
         # get Event label from dict
         Monastery = None
+        Kloster = None
 
         if semantics in Entities_dict and Entities_dict[semantics] is not None:
             Monastery = Entities_dict[semantics]
@@ -292,40 +292,22 @@ class Nampi_data_entry_form_parser_prodomo:
 
         strPlace = ""
         Place = ""
-        
+        place = ""
+
         if hasattr(Monastery, "Place_Label"):
             strPlace = Monastery.Place_Label
             Place = self.__get_place(strPlace, Monastery.GeoId)
         elif place:
             Place = self.__get_place(place, "")
-        # get various type by key from dict
-        # leave if not present; core:aspect will be set automatically
-        types = []
-        try:
-            if len(str(aspectkey)) > 0:
-                types.append(_status_types[aspectkey])
 
-            if len(occupationkey) > 0:
-                types.append(_occupation_types[occupationkey])
-
-        except:
-            logging.info("Key not in Dict")
-
-        varAspect =""
-        alabel = ""
-
-        if(aspectlabel.find("[Orden]") > -1):
-            alabel = aspectlabel.replace("[Orden]", Monastery.AspectPart)
-        else:
-            alabel = aspectlabel
-
-        varAspect = Aspect(self._graph,alabel, types)
+ 
 
         # check date
         # if it contains 4 digits, make earliest and latest date
 
         dateearly = ""
         datelast = ""
+        datetokens = ""
         if date:
             if len(date) == 4:
                 dateearly = date + "-01-01"
@@ -333,21 +315,42 @@ class Nampi_data_entry_form_parser_prodomo:
                 date = None
 
             elif len(date) == 7:
+                datetokens = date.split("-")
                 dateearly = date + "-01"
-                datelast = date + "-30"
+                datelast = date + "-" + str(calendar.monthrange(int(datetokens[0]),int(datetokens[1]))[1])
                 date = None
 
-        if date:
-            PlainEvent = Event(
-                self._graph,
-                Person,
-                Nampi_type.Core.has_main_participant,
-                label,
-                Nampi_type.Core.event,
-                Place,
-                date,
-            )
-        elif len(dateearly) > 0:
+        if datefrom:
+            if(len(datefrom))== 4:
+                dateearly = datefrom + "-01-01"
+            elif(len(datefrom))==7:
+                dateearly = datefrom + "-01"
+            else:
+                dateearly = datefrom
+
+        if dateto:        
+            
+            if(len(dateto.strip()))== 4:
+                datelast = dateto + "-12-31"
+            elif(len(dateto.strip()))==7:
+                datetokens = dateto.split("-")
+                datelast = dateto + "-" + str(calendar.monthrange(int(datetokens[0]),int(datetokens[1]))[1])
+            else:
+                datelast = dateto   
+
+        if dateearly == "0000-00-00":
+            dateearly = ""
+
+        if datelast == "0000-00-00":
+            datelast = ""
+
+        if dateearly.find("0000") > -1:
+            dateearly = ""
+
+        if datelast.find("0000") > -1:
+            datelast = ""
+
+        if len(dateearly) > 0  :
              PlainEvent = Event(
                 self._graph,
                 Person,
@@ -358,6 +361,16 @@ class Nampi_data_entry_form_parser_prodomo:
                 "",
                 dateearly,
                 datelast
+            )
+        elif date:
+            PlainEvent = Event(
+                self._graph,
+                Person,
+                Nampi_type.Core.has_main_participant,
+                label,
+                Nampi_type.Core.event,
+                Place,
+                date,
             )     
         else: 
              PlainEvent = Event(
@@ -379,81 +392,116 @@ class Nampi_data_entry_form_parser_prodomo:
             )
 
 
-        PlainEvent.add_relationship(Nampi_type.Core.adds_aspect, varAspect)
+       # get various type by key from dict
+        # leave if not present; core:aspect will be set automatically
+        types = []
+        try:
+            if len(str(aspectkey)) > 0:
+                types.append(_status_types[aspectkey])
+
+            if len(occupationkey) > 0:
+                types.append(_occupation_types[occupationkey])
+
+            if len(types) == 0:
+                types.append(_status_types["Unspecified"])
+
+        except:
+            logging.info("Key not in Dict")
+
+        varAspect =""
+        alabel = ""
+
+        if aspectlabel is not None:  
+            if(aspectlabel.find("[Orden]") > -1 and hasattr(Monastery, "AspectPart")):
+                alabel = aspectlabel.replace("[Orden]", Monastery.AspectPart)
+            else:  
+                alabel = aspectlabel
 
 
-        self.__insert_di_act(
-            PlainEvent,
-            (),
-            authors,
-            "ProDomo",
-            "https://prodomo.icar-us.eu/aspect/" + id,
-            self._d1,
-        )
+        if alabel is not None and len(alabel.strip()) > 0:
 
-    def add_investiture_events(self, person, invest_date):
+            varAspect = Aspect(self._graph,alabel.capitalize(), types)
+            
+            PlainEvent.add_relationship(Nampi_type.Core.adds_aspect, varAspect)
+
+
+            self.__insert_di_act(
+                PlainEvent,
+                (),
+                authors,
+                "ProDomo",
+                "https://prodomo.icar-us.eu/aspect/" + id,
+                self._d1,
+            )
+
+    def add_investiture_events(self, person, invest_dates):
         # get Event label from dict
         # print(invest_date.SemanticStm)
         # print(Entities_dict.keys())
-        if (
-            invest_date.SemanticStm in Entities_dict
-            and Entities_dict[invest_date.SemanticStm] is not None
-        ):
-            Monastery = Entities_dict[invest_date.SemanticStm]
-        elif (
-            invest_date.Reference in Entities_dict
-            and Entities_dict[invest_date.Reference] is not None
-        ):
-            Monastery = Entities_dict[invest_date.Reference]
-        else:
-            Monastery = ""
+        if not isinstance(invest_dates, list):
+                # If type is not list then make it list
+                invest_dates = [invest_dates]
 
-        strPlace = ""
+        for invest_date in invest_dates:
+            if (
+                invest_date.SemanticStm in Entities_dict
+                and Entities_dict[invest_date.SemanticStm] is not None
+            ):
+                Monastery = Entities_dict[invest_date.SemanticStm]
+            elif (
+                invest_date.Reference in Entities_dict
+                and Entities_dict[invest_date.Reference] is not None
+            ):
+                Monastery = Entities_dict[invest_date.Reference]
+            else:
+                Monastery = ""
 
-        if hasattr(Monastery, "Place_Label"):
-            strPlace = Monastery.Place_Label
-            Place = self.__get_place(strPlace, Monastery.GeoId)
+            strPlace = ""
 
-        Person = self.__get_person(person.Name)
+            if hasattr(Monastery, "Place_Label"):
+                strPlace = Monastery.Place_Label
+                Place = self.__get_place(strPlace, Monastery.GeoId)
 
-        Religious_Name = Appellation(
-            self._graph, person.Forename, Appellation_type.RELIGIOUS_NAME
-        )
+            Person = self.__get_person(person.Name)
 
-        Novice = Aspect(
-            self._graph, "Novice", Nampi_type.Mona.member_of_a_religious_community
-        )
-
-        investiture = Event(
-            self._graph,
-            Person,
-            Nampi_type.Core.has_main_participant,
-            "Investiture in " + Monastery.Event,
-            Nampi_type.Core.event,
-            Place,
-            invest_date.When,
-        )
-
-        if type(Monastery) is Entity_Importer:
-            Kloster = self.__get_group(
-                Monastery.Class, Monastery.Label, Monastery.Part_Of_Label
-            )
-            investiture.add_relationship(
-                Nampi_type.Core.changes_aspect_related_to, Kloster
+            Religious_Name = Appellation(
+                self._graph, person.Forename, Appellation_type.RELIGIOUS_NAME
             )
 
-        investiture.add_relationship(Nampi_type.Core.adds_aspect, Religious_Name.node)
-        investiture.add_relationship(Nampi_type.Core.adds_aspect, Novice)
+            Novice = Aspect(
+                self._graph, "Novice", Nampi_type.Mona.member_of_a_religious_community
+            )
 
-        # investiture.add_relationship(Nampi_type.Core.changes_aspect_related_to, Group)
-        self.__insert_di_act(
-            investiture,
-            (),
-            authors,
-            "ProDomo",
-            "https://prodomo.icar-us.eu/aspect/" + invest_date.Id,
-            self._d1,
-        )
+            investiture = Event(
+                self._graph,
+                Person,
+                Nampi_type.Core.has_main_participant,
+                "Investiture in " + Monastery.Event,
+                Nampi_type.Core.event,
+                Place,
+                invest_date.When,
+            )
+
+            if type(Monastery) is Entity_Importer:
+                Kloster = self.__get_group(
+                    Monastery.Class, Monastery.Label, Monastery.Part_Of_Label
+                )
+                investiture.add_relationship(
+                    Nampi_type.Core.changes_aspect_related_to, Kloster
+                )
+
+            investiture.add_relationship(Nampi_type.Core.adds_aspect, Religious_Name.node)
+            investiture.add_relationship(Nampi_type.Core.adds_aspect, Novice)
+
+            # investiture.add_relationship(Nampi_type.Core.changes_aspect_related_to, Group)
+            self.__insert_di_act(
+                investiture,
+                (),
+                authors,
+                "ProDomo",
+                "https://prodomo.icar-us.eu/aspect/" + invest_date.Id,
+                self._d1,
+            )
 
     def add_persons(self, persondata, birthdate="", birthplace="", ids=""):
         """

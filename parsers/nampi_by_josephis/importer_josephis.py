@@ -32,7 +32,7 @@ class Importer_Josephis:
         josephis_parser = Nampi_data_entry_form_parser_josephis(self._graph)
         print("--Starte Josephis-Daten Erstellung--")
         
-        josephis_parser.createJosephus()
+        josephis_parser.createJosephis()
 
         print("--Beende Josephis-Daten Erstellung--")
         

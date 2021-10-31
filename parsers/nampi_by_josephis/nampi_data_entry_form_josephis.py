@@ -92,7 +92,8 @@ _status_types = {
     "Member of a religious community visiting": Nampi_type.Mona.member_of_a_religious_community_visiting,
     "Religious life outside a community": Nampi_type.Mona.religious_life_outside_a_community,
     "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
-    "Office": Nampi_type.Mona.monastic_office
+    "Office": Nampi_type.Mona.monastic_office,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect
 }
 
 _occupation_types = {
@@ -128,17 +129,9 @@ class Nampi_data_entry_form_parser_josephis:
     # Get all Entries from Group_Entities Spreadsheet
     def getEntities(self):
         logging.info("Getting Group_Entites")
-        # use creds to create a client to interact with the Google Drive API
-        # scope = ['https://spreadsheets.google.com/feeds']
-        creds = ServiceAccountCredentials.from_json_keyfile_name(".credentials.json")
-        client = gspread.authorize(creds)
-
-        # Find a workbook by name and open the first sheet
-        # Make sure you use the right name here.
-        sheet = client.open("Josephis_Überarbeitungsformular_ASB").worksheet("Daten")
 
         # Extract and print all of the values
-        list_of_hashes = sheet.get_all_records()
+        list_of_hashes = GetTypesAndStati("Josephis").getData()
         print("--Start analyzing 'Josephis_Überarbeitungsformular_ASB' --")
         i = 0
         for  val in list_of_hashes:
@@ -164,6 +157,7 @@ class Nampi_data_entry_form_parser_josephis:
             Entry.Cite = val["Zitation (Jahr und Tagesdatum)"]
             Entry.GND = val["GND"]
             Entry.Comment = val["Kommentar"]
+            Entry.Source = val["Quellenangabe"]
 
 
             Entities_dict[i] = Entry
@@ -172,7 +166,7 @@ class Nampi_data_entry_form_parser_josephis:
         logging.info("Finished Getting Group_Entities")
         print("--Ready with 'Josephis_Überarbeitungsformular_ASB' --")
 
-    def createJosephus(self):
+    def createJosephis(self):
         print("-- Create entries --")
         logging.info("-- Create entries --")
         for index in Entities_dict:
@@ -229,17 +223,17 @@ class Nampi_data_entry_form_parser_josephis:
                     )
                     logging.debug("Added 'membership' in family ")
 
-                    self.__insert_di_act(become_member_event,(), authors,"Josephisbruderschaft", Entry.Cite, self._d1, )
+                    self.__insert_di_act(become_member_event,(), authors, Entry.Source, Entry.Cite, self._d1, )
                     
                 # Tod
         
                 # Exaktes Datum / Datum frühestens / Datum spätestens
-                death = self.add_deaths(persName, (), Entry.Deathplace, Entry.DeathplaceGeo, Entry.Cite, datefirst, date, datelast)
+                death = self.add_deaths(persName, (), Entry.Deathplace, Entry.DeathplaceGeo, Entry.Cite, datefirst, date, datelast, Entry.Source)
                 
                 # Wenn Event vorhanden, schreiben
                 if death:
                     death.add_text(Entry.ExactCite, "la")
-                    self.__insert_di_act(death, (), authors, "Josephisbruderschaft", Entry.Cite, self._d1,  )
+                    self.__insert_di_act(death, (), authors, Entry.Source, Entry.Cite, self._d1,  )
 
                 cite = Entry.Cite
                 # Titel 
@@ -256,7 +250,7 @@ class Nampi_data_entry_form_parser_josephis:
                         obj=person, pred=Nampi_type.Core.has_main_participant
                     )
                     RelTitle.add_relationship(obj=title, pred=Nampi_type.Core.adds_aspect)
-                    self.__insert_di_act(RelTitle,(), authors,"Josephisbruderschaft", Entry.Cite, self._d1, )
+                    self.__insert_di_act(RelTitle,(), authors,Entry.Source, Entry.Cite, self._d1, )
                     
                 # Inits
                 PlaceArray = ""
@@ -430,7 +424,7 @@ class Nampi_data_entry_form_parser_josephis:
                             event,
                             (),
                             authors,
-                            "Josephisbruderschaft",
+                            Entry.Source,
                             cite ,
                             self._d1,
                         )
@@ -452,7 +446,7 @@ class Nampi_data_entry_form_parser_josephis:
 
     
 
-    def add_deaths(self, singleperson, deathday, deathplace, deathgeo, cite, deathearlist, deathexact, deathlatest):
+    def add_deaths(self, singleperson, deathday, deathplace, deathgeo, cite, deathearlist, deathexact, deathlatest, source):
         """
         Add all death events from the deaths table.
         """
@@ -475,7 +469,7 @@ class Nampi_data_entry_form_parser_josephis:
                 death,
                 (),
                 authors,
-                "Josephisbruderschaft",
+                source,
                 cite ,
                 self._d1,
             )

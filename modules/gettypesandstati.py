@@ -9,10 +9,10 @@ class GetTypesAndStati:
     _data: Dict
     _value: {}
     def __init__(self, 
-        sheet_name: str):
+        sheet_name: Optional[str]):
 
-        current = {}
 
+        sheet_data = ""
         # use creds to create a client to interact with the Google Drive API
         # scope = ['https://spreadsheets.google.com/feeds']
         creds = ServiceAccountCredentials.from_json_keyfile_name(".credentials.json")
@@ -28,15 +28,37 @@ class GetTypesAndStati:
             sheet_data = client.open("NAMPI Data Entry Form v2").worksheet("Groups")
         elif sheet_name == "Places":
             sheet_data = client.open("NAMPI Data Entry Form v2").worksheet("Places")
-
+        elif sheet_name == "Events":
+            sheet_data = client.open("NAMPI Data Entry Form v2").worksheet("Event Definitions")
+        elif sheet_name == "Group Entities":
+            sheet_data = client.open("Group_Entities").sheet1
+        elif sheet_name == "Josephis":
+            sheet_data = client.open("Josephis_Überarbeitungsformular_ASB").worksheet("Daten")
+        elif sheet_name == "Events Sheet":
+            sheet_data = client.open("Events").sheet1
+        elif sheet_name == "Sonstige Seelsorgen":
+            sheet_data = client.open("Mögliche Einträge - sonstige_Seelsorgetätigkeit").sheet1
+        else:
+            sheet_data =  client.open("NAMPI Data Entry Form v2").worksheet("Persons")
         self._data = sheet_data.get_all_records()
+
+
+
+    def getData(self):
+        return self._data
+
+    def getValues(self):
+        current = {}
         # Extract and print all of the values
         for (val) in self._data:
             
             current[str(val["Name"]).strip()]= val
 
         self._value = current
-
-    def getValues(self):
         return self._value
+    
+    def getSingleValues(self):
+        for i in self._value:
+            print(i)
+        
         

@@ -22,6 +22,7 @@ class Entity_Importer_Josephis:
         self._cite = ""
         self._gnd = ""
         self._comment = ""
+        self._source = ""
 
     @property
     def ExactCite(self):
@@ -107,6 +108,10 @@ class Entity_Importer_Josephis:
     def Comment(self):
         return self._comment
 
+    @property
+    def Source(self):
+        return self._source
+
     #@Comment.setter
     @ExactCite.setter
     def ExactCite(self, exactcite):
@@ -191,3 +196,7 @@ class Entity_Importer_Josephis:
     @Comment.setter
     def Comment(self, comment):
         self._comment = comment
+
+    @Source.setter
+    def Source(self, source):
+        self._source = source
