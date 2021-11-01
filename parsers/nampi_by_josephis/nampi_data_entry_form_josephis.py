@@ -101,7 +101,7 @@ _occupation_types = {
     "Associated parish clergy": Nampi_type.Mona.associated_parish_clergy,
     "Clergy": Nampi_type.Mona.clergy,
     "Official": Nampi_type.Mona.official,
-    "Profession": Nampi_type.Mona.profession,
+    
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
     "Office": Nampi_type.Mona.official
 }

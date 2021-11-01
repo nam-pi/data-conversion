@@ -85,6 +85,7 @@ subtypes = dict(
 Entities_dict = {}
 Event_dict = {}
 Other_Dict = {}
+Stati_dict = {}
 TypSub = {}
 dateids = {}
 
@@ -126,6 +127,30 @@ class Importer_prodomo:
 
         print("--Ready with Event-Spreadsheet --")
 
+
+    def getStati(self):
+
+ # Extract and print all of the values
+
+        i = 0
+        print("--Start analyzing Stati-Spreadsheet --")
+        for i in GetTypesAndStati("Statuses").getData():
+            eStati = {}
+            key = i["Name"]
+            eStati["Name"] = i["Name"]
+            eStati["Type"] = i["Type"]
+
+
+            if key not in Stati_dict:
+                Stati_dict[key] = eEvent
+            else:
+                if not isinstance(Stati_dict[key], list):
+                    # If type is not list then make it list
+                    Stati_dict[key] = [Stati_dict[key]]
+                    
+                Stati_dict[key].append(eEvent)
+
+        print("--Ready with Stati-Spreadsheet --")
 
     def getOthers(self):
 
@@ -183,7 +208,7 @@ class Importer_prodomo:
 
         self.prodomo_parser = Nampi_data_entry_form_parser_prodomo(self._graph)
         # init variables and URLs
-        baseURL = "https://prodomo.icar-us.eu/rest/db?_wrap=yes&_howmany=1000&_query="
+        baseURL = "http://prodomo.icar-us.eu/rest/db?_wrap=yes&_howmany=1000&_query="
         personQuery = "xquery version '3.1';declare namespace podl = 'http://pdr.bbaw.de/namespaces/podl/';declare namespace aodl = 'http://pdr.bbaw.de/namespaces/aodl/'; collection('/db/apps/prodomo/data/pdr/person')//podl:person/data(@id)"
 
         # Get all Persons and start querying

@@ -28,6 +28,8 @@ class Nampi_type:
         source = Nampi_ns.core.source
         source_location = Nampi_ns.core.source_location
         title = Nampi_ns.core.title
+        status = Nampi_ns.core.status
+        occupation = Nampi_ns.core.occupation
 
         # Object properties
         adds_aspect = Nampi_ns.core.adds_aspect
@@ -89,9 +91,10 @@ class Nampi_type:
         historic_diocese = Nampi_ns.mona.historic_diocese
 
         # Aspect types
-
-        academic_degree = Nampi_ns.mona.academic_degree
         burial = Nampi_ns.mona.burial
+
+        # Status
+        academic_degree = Nampi_ns.mona.academic_degree
         clergy = Nampi_ns.mona.clergy
         community_subsacristan = Nampi_ns.mona.community_subsacristan
         community_superior = Nampi_ns.mona.community_superior
@@ -122,12 +125,28 @@ class Nampi_type:
             Nampi_ns.mona.religious_life_outside_a_community
         )
         office_in_a_diocese = Nampi_ns.mona.office_in_a_diocese
-
+        secular_office = Nampi_ns.mona.secular_office
+        educator = Nampi_ns.mona.educator
+        office = Nampi_ns.mona.office
+        ruler_of_a_school = Nampi_ns.mona.ruler_of_a_school
+        unspecified_aspect = Nampi_ns.mona.unspecified_aspect
+        # Occupation
         administration_of_a_community = Nampi_ns.mona.administration_of_a_community
         associated_parish_clergy = Nampi_ns.mona.associated_parish_clergy
+        clergy = Nampi_ns.mona.clergy
         official = Nampi_ns.mona.official
-        profession = Nampi_ns.mona.profession
+        trade = Nampi_ns.mona.trade
         rule_of_a_community = Nampi_ns.mona.rule_of_a_community
+        monastic_office = Nampi_ns.mona.monastic_office
+        secular_office = Nampi_ns.mona.secular_office
+        office_in_a_diocese = Nampi_ns.mona.office_in_a_diocese
+        office = Nampi_ns.mona.office
+        educator = Nampi_ns.mona.educator
+        servant = Nampi_ns.mona.servant
+        visitator = Nampi_ns.mona.visitator
+        highly_skilled_professional = Nampi_ns.mona.highly_skilled_professional
+        rule_of_a_school = Nampi_ns.mona.rule_of_a_school
+        unspecified_aspect = Nampi_ns.mona.unspecified_aspect
 
-        #unspecified
+        # unspecified
         unspecified_aspect = Nampi_ns.mona.unspecified_aspect
