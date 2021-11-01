@@ -20,6 +20,8 @@ from os import path, remove
 
 from modules.cli_param import Env
 from modules.nampi_graph import Nampi_graph
+from parsers.nampi_by_josephis.importer_josephis import Importer_Josephis
+from parsers.nampi_by_prodomo.importer_prodomo import Importer_prodomo
 from parsers.nampi_data_entry_form.nampi_data_entry_form_parser import \
     Nampi_data_entry_form_parser
 
@@ -43,9 +45,17 @@ logging.info("************************************")
 nampi_graph = Nampi_graph()
 
 """Parse the various data sources to RDF"""
+
+""" Importer nampi entry form """
 Nampi_data_entry_form_parser(
     nampi_graph, Env.cache_path, Env.google_cred_path, Env.cache_validity_days
 )
+
+""" Importer Josephis"""
+Importer_Josephis(nampi_graph)
+
+""" Importer ProDomo"""
+Importer_prodomo(nampi_graph)
 
 """Write RDF graph to file"""
 logging.info("Serialize graph")
@@ -57,7 +67,7 @@ except OSError as e:
 if path.isfile(Env.out_path):
     remove(Env.out_path)
     logging.info("Old output file removed at '{}'".format(Env.out_path))
-file = open(Env.out_path, "w")
+file = open(Env.out_path, "w", encoding="utf-8")
 file.write(
     nampi_graph.graph.serialize(format=Env.out_format, encoding="utf-8").decode("utf-8")
 )

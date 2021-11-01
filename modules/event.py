@@ -37,6 +37,16 @@ class Event(Resource):
         """
         self.add_relationship(RDFS.comment, self._graph.string_literal(comment))
 
+    def add_text(self, text: str, lang: str):
+        """"Add a text to the event
+
+        Parameters:
+            text: The text to add.
+        """
+        self.add_relationship(
+            Nampi_type.Core.has_text, self._graph.string_literal(text, lang)
+        )
+
     def __init__(
         self,
         graph: Nampi_graph,
@@ -112,3 +122,4 @@ class Event(Resource):
                 )
                 assert isinstance(relationship_type, URIRef)
                 self.add_relationship(relationship_type, participant)
+

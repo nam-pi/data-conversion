@@ -6,7 +6,7 @@ Classes:
 from __future__ import annotations
 
 from typing import Optional
-
+from rdflib import RDF, RDFS, URIRef
 from modules.gender import Gender
 from modules.nampi_graph import Nampi_graph
 from modules.nampi_ns import Nampi_ns
@@ -43,6 +43,15 @@ class Person(Resource):
             self.add_relationship(
                 Nampi_ns.core.same_as, Other_ns.gnd[gnd_id])
 
+    def add_comment(self, comment: str):
+        """"Add a comment to the event
+
+        Parameters:
+            comment: The comment to add.
+        """
+        self.add_relationship(
+            RDFS.comment, self._graph.string_literal(comment))
+            
     @classmethod
     def optional(
         cls,

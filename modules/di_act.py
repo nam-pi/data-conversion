@@ -25,7 +25,7 @@ class Di_act(Resource):
         self,
         graph: Nampi_graph,
         event: Event,
-        author: Author,
+        authors,
         source_location: Source_location,
         interpretation_date_text: Optional[str],
         comment_text: Optional[str] = None,
@@ -35,7 +35,7 @@ class Di_act(Resource):
         Parameters:
             graph: The RDF graph the person belongs to.
             event: The event of the document interpretation act.
-            author: The author of the document interpretation act.
+            authors: List of authors of the document interpretation act.
             source_location: The location the interpretation was made.
             interpretation_date_text: The text of the interpretation date in the form "YYYY-MM-DD".
             comment_text: The event comment.
@@ -46,7 +46,17 @@ class Di_act(Resource):
         date = Date(graph, interpretation_date_text if interpretation_date_text else datetime.datetime.now(
         ).strftime("%Y-%m-%d"))
         self.add_relationship(Nampi_type.Core.has_interpretation, event)
-        self.add_relationship(Nampi_type.Core.is_authored_by, author)
+
+        if type(authors) is not Author:
+            if len(authors) == 1:
+                author = Author(self._graph, authors)
+                self.add_relationship(Nampi_type.Core.is_authored_by, author)
+            else:
+                for authoritem in authors:
+                    author = Author(self._graph, authoritem)
+                    self.add_relationship(Nampi_type.Core.is_authored_by, author)
+        else: 
+            self.add_relationship(Nampi_type.Core.is_authored_by, authors)
         self.add_relationship(
             Nampi_type.Core.has_source_location, source_location)
         self.add_relationship(Nampi_type.Core.is_authored_on, date)
