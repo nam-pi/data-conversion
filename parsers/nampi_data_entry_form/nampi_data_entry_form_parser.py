@@ -66,6 +66,13 @@ _status_types = {
     "Member of a religious community visiting": Nampi_type.Mona.member_of_a_religious_community_visiting,
     "Religious life outside a community": Nampi_type.Mona.religious_life_outside_a_community,
     "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
+    "Secular office": Nampi_type.Mona.secular_office,
+    "Educator": Nampi_type.Mona.educator,
+    "Office": Nampi_type.Mona.office,
+    "Ruler of a school": Nampi_type.Mona.ruler_of_a_school,
+    "Status": Nampi_type.Core.status,
+    "Aspect": Nampi_type.Core.aspect,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect,
 }
 
 _occupation_types = {
@@ -73,8 +80,20 @@ _occupation_types = {
     "Associated parish clergy": Nampi_type.Mona.associated_parish_clergy,
     "Clergy": Nampi_type.Mona.clergy,
     "Official": Nampi_type.Mona.official,
-    "Profession": Nampi_type.Mona.profession,
+    "Trade": Nampi_type.Mona.trade,
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
+    "Monastic office": Nampi_type.Mona.monastic_office,
+    "Secular office": Nampi_type.Mona.secular_office,
+    "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
+    "Office": Nampi_type.Mona.office,
+    "Educator": Nampi_type.Mona.educator,
+    "Servant": Nampi_type.Mona.servant,
+    "Visitator": Nampi_type.Mona.visitator,
+    "Highly skilled professional": Nampi_type.Mona.highly_skilled_professional,
+    "Rule of a school": Nampi_type.Mona.rule_of_a_school,
+    "Occupation": Nampi_type.Core.occupation,
+    "Aspect": Nampi_type.Core.aspect,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect,
 }
 
 
