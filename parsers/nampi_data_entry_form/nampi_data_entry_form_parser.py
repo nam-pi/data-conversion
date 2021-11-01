@@ -736,16 +736,12 @@ class Nampi_data_entry_form_parser:
         source_location_label: str = "",
         interpretation_date_text: Optional[str] = None,
     ):
-        author_label = row[Column.author] if Column.author in row else author_label
         source_label = row[Column.source] if Column.source in row else source_label
         source_location_label = (
             row[Column.source_location]
             if Column.source_location in row
             else source_location_label
         )
-        author = Author(self._graph, author_label)
-        if not author:
-            return None
         source_location = self.__get_source_location(
             source_label, source_location_label
         )
@@ -760,7 +756,7 @@ class Nampi_data_entry_form_parser:
         Di_act(
             self._graph,
             event,
-            author,
+            ["Patrick Fiska", "Irene Rabl"],
             source_location,
             interpretation_date,
         )
