@@ -284,7 +284,8 @@ class Nampi_data_entry_form_parser_josephis:
                     RelTitle = Event(
                         self._graph,
                         person,
-                        latest_date=date,
+                        latest_date=date
+                        , label="Get title " + Entry.RelTitle
                     )
                     RelTitle.add_text(Entry.ExactCite, "la")
                     title = Title(
