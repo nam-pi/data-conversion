@@ -12,6 +12,7 @@ from typing import List, Optional
 import gspread
 import pandas
 from oauth2client.service_account import ServiceAccountCredentials
+
 # from modules.title import Title
 from pandas import Series
 from rdflib.term import URIRef
@@ -28,6 +29,7 @@ from modules.di_act import Di_act
 from modules.event import Event
 from modules.family import Family
 from modules.gettypesandstati import GetTypesAndStati
+
 # from modules.gender import Gender
 from modules.group import Group
 from modules.nampi_graph import Nampi_graph
@@ -40,7 +42,10 @@ from modules.source_type import Source_type
 from parsers.nampi_by_prodomo.classes.date import Dates
 from parsers.nampi_by_prodomo.classes.entity_importer import Entity_Importer
 from parsers.nampi_data_entry_form.nampi_data_entry_form import (
-    Table, added_investiture_label, family_member_label)
+    Table,
+    added_investiture_label,
+    family_member_label,
+)
 
 _types = dict(
     Geburt="Geburt",
@@ -642,7 +647,7 @@ class Nampi_data_entry_form_parser_prodomo:
                     person_label,
                     family_names,
                     birthplace,
-                    persondata.Id,
+                    ids["Geburt"],
                     persondata.Mother,
                     persondata.Father,
                 )

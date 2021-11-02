@@ -215,7 +215,14 @@ class Nampi_data_entry_form_parser_josephis:
                     family_name_label=family_names,
                 )
                 birth.add_text(Entry.ExactCite, "la")
-
+                self.__insert_di_act(
+                    birth,
+                    (),
+                    authors,
+                    Entry.Source,
+                    Entry.Cite,
+                    self._d1,
+                )
                 family = Family(self._graph, family_names)
                 aspect = Aspect(self._graph, family_names)
 
