@@ -3,13 +3,17 @@
 Classes:
     Nampi_data_entry_form
 """
-import logging
 import json
+import logging
 from datetime import date, datetime
 from typing import List, Optional
-from oauth2client.service_account import ServiceAccountCredentials
+
 import gspread
 import pandas
+from oauth2client.service_account import ServiceAccountCredentials
+from pandas import Series
+from rdflib.term import URIRef
+
 from modules.appellation import Appellation, Appellation_type
 from modules.appellation_assignment import Appellation_assignment
 from modules.aspect import Aspect
@@ -21,7 +25,7 @@ from modules.death import Death
 from modules.di_act import Di_act
 from modules.event import Event
 from modules.family import Family
-
+from modules.gettypesandstati import GetTypesAndStati
 # from modules.gender import Gender
 from modules.group import Group
 from modules.nampi_graph import Nampi_graph
@@ -31,20 +35,12 @@ from modules.place import Place
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
-
-from modules.gettypesandstati import GetTypesAndStati
-
 from modules.title import Title
-from pandas import Series
+from parsers.nampi_by_josephis.classes.entity_importer_josephis import \
+    Entity_Importer_Josephis
 from parsers.nampi_by_prodomo.classes.date import Dates
-from parsers.nampi_by_josephis.classes.entity_importer_josephis import Entity_Importer_Josephis
 from parsers.nampi_data_entry_form.nampi_data_entry_form import (
-    Table,
-    added_investiture_label,
-    family_member_label,
-)
-
-from rdflib.term import URIRef
+    Table, added_investiture_label, family_member_label)
 
 _types = dict(
     Geburt="Geburt",
@@ -92,8 +88,13 @@ _status_types = {
     "Member of a religious community visiting": Nampi_type.Mona.member_of_a_religious_community_visiting,
     "Religious life outside a community": Nampi_type.Mona.religious_life_outside_a_community,
     "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
-    "Office": Nampi_type.Mona.monastic_office,
-    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect
+    "Secular office": Nampi_type.Mona.secular_office,
+    "Educator": Nampi_type.Mona.educator,
+    "Office": Nampi_type.Mona.office,
+    "Ruler of a school": Nampi_type.Mona.ruler_of_a_school,
+    "Status": Nampi_type.Core.status,
+    "Aspect": Nampi_type.Core.aspect,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect,
 }
 
 _occupation_types = {
@@ -101,16 +102,24 @@ _occupation_types = {
     "Associated parish clergy": Nampi_type.Mona.associated_parish_clergy,
     "Clergy": Nampi_type.Mona.clergy,
     "Official": Nampi_type.Mona.official,
-    
+    "Trade": Nampi_type.Mona.trade,
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
-    "Office": Nampi_type.Mona.official
+    "Monastic office": Nampi_type.Mona.monastic_office,
+    "Secular office": Nampi_type.Mona.secular_office,
+    "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
+    "Office": Nampi_type.Mona.office,
+    "Educator": Nampi_type.Mona.educator,
+    "Servant": Nampi_type.Mona.servant,
+    "Visitator": Nampi_type.Mona.visitator,
+    "Highly skilled professional": Nampi_type.Mona.highly_skilled_professional,
+    "Rule of a school": Nampi_type.Mona.rule_of_a_school,
+    "Occupation": Nampi_type.Core.occupation,
+    "Aspect": Nampi_type.Core.aspect,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect,
 }
 
-authors = [
-    "Stephan Makowski",
-    "Manuela Mayer",
-    "Mag. Andrea Singh Bottanova, MA"
-]
+authors = ["Stephan Makowski", "Manuela Mayer", "Mag. Andrea Singh Bottanova, MA"]
+
 
 def safe_str(row: Series, column: str) -> Optional[str]:
     return str(row[column]) if column in row else None
@@ -134,7 +143,7 @@ class Nampi_data_entry_form_parser_josephis:
         list_of_hashes = GetTypesAndStati("Josephis").getData()
         print("--Start analyzing 'Josephis_Überarbeitungsformular_ASB' --")
         i = 0
-        for  val in list_of_hashes:
+        for val in list_of_hashes:
             Entry = Entity_Importer_Josephis()
             Entry.ExactCite = val["Exaktes Zitat"]
             Entry.Enable = val["Aufnehmen (x)"].strip()
@@ -159,7 +168,6 @@ class Nampi_data_entry_form_parser_josephis:
             Entry.Comment = val["Kommentar"]
             Entry.Source = val["Quellenangabe"]
 
-
             Entities_dict[i] = Entry
             i = i + 1
 
@@ -172,10 +180,10 @@ class Nampi_data_entry_form_parser_josephis:
         for index in Entities_dict:
             Entry = Entity_Importer_Josephis()
             Entry = Entities_dict[index]
-            
+
             # Just do stuff, if Enable == "X"
             if Entry.Enable.upper() == "X":
-                
+
                 # Person
                 Comment = Entry.Comment
                 persName = Entry.Forename + " " + Entry.Surename
@@ -184,12 +192,11 @@ class Nampi_data_entry_form_parser_josephis:
                 person = self.__get_person(persName, Entry.GND)
                 if Comment:
                     person.add_comment(Comment)
-                
+
                 # check if Deathdate is valid
                 date = Entry.Deathdate
                 datefirst = Entry.Deathdateearly
                 datelast = Entry.Deathdatelate
-
 
                 # Geburt / inits
                 family_names = Entry.Surename
@@ -198,10 +205,15 @@ class Nampi_data_entry_form_parser_josephis:
                 # Exaktes Datum ist vorhanden. Ansonsten letzt verfügbares Datum nehmen
                 if len(date) > 0:
                     date_value = date
-                elif (len(datelast) > 0):
+                elif len(datelast) > 0:
                     date_value = datelast
 
-                birth = Birth(self._graph, person, latest_date=date_value, family_name_label=family_names)
+                birth = Birth(
+                    self._graph,
+                    person,
+                    latest_date=date_value,
+                    family_name_label=family_names,
+                )
                 birth.add_text(Entry.ExactCite, "la")
 
                 family = Family(self._graph, family_names)
@@ -223,35 +235,70 @@ class Nampi_data_entry_form_parser_josephis:
                     )
                     logging.debug("Added 'membership' in family ")
 
-                    self.__insert_di_act(become_member_event,(), authors, Entry.Source, Entry.Cite, self._d1, )
-                    
+                    self.__insert_di_act(
+                        become_member_event,
+                        (),
+                        authors,
+                        Entry.Source,
+                        Entry.Cite,
+                        self._d1,
+                    )
+
                 # Tod
-        
+
                 # Exaktes Datum / Datum frühestens / Datum spätestens
-                death = self.add_deaths(persName, (), Entry.Deathplace, Entry.DeathplaceGeo, Entry.Cite, datefirst, date, datelast, Entry.Source)
-                
+                death = self.add_deaths(
+                    persName,
+                    (),
+                    Entry.Deathplace,
+                    Entry.DeathplaceGeo,
+                    Entry.Cite,
+                    datefirst,
+                    date,
+                    datelast,
+                    Entry.Source,
+                )
+
                 # Wenn Event vorhanden, schreiben
                 if death:
                     death.add_text(Entry.ExactCite, "la")
-                    self.__insert_di_act(death, (), authors, Entry.Source, Entry.Cite, self._d1,  )
+                    self.__insert_di_act(
+                        death,
+                        (),
+                        authors,
+                        Entry.Source,
+                        Entry.Cite,
+                        self._d1,
+                    )
 
                 cite = Entry.Cite
-                # Titel 
+                # Titel
                 if Entry.RelTitle:
-                    RelTitle =  Event(self._graph,
+                    RelTitle = Event(
+                        self._graph,
                         person,
-                        latest_date=date,)
+                        latest_date=date,
+                    )
                     RelTitle.add_text(Entry.ExactCite, "la")
                     title = Title(
                         self._graph, Entry.RelTitle, Nampi_type.Mona.religious_title
                     )
-                    
+
                     RelTitle.add_relationship(
                         obj=person, pred=Nampi_type.Core.has_main_participant
                     )
-                    RelTitle.add_relationship(obj=title, pred=Nampi_type.Core.adds_aspect)
-                    self.__insert_di_act(RelTitle,(), authors,Entry.Source, Entry.Cite, self._d1, )
-                    
+                    RelTitle.add_relationship(
+                        obj=title, pred=Nampi_type.Core.adds_aspect
+                    )
+                    self.__insert_di_act(
+                        RelTitle,
+                        (),
+                        authors,
+                        Entry.Source,
+                        Entry.Cite,
+                        self._d1,
+                    )
+
                 # Inits
                 PlaceArray = ""
                 PlaceGeoArray = ""
@@ -259,7 +306,7 @@ class Nampi_data_entry_form_parser_josephis:
                 StatusArray = ""
                 StatusNampiArray = ""
                 OccupationArray = ""
-                OccupationNampiArray = "" 
+                OccupationNampiArray = ""
                 EventArray = ""
 
                 # Place
@@ -294,27 +341,34 @@ class Nampi_data_entry_form_parser_josephis:
                     EventArray = Entry.Event.split("%")
 
                 for (i, val) in enumerate(GroupArray):
-                    
-                    
-                    Group = self.__get_group("Monastic community", GroupArray[i].replace('"', ''), GroupArray[i].replace('"', ''))
-     
-                    if len(PlaceArray) > i and len(PlaceGeoArray) > i:    
-                        Place = self.__get_place(PlaceArray[i].strip(), PlaceGeoArray[i].split(" ")[0])
+
+                    Group = self.__get_group(
+                        "Monastic community",
+                        GroupArray[i].replace('"', ""),
+                        GroupArray[i].replace('"', ""),
+                    )
+
+                    if len(PlaceArray) > i and len(PlaceGeoArray) > i:
+                        Place = self.__get_place(
+                            PlaceArray[i].strip(), PlaceGeoArray[i].split(" ")[0]
+                        )
                         strPlace = PlaceArray[i].strip()
                     elif len(PlaceArray) > 0 and len(PlaceGeoArray) > 0:
-                        Place = self.__get_place(PlaceArray[-1].strip(), PlaceGeoArray[-1].split(" ")[0])
+                        Place = self.__get_place(
+                            PlaceArray[-1].strip(), PlaceGeoArray[-1].split(" ")[0]
+                        )
                         strPlace = PlaceArray[-1].strip()
                     else:
                         Place = ""
                         strPlace = ""
-                
+
                     if len(EventArray) > i:
                         varEvent = EventArray[i]
                     elif len(EventArray) > 0:
                         varEvent = EventArray[-1]
                     else:
-                        varEvent = ""                        
-                    
+                        varEvent = ""
+
                     if len(StatusArray) > i:
                         varStatus = StatusArray[i]
                     elif len(StatusArray) > 0:
@@ -328,22 +382,24 @@ class Nampi_data_entry_form_parser_josephis:
                         varStatusNampi = StatusNampiArray[-1]
                     else:
                         varStatusNampi = ""
-                        
+
                     varStatusNampi = varStatusNampi.strip()
                     if len(OccupationArray) > i is not None:
                         varOccupation = OccupationArray[i]
                     elif len(OccupationArray) > 0:
                         varOccupation = OccupationArray[-1]
-                    
-                    if len(OccupationNampiArray) >i is not None:
+
+                    if len(OccupationNampiArray) > i is not None:
                         varOccupation_Nampi = OccupationNampiArray[i]
                     elif len(OccupationNampiArray) > 0:
                         varOccupation_Nampi = OccupationNampiArray[-1]
 
                     if len(varStatusNampi.strip()) > 0:
-                        
+
                         if self._stati.getValues()[varStatusNampi.strip()]["Type"]:
-                            type = self._stati.getValues()[varStatusNampi.strip()]["Type"]
+                            type = self._stati.getValues()[varStatusNampi.strip()][
+                                "Type"
+                            ]
 
                             varStatusType = _status_types[type]
 
@@ -355,21 +411,40 @@ class Nampi_data_entry_form_parser_josephis:
                     event = None
 
                     if len(date) > 0:
-                        
-                        event = Event(self._graph,  person,  Nampi_type.Core.has_main_participant,varEvent,(), Place,latest_date=date,  )
+
+                        event = Event(
+                            self._graph,
+                            person,
+                            Nampi_type.Core.has_main_participant,
+                            varEvent,
+                            (),
+                            Place,
+                            latest_date=date,
+                        )
                         event.add_text(Entry.ExactCite, "la")
-                       
+
                     elif len(datelast) > 0:
-                        
-                        event = Event(self._graph,  person,  Nampi_type.Core.has_main_participant, varEvent, (),Place,earliest_date=datefirst ,latest_date=datelast,  )
+
+                        event = Event(
+                            self._graph,
+                            person,
+                            Nampi_type.Core.has_main_participant,
+                            varEvent,
+                            (),
+                            Place,
+                            earliest_date=datefirst,
+                            latest_date=datelast,
+                        )
                         event.add_text(Entry.ExactCite, "la")
 
                     aspect_label = ""
                     occupation_type = ""
-                    if(varStatusNampi or varOccupation_Nampi) and varStatusNampi == varOccupation_Nampi:
+                    if (
+                        varStatusNampi or varOccupation_Nampi
+                    ) and varStatusNampi == varOccupation_Nampi:
                         aspect_label == varOccupation_Nampi
                         status_type = varStatusType
-                        occupation_type = "" #varOccupationType
+                        occupation_type = ""  # varOccupationType
                         types: List[URIRef] = []
                         if status_type:
                             types.append(status_type)
@@ -378,46 +453,61 @@ class Nampi_data_entry_form_parser_josephis:
 
                         if event is not None:
                             aspect = Aspect(self._graph, aspect_label, types)
-                            
+
                             event.add_relationship(
                                 obj=person, pred=Nampi_type.Core.has_main_participant
                             )
                             if Group:
                                 event.add_relationship(
-                                    obj=Group, pred=Nampi_type.Core.changes_aspect_related_to
+                                    obj=Group,
+                                    pred=Nampi_type.Core.changes_aspect_related_to,
                                 )
-                            event.add_relationship(obj=aspect, pred=Nampi_type.Core.adds_aspect)
+                            event.add_relationship(
+                                obj=aspect, pred=Nampi_type.Core.adds_aspect
+                            )
                     else:
                         if len(varStatusNampi.strip()) > 0:
                             status_type = varStatusType
                             aspect_label == varOccupation_Nampi
                             if event is not None:
-                                
+
                                 if status_type is None:
                                     status_type = Nampi_type.Core.aspect
 
-                                aspect = Aspect(self._graph, varStatusNampi, status_type)
+                                aspect = Aspect(
+                                    self._graph, varStatusNampi, status_type
+                                )
                                 event.add_relationship(
-                                    obj=person, pred=Nampi_type.Core.has_main_participant
+                                    obj=person,
+                                    pred=Nampi_type.Core.has_main_participant,
                                 )
                                 if Group:
                                     event.add_relationship(
-                                        obj=Group, pred=Nampi_type.Core.changes_aspect_related_to
+                                        obj=Group,
+                                        pred=Nampi_type.Core.changes_aspect_related_to,
                                     )
-                                event.add_relationship(obj=aspect, pred=Nampi_type.Core.adds_aspect)
+                                event.add_relationship(
+                                    obj=aspect, pred=Nampi_type.Core.adds_aspect
+                                )
 
                         elif varOccupation_Nampi:
-                            occupation_type = "" #varOccupationType
+                            occupation_type = ""  # varOccupationType
                             if event is not None:
-                                aspect = Aspect(self._graph, varOccupation_Nampi, occupation_type)
+                                aspect = Aspect(
+                                    self._graph, varOccupation_Nampi, occupation_type
+                                )
                                 event.add_relationship(
-                                    obj=person, pred=Nampi_type.Core.has_main_participant
+                                    obj=person,
+                                    pred=Nampi_type.Core.has_main_participant,
                                 )
                                 if Group:
                                     event.add_relationship(
-                                        obj=Group, pred=Nampi_type.Core.changes_aspect_related_to
+                                        obj=Group,
+                                        pred=Nampi_type.Core.changes_aspect_related_to,
                                     )
-                                event.add_relationship(obj=aspect, pred=Nampi_type.Core.adds_aspect)
+                                event.add_relationship(
+                                    obj=aspect, pred=Nampi_type.Core.adds_aspect
+                                )
 
                     if event:
                         self.__insert_di_act(
@@ -425,12 +515,12 @@ class Nampi_data_entry_form_parser_josephis:
                             (),
                             authors,
                             Entry.Source,
-                            cite ,
+                            cite,
                             self._d1,
                         )
 
                 print("Create entry: " + persName + " ready")
-                
+
     def __init__(self, graph: Nampi_graph):
         """Initialize the class.
 
@@ -444,9 +534,18 @@ class Nampi_data_entry_form_parser_josephis:
         self._occu = GetTypesAndStati("Occupations")
         self.getEntities()
 
-    
-
-    def add_deaths(self, singleperson, deathday, deathplace, deathgeo, cite, deathearlist, deathexact, deathlatest, source):
+    def add_deaths(
+        self,
+        singleperson,
+        deathday,
+        deathplace,
+        deathgeo,
+        cite,
+        deathearlist,
+        deathexact,
+        deathlatest,
+        source,
+    ):
         """
         Add all death events from the deaths table.
         """
@@ -460,7 +559,13 @@ class Nampi_data_entry_form_parser_josephis:
         if len(deathday) > 0:
             death = Death(self._graph, died_person, death_place, exact_date=deathexact)
         elif len(deathlatest) > 0:
-            death = Death(self._graph, died_person, death_place,earliest_date=deathearlist, latest_date= deathlatest)
+            death = Death(
+                self._graph,
+                died_person,
+                death_place,
+                earliest_date=deathearlist,
+                latest_date=deathlatest,
+            )
         else:
             death = None
 
@@ -470,47 +575,53 @@ class Nampi_data_entry_form_parser_josephis:
                 (),
                 authors,
                 source,
-                cite ,
+                cite,
                 self._d1,
             )
 
         logging.info("Parsed the deaths")
 
-
-    def __get_group(self, group_type_desc, group_label: Optional[str], part_of_label) -> Optional[Group]:
+    def __get_group(
+        self, group_type_desc, group_label: Optional[str], part_of_label
+    ) -> Optional[Group]:
         if not group_label:
             return None
         group_type_label = group_label
         group_type = _group_types[group_type_desc]
-        part_of_group = self.__get_group(
-            part_of_label, (), ()) if part_of_label else None
+        part_of_group = (
+            self.__get_group(part_of_label, (), ()) if part_of_label else None
+        )
         group = Group(self._graph, group_label, group_type)
         if part_of_group:
             group.add_relationship(Nampi_type.Core.is_part_of, part_of_group)
         return group
 
-    def __get_person(self, person_label: Optional[str], gnd_id: Optional[str]) -> Optional[Person]:
+    def __get_person(
+        self, person_label: Optional[str], gnd_id: Optional[str]
+    ) -> Optional[Person]:
 
-        if gnd_id and str(gnd_id).upper() != "KEINE":    
+        if gnd_id and str(gnd_id).upper() != "KEINE":
             if str(gnd_id).find(" "):
                 gnd_split = str(gnd_id).split(" ")
-                gnd_id_split = gnd_split[0] 
+                gnd_id_split = gnd_split[0]
                 gnd = "http://d-nb.info/gnd/" + str(gnd_id_split).strip()
             else:
                 gnd = "http://d-nb.info/gnd/" + str(gnd_id).strip()
         else:
             gnd = ""
         gender = ""
-        
+
         return Person.optional(self._graph, person_label, gender, gnd)
 
-    def __get_place(self, place_label: Optional[str], geoid: Optional[str]) -> Optional[Place]:
+    def __get_place(
+        self, place_label: Optional[str], geoid: Optional[str]
+    ) -> Optional[Place]:
         if geoid:
             geoname_id = str(geoid).strip()
         else:
             geoname_id = ""
 
-        place_label = place_label.replace('"', '')
+        place_label = place_label.replace('"', "")
         return Place.optional(self._graph, place_label.strip(), geoname_id, "")
 
     def __get_source_location(
@@ -545,8 +656,7 @@ class Nampi_data_entry_form_parser_josephis:
         source_label = source_label
         source_location_label = source_location_label
 
-
-        author = author_label # Author(self._graph, author_label)
+        author = author_label  # Author(self._graph, author_label)
         if not author:
             return None
         source_location = self.__get_source_location(
@@ -564,4 +674,3 @@ class Nampi_data_entry_form_parser_josephis:
             source_location,
             interpretation_date,
         )
-

@@ -1,26 +1,24 @@
 # -*- coding: utf-8 -*-
-import logging
 import glob
-import sys
+import json
+import logging
 import os
+import sys
+import traceback
+from collections import OrderedDict
+from operator import contains
+from types import SimpleNamespace
+
+import gspread
 import requests
 import xmltodict
-import json
-import gspread
-import traceback
-
-from operator import contains
-from collections import OrderedDict
-from modules.date import Date
 from lxml import etree
-from types import SimpleNamespace
-from collections import OrderedDict
-from requests.api import get
 from oauth2client.service_account import ServiceAccountCredentials
+from requests.api import get
 
-from modules.nampi_graph import Nampi_graph
+from modules.date import Date
 from modules.gettypesandstati import GetTypesAndStati
-
+from modules.nampi_graph import Nampi_graph
 from parsers.nampi_by_prodomo.classes.date import Dates
 from parsers.nampi_by_prodomo.classes.events import ExternalEvent
 from parsers.nampi_by_prodomo.classes.name import Name
@@ -28,10 +26,8 @@ from parsers.nampi_by_prodomo.classes.person import Person
 from parsers.nampi_by_prodomo.classes.place import Place
 from parsers.nampi_by_prodomo.classes.placename import PlaceName
 from parsers.nampi_by_prodomo.classes.time import Time
-
-from parsers.nampi_by_prodomo.nampi_data_entry_form_prodomo import (
-    Nampi_data_entry_form_parser_prodomo,
-)
+from parsers.nampi_by_prodomo.nampi_data_entry_form_prodomo import \
+    Nampi_data_entry_form_parser_prodomo
 
 # prepare dicts
 ns = dict(
@@ -51,7 +47,7 @@ selector = dict(
     timeStm="",
     semanticStm="",
     name="",
-    orgName=""
+    orgName="",
 )
 
 types = dict(
@@ -74,8 +70,8 @@ excludes = dict(
     Begräbnis="",
     KonventEinkleidung="",
     StudiumStudienrichtung="",
-    NarrativesElement= "",
-    GedruckteWerkeTitel=""
+    NarrativesElement="",
+    GedruckteWerkeTitel="",
 )
 
 subtypes = dict(
@@ -89,10 +85,12 @@ Stati_dict = {}
 TypSub = {}
 dateids = {}
 
+
 class Importer_prodomo:
     _graph: Nampi_graph
     _persName: None
     prodomo_parser: None
+
     def getEvents(self):
 
         # Extract and print all of the values
@@ -104,7 +102,7 @@ class Importer_prodomo:
             key = i["TypSubtyp"].strip()
             eEvent.Key = key
             eEvent.Label = i["rdfs:label"]
-            eEvent.Date =  i["Datum - aodl:date"]
+            eEvent.Date = i["Datum - aodl:date"]
             eEvent.Group = i["Gruppe"]
             eEvent.Place = i["core:takes_place_at"]
             eEvent.Relation = i["aspekt-relationship"]
@@ -122,15 +120,14 @@ class Importer_prodomo:
                 if not isinstance(Event_dict[key], list):
                     # If type is not list then make it list
                     Event_dict[key] = [Event_dict[key]]
-                    
+
                 Event_dict[key].append(eEvent)
 
         print("--Ready with Event-Spreadsheet --")
 
-
     def getStati(self):
 
- # Extract and print all of the values
+        # Extract and print all of the values
 
         i = 0
         print("--Start analyzing Stati-Spreadsheet --")
@@ -140,34 +137,34 @@ class Importer_prodomo:
             eStati["Name"] = i["Name"]
             eStati["Type"] = i["Type"]
 
-
             if key not in Stati_dict:
                 Stati_dict[key] = eEvent
             else:
                 if not isinstance(Stati_dict[key], list):
                     # If type is not list then make it list
                     Stati_dict[key] = [Stati_dict[key]]
-                    
+
                 Stati_dict[key].append(eEvent)
 
         print("--Ready with Stati-Spreadsheet --")
 
     def getOthers(self):
 
-
         # Extract and print all of the values
-        list_of_hashes = GetTypesAndStati("Sonstige Seelsorgen").getData()
+        list_of_hashes = (
+            GetTypesAndStati("Sonstige Seelsorgen").getData()
+            + GetTypesAndStati("Sonstige Amt").getData()
+            + GetTypesAndStati("Sonstige Taetigkeit").getData()
+        )
         i = 0
 
-        
-        print("--Start analyzing Mögliche Einträge - sonstige_Seelsorgetätigkeit-Spreadsheet --")
+        print("--Start analyzing Mögliche Einträge - sonstige --")
         for i in list_of_hashes:
             eOther = {}
             key = i["aodl:name"].strip()
             eOther["Name"] = key
             eOther["Prodomo"] = i["Zeile Prodomo Events"]
-            eOther["Nampi"] =  i["Zeile Nampi Events"]
-
+            eOther["Nampi"] = i["Zeile Nampi Events"]
 
             if key not in Other_Dict:
                 Other_Dict[key] = eOther
@@ -175,10 +172,10 @@ class Importer_prodomo:
                 if not isinstance(Other_Dict[key], list):
                     # If type is not list then make it list
                     Other_Dict[key] = [Other_Dict[key]]
-                    
+
                 Other_Dict[key].append(eOther)
 
-        print("--Ready with Mögliche Einträge - sonstige_Seelsorgetätigkeit-Spreadsheet --")
+        print("--Ready with Mögliche Einträge - sonstige --")
 
     # collect all TypSubtypes for iterative Workflow
     def addTypSub(self, kombi, item, strid):
@@ -188,19 +185,18 @@ class Importer_prodomo:
             if not isinstance(Entities_dict[kombi], list):
                 # If type is not list then make it list
                 Entities_dict[kombi] = [Entities_dict[kombi]]
-                
+
             Entities_dict[kombi].append(item)
 
         if len(strid.strip()) > 0:
 
             if strid not in dateids:
                 dateids[strid] = Entities_dict[kombi]
-                
+
             else:
                 if not isinstance(dateids[strid], list):
                     dateids[strid] = [dateids[strid]]
                 dateids[strid].append(Entities_dict[kombi])
-
 
     def __init__(self, graph: Nampi_graph):
         self._graph = graph
@@ -221,7 +217,7 @@ class Importer_prodomo:
         self.getEvents()
         logging.info("Finished prefetching events")
 
-        #gather "Sonstige Tätigkeiten" from spreadsheet "
+        # gather "Sonstige Tätigkeiten" from spreadsheet "
         logging.info("Start prefetching events")
         self.getOthers()
         logging.info("Finished prefetching events")
@@ -229,9 +225,13 @@ class Importer_prodomo:
         # iterate over persons
         for person in dict_data.get("exist:result").get("exist:value"):
             personID = str(person.get("#text"))
-            
+
             # prepare query for aspects
-            query = "xquery version '3.1'; declare namespace podl = 'http://pdr.bbaw.de/namespaces/podl/'; declare namespace aodl = 'http://pdr.bbaw.de/namespaces/aodl/'; import module namespace functx='http://www.functx.com' at 'xmldb:exist:///db/system/repo/functx-1.0.1/functx/functx.xq'; declare function local:addId($node) {     let $r1 := functx:add-attributes($node,xs:QName('id') ,data(root($node)//aodl:aspect/@id))    return         $r1     }; declare function local:addSemantic($node, $base) {     let $r1 := functx:add-attributes($node,xs:QName('semanticStm') ,root($base)//aodl:semanticStm/text() )     let $r2 := functx:add-attributes($r1,xs:QName('reference') ,root($base)//aodl:reference/text() )     return $r2     }; declare function local:addPlace($node, $base) {         let $r1 :=    if(exists(root($base)//aodl:spatialStm/aodl:place)) then             functx:add-attributes($node,xs:QName('placename') ,root($base)//aodl:spatialStm/aodl:place/text() )        else            $node    return $r1}; let $cols := collection('/db/apps/prodomo/data/pdr/aspect')//aodl:relation[data(@object)='" + personID + "'] return   for $col in $cols        let $root := root($col)//.[@type][@type != 'undefined']           let $base :=             for $item in $root                 let $ided := local:addId($item)              let $place := local:addPlace($ided, $item)                 return                     local:addSemantic($place, $item)  return   $base"
+            query = (
+                "xquery version '3.1'; declare namespace podl = 'http://pdr.bbaw.de/namespaces/podl/'; declare namespace aodl = 'http://pdr.bbaw.de/namespaces/aodl/'; import module namespace functx='http://www.functx.com' at 'xmldb:exist:///db/system/repo/functx-1.0.1/functx/functx.xq'; declare function local:addId($node) {     let $r1 := functx:add-attributes($node,xs:QName('id') ,data(root($node)//aodl:aspect/@id))    return         $r1     }; declare function local:addSemantic($node, $base) {     let $r1 := functx:add-attributes($node,xs:QName('semanticStm') ,root($base)//aodl:semanticStm/text() )     let $r2 := functx:add-attributes($r1,xs:QName('reference') ,root($base)//aodl:reference/text() )     return $r2     }; declare function local:addPlace($node, $base) {         let $r1 :=    if(exists(root($base)//aodl:spatialStm/aodl:place)) then             functx:add-attributes($node,xs:QName('placename') ,root($base)//aodl:spatialStm/aodl:place/text() )        else            $node    return $r1}; let $cols := collection('/db/apps/prodomo/data/pdr/aspect')//aodl:relation[data(@object)='"
+                + personID
+                + "'] return   for $col in $cols        let $root := root($col)//.[@type][@type != 'undefined']           let $base :=             for $item in $root                 let $ided := local:addId($item)              let $place := local:addPlace($ided, $item)                 return                     local:addSemantic($place, $item)  return   $base"
+            )
             url = baseURL + query
             response = requests.get(url)
             dict_data = xmltodict.parse(response.content)
@@ -240,11 +240,11 @@ class Importer_prodomo:
             times = {}
             dates = {}
             names = {}
-            places  = {}
+            places = {}
             placenames = {}
             singlePerson = Person()
-            ids  = {}
-            parents  = {}
+            ids = {}
+            parents = {}
 
             print("Creating Person: " + personID)
             # iterate over result set
@@ -286,27 +286,26 @@ class Importer_prodomo:
                                     singlePerson.Forename = text
                                 elif typ == "Eltern" and subtyp == "Vater":
                                     ids["Vater"] = entry.get("@id")
-                               
+
                                     singlePerson.Father = text
                                     parents[subtyp] = text
                                 elif typ == "Eltern" and subtyp == "Mutter":
-                                    
+
                                     ids["Mutter"] = entry.get("@id")
                                     singlePerson.Mother = text
                                     parents[subtyp] = text
 
                                 if typ is not None and subtyp is not None:
-                                    typsub = typ+subtyp
+                                    typsub = typ + subtyp
                                 elif typ is not None:
                                     typsub = typ
 
                                 self.addTypSub(typsub, singlePerson, "")
                             except:
-                                
-                                
+
                                 print(traceback.format_exc())
-                                #singlePerson.Surname = "na"
-                                #singlePerson.Forename = "na"
+                                # singlePerson.Surname = "na"
+                                # singlePerson.Forename = "na"
 
                     # ASPEKT Date
                     elif tagName == "date":
@@ -372,7 +371,7 @@ class Importer_prodomo:
                                 else:
                                     personDate.Reference = ""
 
-                                typsub = typ+subtype
+                                typsub = typ + subtype
 
                                 self.addTypSub(typsub, personDate, strid)
 
@@ -387,9 +386,8 @@ class Importer_prodomo:
                                 if not isinstance(dates[typsub], list):
                                     # If type is not list then make it list
                                     dates[typsub] = [dates[typsub]]
-                        
-                                dates[typsub].append(personDate)
 
+                                dates[typsub].append(personDate)
 
                     # ASPEKT place
                     elif tagName == "place":
@@ -432,12 +430,11 @@ class Importer_prodomo:
                                 placeObject.SemanticStm = semanticstm
                                 placeObject.PlaceName = placename
 
-
                                 # print(placeObject)
                                 if places.get(typ) is None:
                                     places[typ] = placeObject
 
-                                typsub = typ+subtype
+                                typsub = typ + subtype
                                 self.addTypSub(typsub, placeObject, "")
 
                     # ASPEKT placeName
@@ -484,7 +481,7 @@ class Importer_prodomo:
                             if not placenames[typ]:
                                 placenames[typ] = placenameObject
 
-                            typsub = typ+subtype
+                            typsub = typ + subtype
                             self.addTypSub(typsub, placenameObject, "")
 
                     # ASPEKT Time
@@ -520,7 +517,7 @@ class Importer_prodomo:
                                 personTime.SemanticStm = semanticstm
                                 personTime.PlaceName = placename
 
-                                typsub = typ+subtype
+                                typsub = typ + subtype
                                 self.addTypSub(typsub, personTime, "")
 
                             except:
@@ -533,10 +530,10 @@ class Importer_prodomo:
                     elif tagName == "name" or tagName == "orgName":
 
                         name = dict_data.get("exist:result").get(key)
-                            
+
                         if type(name) is OrderedDict:
                             name = [name]
-                            
+
                         typsub = ""
                         for entry in name:
                             personName = Name()
@@ -558,7 +555,7 @@ class Importer_prodomo:
 
                                 ids[typ] = strid
 
-                                typsub = typ+subtype
+                                typsub = typ + subtype
 
                                 self.addTypSub(typsub, personName, "")
 
@@ -573,9 +570,8 @@ class Importer_prodomo:
                                 if not isinstance(names[typsub], list):
                                     # If type is not list then make it list
                                     names[typsub] = [names[typsub]]
-                        
-                                names[typsub].append(personName)
 
+                                names[typsub].append(personName)
 
                     # ASPEKT place
 
@@ -589,14 +585,14 @@ class Importer_prodomo:
                 for birthday in birthdays:
 
                     bday = self._buildDate(birthday)
-                    #print("GEBURTSTAG")
-                    #print(bday)
+                    # print("GEBURTSTAG")
+                    # print(bday)
                     ids["Geburt"] = birthday.Id
                     break
-                    
+
             elif type(birthdays) is Dates:
-                    bday = self._buildDate(birthdays)
-                    ids["Geburt"] = birthdays.Id
+                bday = self._buildDate(birthdays)
+                ids["Geburt"] = birthdays.Id
             else:
                 bday = ""
 
@@ -621,8 +617,8 @@ class Importer_prodomo:
                 for death in deaths:
                     deathday = self._buildDate(death)
                     ids["Tod"] = death.Id
-                    #print(death.Id)
-                  
+                    # print(death.Id)
+
             elif type(deaths) is Dates:
                 deathday = self._buildDate(deaths)
                 ids["Tod"] = deaths.Id
@@ -661,48 +657,48 @@ class Importer_prodomo:
             # print(personID)
             else:
                 burialplace = ""
-                
+
             self.prodomo_parser.add_burial(singlePerson, burialday, burialplace, ids)
 
             # Investitur
             if dates.get("KonventEinkleidung") is not None:
-                #print(dates.get("KonventEinkleidung"))
-                
-                self.prodomo_parser.add_investiture_events( singlePerson, dates.get("KonventEinkleidung") )
+                # print(dates.get("KonventEinkleidung"))
 
+                self.prodomo_parser.add_investiture_events(
+                    singlePerson, dates.get("KonventEinkleidung")
+                )
 
             # Other Events
             for key in Entities_dict:
-                
-                # Check if Key exists 
-                try:   
+
+                # Check if Key exists
+                try:
                     if key.replace(" ", "") not in excludes:
                         InfoEntry = ""
 
                         if key in Event_dict:
                             # get corresponding rule set
                             InfoEntry = Event_dict[key]
-                    
-                
+
                         # get origin data object
                         DataEntries = Entities_dict[key]
-                    
+
                         # check special cases:
-                        if key == "Schule": 
-                        
-                            if hasattr(DataEntries, "SemanticStm"): 
+                        if key == "Schule":
+
+                            if hasattr(DataEntries, "SemanticStm"):
                                 if DataEntries.semanticStm != "Sonstige Tätigkeiten":
                                     InfoEntry = ""
-                                    
+
                             else:
                                 InfoEntry = ""
-                        
-                        #print("Current Key: " + key)
-                        
+
+                        # print("Current Key: " + key)
+
                         # Data = ""
 
-                        if not(isinstance(DataEntries, list)):
-            
+                        if not (isinstance(DataEntries, list)):
+
                             self.doChecker(DataEntries, InfoEntry, singlePerson)
                         else:
                             for DataEntry in DataEntries:
@@ -723,24 +719,24 @@ class Importer_prodomo:
             Entities_dict.clear()
             dates.clear()
             dateids.clear()
-    
-
 
     def doChecker(self, DataEntry, InfoEntries, singlePerson):
 
-        if not(isinstance(InfoEntries, list)):
+        if not (isinstance(InfoEntries, list)):
             self.doCheckerRoutine(DataEntry, InfoEntries, singlePerson)
         else:
             for InfoEntry in InfoEntries:
                 self.doCheckerRoutine(DataEntry, InfoEntry, singlePerson)
-        
-            
 
     def doCheckerRoutine(self, DataEntry, InfoEntry, singlePerson):
 
         # check if date
-        #if type(DataEntry) is Dates or type(DataEntry) is Place or type(DataEntry) is PlaceName  or type(DataEntry) is Name:
-        if  type(DataEntry) is Place or type(DataEntry) is PlaceName  or type(DataEntry) is Name:
+        # if type(DataEntry) is Dates or type(DataEntry) is Place or type(DataEntry) is PlaceName  or type(DataEntry) is Name:
+        if (
+            type(DataEntry) is Place
+            or type(DataEntry) is PlaceName
+            or type(DataEntry) is Name
+        ):
             # init
             label = ""
 
@@ -762,45 +758,74 @@ class Importer_prodomo:
                 participant = InfoEntry.Participant
 
             try:
-                
+
                 # if DataEntry.Type == "Konvent" and DataEntry.Subtype == "sonstiges Amt":
                 #     print (DataEntry.From)
 
                 aspectlabel = ""
                 if hasattr(InfoEntry, "Aspectlabel"):
-                    if(InfoEntry.Aspectlabel.find("[aodl:name]") > -1):
+                    if InfoEntry.Aspectlabel.find("[aodl:name]") > -1:
                         aspectlabel = DataEntry.Text
                     else:
                         aspectlabel = InfoEntry.Aspectlabel
                 else:
                     aspectlabel = DataEntry.Text
-                
-                if(len(arrDates) > 1):
+
+                if len(arrDates) > 1:
 
                     for attribute in arrDates:
                         date = self.checkexistence(str(attribute), DataEntry)
-                        #if date is not None:
-                        #build event
+                        # if date is not None:
+                        # build event
                         label = self.buildStrings(DataEntry, InfoEntry)
 
-                        self.createEvent(DataEntry, label, date, aspectkey, occupationkey, aspectlabel, participant, DataEntry.Id, singlePerson)
+                        self.createEvent(
+                            DataEntry,
+                            label,
+                            date,
+                            aspectkey,
+                            occupationkey,
+                            aspectlabel,
+                            participant,
+                            DataEntry.Id,
+                            singlePerson,
+                        )
                         return
                 elif len(arrDates) == 1:
 
                     date = self.checkexistence(arrDates, DataEntry)
-                    
-                    #if date is not None:
-                    label = self.buildStrings(DataEntry,InfoEntry)
-                    self.createEvent(DataEntry, label, date,  aspectkey, occupationkey, aspectlabel, participant, DataEntry.Id, singlePerson)
 
+                    # if date is not None:
+                    label = self.buildStrings(DataEntry, InfoEntry)
+                    self.createEvent(
+                        DataEntry,
+                        label,
+                        date,
+                        aspectkey,
+                        occupationkey,
+                        aspectlabel,
+                        participant,
+                        DataEntry.Id,
+                        singlePerson,
+                    )
 
-            except:    
+            except:
                 print(traceback.format_exc())
 
-            #print("Label gelabeld: " + label)
+            # print("Label gelabeld: " + label)
 
-
-    def createEvent(self, DataEntry, label, date,  aspectKey, occupationKey, aspectLabel, participant, id, singlePerson) -> str:
+    def createEvent(
+        self,
+        DataEntry,
+        label,
+        date,
+        aspectKey,
+        occupationKey,
+        aspectLabel,
+        participant,
+        id,
+        singlePerson,
+    ) -> str:
         if label is not None:
             semantics = ""
             reference = ""
@@ -811,32 +836,35 @@ class Importer_prodomo:
             if type(DataEntry) is Dates:
                 reference = DataEntry.Reference
                 semantics = DataEntry.SemanticStm
-                if(len(DataEntry.From)) > 0:
+                if (len(DataEntry.From)) > 0:
                     datefrom = DataEntry.From
                     date = None
-                if(len(DataEntry.To)) > 0:
+                if (len(DataEntry.To)) > 0:
                     dateto = DataEntry.To
                     date = None
-            
+
             if type(DataEntry) is Place:
                 semantics = DataEntry.PlaceName
 
             if type(DataEntry) is Name:
 
-                typsub = (DataEntry.Type + DataEntry.Subtype)
-                
+                typsub = DataEntry.Type + DataEntry.Subtype
+
                 try:
 
-                    if DataEntry.Id in dateids :
+                    if DataEntry.Id in dateids:
 
                         kombidict = dateids[DataEntry.Id]
-                        
+
                         if not isinstance(kombidict, list):
-                        # If type is not list then make it list
+                            # If type is not list then make it list
                             kombidict = [kombidict]
                         for kombi in kombidict:
                             if type(kombi) is Dates:
-                                if kombi.Type + kombi.Subtype == typsub and kombi.Id == DataEntry.Id:
+                                if (
+                                    kombi.Type + kombi.Subtype == typsub
+                                    and kombi.Id == DataEntry.Id
+                                ):
                                     datefrom = kombi.From
                                     dateto = kombi.To
                                     date = kombi.When
@@ -844,8 +872,23 @@ class Importer_prodomo:
                 except:
                     print(traceback.format_exc())
 
-            
-            self.prodomo_parser.add_other_events(singlePerson, label, date, semantics, reference,"" ,aspectKey, occupationKey, aspectLabel, "", participant, id, DataEntry.PlaceName, datefrom, dateto)
+            self.prodomo_parser.add_other_events(
+                singlePerson,
+                label,
+                date,
+                semantics,
+                reference,
+                "",
+                aspectKey,
+                occupationKey,
+                aspectLabel,
+                "",
+                participant,
+                id,
+                DataEntry.PlaceName,
+                datefrom,
+                dateto,
+            )
 
     def buildStrings(self, DataEntry, InfoEntry) -> str:
         # clear labeltext1
@@ -854,20 +897,18 @@ class Importer_prodomo:
         # if Entry couldnt be found (Sonstige Tätigkeiten), try to match with excel spreadsheet
         if InfoEntry is None:
             if Other_Dict[DataEntry.Text]:
-                #get possible item from dict
+                # get possible item from dict
                 Item = Other_Dict[DataEntry.Text]
                 indexPr = Item["Prodomo"]
                 indexNp = Item["Nampi"]
                 index = ""
-                
-                if(len(indexPr) > 0):
+
+                if len(indexPr) > 0:
                     # make Event_dict iteratable
                     tuple_list = list(Event_dict.items())
                     InfoEntry = tuple_list(indexPr)
                 elif len(indexNp) > 0:
                     index = indexNp
-                    
-
 
         if hasattr(InfoEntry, "Label"):
             label = InfoEntry.Label
@@ -891,14 +932,14 @@ class Importer_prodomo:
 
         if group:
             # get Group via content of variable group
-            if(str(group).strip().upper() == "AODL:SEMANTICSTM"):
+            if str(group).strip().upper() == "AODL:SEMANTICSTM":
                 # do something
                 if type(DataEntry) is Dates:
                     labelGroup = DataEntry.SemanticStm
-            elif(str(group).strip().upper().find("AODL:PLACENAME") > -1 ):          
+            elif str(group).strip().upper().find("AODL:PLACENAME") > -1:
                 labelGroup = DataEntry.PlaceName
 
-            elif(type(DataEntry) is Date):
+            elif type(DataEntry) is Date:
                 labelGroup = DataEntry.Reference
             else:
                 if type(DataEntry) is Date:
@@ -908,13 +949,11 @@ class Importer_prodomo:
 
         # just take some group
         if label:
-            returnlabel = label.strip() 
+            returnlabel = label.strip()
         if labelGroup:
             returnlabel = returnlabel + " " + labelGroup
 
         return returnlabel
-
-
 
     # Check Rules and test, if DataEntry contains searched patterns
     def checkexistence(self, attribute, DataEntry) -> bool:
@@ -925,27 +964,27 @@ class Importer_prodomo:
             dateobject = DataEntry
 
         if dateobject is Dates:
-            if  (Att.upper() == "FROM"):
+            if Att.upper() == "FROM":
                 if len(DataEntry.From.strip()) > 1:
                     # apply event / aspect
                     logging.info("From was true ")
                     return DataEntry.From.strip()
-            elif (Att.upper() == "TO"):
+            elif Att.upper() == "TO":
                 if len(DataEntry.To.strip()) > 1:
                     # apply event / aspect
                     logging.info("To was true ")
                     return DataEntry.To.strip()
-            elif (Att.upper() == "WHEN"):
+            elif Att.upper() == "WHEN":
                 if len(DataEntry.When.strip()) > 1:
                     # apply event / aspect
                     logging.info("When was true ")
                     return DataEntry.When.strip()
-            elif (Att.upper() == "NOTAFTER"):
+            elif Att.upper() == "NOTAFTER":
                 if len(DataEntry.NotAfter.strip()) > 1:
                     # apply event / aspect
                     logging.info("NotAfter was true ")
                     return DataEntry.NotAfter.strip()
-            elif (Att.upper() == "NOTBEFORE"):
+            elif Att.upper() == "NOTBEFORE":
                 if len(DataEntry.NotBefore.strip()) > 1:
                     # apply event / aspect
                     logging.info("NotBefore was true ")
@@ -955,7 +994,7 @@ class Importer_prodomo:
 
         else:
             return ""
-            
+
     # Prepare Date
     def _buildDate(self, date):
 

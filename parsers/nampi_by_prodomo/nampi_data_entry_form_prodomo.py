@@ -3,14 +3,19 @@
 Classes:
     Nampi_data_entry_form
 """
-import logging
+import calendar
 import json
+import logging
 from datetime import date
 from typing import List, Optional
-from oauth2client.service_account import ServiceAccountCredentials
+
 import gspread
 import pandas
-import calendar
+from oauth2client.service_account import ServiceAccountCredentials
+# from modules.title import Title
+from pandas import Series
+from rdflib.term import URIRef
+
 from modules.appellation import Appellation, Appellation_type
 from modules.appellation_assignment import Appellation_assignment
 from modules.aspect import Aspect
@@ -22,9 +27,7 @@ from modules.death import Death
 from modules.di_act import Di_act
 from modules.event import Event
 from modules.family import Family
-
 from modules.gettypesandstati import GetTypesAndStati
-
 # from modules.gender import Gender
 from modules.group import Group
 from modules.nampi_graph import Nampi_graph
@@ -34,18 +37,10 @@ from modules.place import Place
 from modules.source import Source
 from modules.source_location import Source_location
 from modules.source_type import Source_type
-
-# from modules.title import Title
-from pandas import Series
 from parsers.nampi_by_prodomo.classes.date import Dates
 from parsers.nampi_by_prodomo.classes.entity_importer import Entity_Importer
 from parsers.nampi_data_entry_form.nampi_data_entry_form import (
-    Table,
-    added_investiture_label,
-    family_member_label,
-)
-
-from rdflib.term import URIRef
+    Table, added_investiture_label, family_member_label)
 
 _types = dict(
     Geburt="Geburt",
@@ -319,10 +314,21 @@ _status_types = {
     "Vicerector of the Josephsbruderschaft emeritus": Nampi_type.Core.status,
     "Vicedean": Nampi_type.Mona.vice_community_superior,
     "Visitator": Nampi_type.Mona.visitator,
-    "Visitator for Hungary, Styria, Upper and Lower Austria": Nampi_type.Mona.visitator,
-    "Dominican / Premonstratensian father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
-    "Profess": Nampi_type.Core.status,
-    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect
+
+    "Monastic office with spiritual focus": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Monastic office with manual focus": Nampi_type.Mona.monastic_office_with_manual_focus,
+    "Monastic office": Nampi_type.Mona.monastic_office,
+    "Member of a religious community visiting": Nampi_type.Mona.member_of_a_religious_community_visiting,
+    "Religious life outside a community": Nampi_type.Mona.religious_life_outside_a_community,
+    "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
+    "Secular office": Nampi_type.Mona.secular_office,
+    "Educator": Nampi_type.Mona.educator,
+    "Office": Nampi_type.Mona.office,
+    "Ruler of a school": Nampi_type.Mona.ruler_of_a_school,
+    "Status": Nampi_type.Core.status,
+    "Aspect": Nampi_type.Core.aspect,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect,
+
 }
 
 _occupation_types = {
@@ -331,14 +337,25 @@ _occupation_types = {
     "Clergy": Nampi_type.Mona.clergy,
     "Official": Nampi_type.Mona.official,
 
+    "Trade": Nampi_type.Mona.trade,
+
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
+    "Monastic office": Nampi_type.Mona.monastic_office,
+    "Secular office": Nampi_type.Mona.secular_office,
+    "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
+    "Office": Nampi_type.Mona.office,
+    "Educator": Nampi_type.Mona.educator,
+    "Servant": Nampi_type.Mona.servant,
+    "Visitator": Nampi_type.Mona.visitator,
+    "Highly skilled professional": Nampi_type.Mona.highly_skilled_professional,
+    "Rule of a school": Nampi_type.Mona.rule_of_a_school,
+    "Occupation": Nampi_type.Core.occupation,
+    "Aspect": Nampi_type.Core.aspect,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect,
 }
 
-authors = [
-    "Stephan Makowski",
-    "Irene Rabl",
-    "Patrick Fiska"
-]
+authors = ["Stephan Makowski", "Irene Rabl", "Patrick Fiska"]
+
 
 def safe_str(row: Series, column: str) -> Optional[str]:
     return str(row[column]) if column in row else None
@@ -355,11 +372,10 @@ class Nampi_data_entry_form_parser_prodomo:
     # Get all Entries from Group_Entities Spreadsheet
     def getEntities(self):
 
-
         # Extract and print all of the values
         list_of_hashes = GetTypesAndStati("Group Entities").getData()
         print("--Start analyzing Group_Entities--")
-        
+
         for i in list_of_hashes:
             Entry = Entity_Importer()
             Entry.Key = i["Rule"].strip()
@@ -499,7 +515,7 @@ class Nampi_data_entry_form_parser_prodomo:
         id: Optional[str],
         place: Optional[str],
         datefrom: Optional[str],
-        dateto:Optional[str]
+        dateto: Optional[str],
     ):
         # get Event label from dict
         Monastery = None
@@ -529,8 +545,6 @@ class Nampi_data_entry_form_parser_prodomo:
         elif place:
             objPlace = self.__get_place(place, "")
 
- 
-
         # check date
         # if it contains 4 digits, make earliest and latest date
 
@@ -546,26 +560,38 @@ class Nampi_data_entry_form_parser_prodomo:
             elif len(date) == 7:
                 datetokens = date.split("-")
                 dateearly = date + "-01"
-                datelast = date + "-" + str(calendar.monthrange(int(datetokens[0]),int(datetokens[1]))[1])
+                datelast = (
+                    date
+                    + "-"
+                    + str(
+                        calendar.monthrange(int(datetokens[0]), int(datetokens[1]))[1]
+                    )
+                )
                 date = None
 
         if datefrom:
-            if(len(datefrom))== 4:
+            if (len(datefrom)) == 4:
                 dateearly = datefrom + "-01-01"
-            elif(len(datefrom))==7:
+            elif (len(datefrom)) == 7:
                 dateearly = datefrom + "-01"
             else:
                 dateearly = datefrom
 
-        if dateto:        
-            
-            if(len(dateto.strip()))== 4:
+        if dateto:
+
+            if (len(dateto.strip())) == 4:
                 datelast = dateto + "-12-31"
-            elif(len(dateto.strip()))==7:
+            elif (len(dateto.strip())) == 7:
                 datetokens = dateto.split("-")
-                datelast = dateto + "-" + str(calendar.monthrange(int(datetokens[0]),int(datetokens[1]))[1])
+                datelast = (
+                    dateto
+                    + "-"
+                    + str(
+                        calendar.monthrange(int(datetokens[0]), int(datetokens[1]))[1]
+                    )
+                )
             else:
-                datelast = dateto   
+                datelast = dateto
 
         if dateearly == "0000-00-00":
             dateearly = ""
@@ -579,8 +605,8 @@ class Nampi_data_entry_form_parser_prodomo:
         if datelast.find("0000") > -1:
             datelast = ""
 
-        if len(dateearly) > 0  :
-             PlainEvent = Event(
+        if len(dateearly) > 0:
+            PlainEvent = Event(
                 self._graph,
                 objPerson,
                 Nampi_type.Core.has_main_participant,
@@ -589,7 +615,7 @@ class Nampi_data_entry_form_parser_prodomo:
                 objPlace,
                 "",
                 dateearly,
-                datelast
+                datelast,
             )
         elif date:
             PlainEvent = Event(
@@ -600,9 +626,9 @@ class Nampi_data_entry_form_parser_prodomo:
                 Nampi_type.Core.event,
                 objPlace,
                 date,
-            )     
-        else: 
-             PlainEvent = Event(
+            )
+        else:
+            PlainEvent = Event(
                 self._graph,
                 objPerson,
                 Nampi_type.Core.has_main_participant,
@@ -620,8 +646,7 @@ class Nampi_data_entry_form_parser_prodomo:
                 Nampi_type.Core.changes_aspect_related_to, Kloster
             )
 
-
-       # get various type by key from dict
+        # get various type by key from dict
         # leave if not present; core:aspect will be set automatically
         types = []
         try:
@@ -636,23 +661,22 @@ class Nampi_data_entry_form_parser_prodomo:
 
         except:
             logging.info("Key not in Dict")
-       
+
         varAspect =""
+
         alabel = ""
 
-        if aspectlabel is not None:  
-            if(aspectlabel.find("[Orden]") > -1 and hasattr(Monastery, "AspectPart")):
+        if aspectlabel is not None:
+            if aspectlabel.find("[Orden]") > -1 and hasattr(Monastery, "AspectPart"):
                 alabel = aspectlabel.replace("[Orden]", Monastery.AspectPart)
-            else:  
+            else:
                 alabel = aspectlabel
-
 
         if alabel is not None and len(alabel.strip()) > 0:
 
-            varAspect = Aspect(self._graph,alabel.capitalize(), types)
-            
-            PlainEvent.add_relationship(Nampi_type.Core.adds_aspect, varAspect)
+            varAspect = Aspect(self._graph, alabel.capitalize(), types)
 
+            PlainEvent.add_relationship(Nampi_type.Core.adds_aspect, varAspect)
 
             self.__insert_di_act(
                 PlainEvent,
@@ -668,8 +692,8 @@ class Nampi_data_entry_form_parser_prodomo:
         # print(invest_date.SemanticStm)
         # print(Entities_dict.keys())
         if not isinstance(invest_dates, list):
-                # If type is not list then make it list
-                invest_dates = [invest_dates]
+            # If type is not list then make it list
+            invest_dates = [invest_dates]
 
         for invest_date in invest_dates:
             if (
@@ -719,7 +743,9 @@ class Nampi_data_entry_form_parser_prodomo:
                     Nampi_type.Core.changes_aspect_related_to, Kloster
                 )
 
-            investiture.add_relationship(Nampi_type.Core.adds_aspect, Religious_Name.node)
+            investiture.add_relationship(
+                Nampi_type.Core.adds_aspect, Religious_Name.node
+            )
             investiture.add_relationship(Nampi_type.Core.adds_aspect, Novice)
 
             # investiture.add_relationship(Nampi_type.Core.changes_aspect_related_to, Group)
@@ -925,7 +951,7 @@ class Nampi_data_entry_form_parser_prodomo:
         source_label = source_label
         source_location_label = source_location_label
 
-        author =authors #Author(self._graph, author_label)
+        author = authors  # Author(self._graph, author_label)
         if not author:
             return None
         source_location = self.__get_source_location(
