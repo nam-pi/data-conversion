@@ -76,24 +76,253 @@ _group_types = {
 }
 
 _status_types = {
-    "Academic degree": Nampi_type.Mona.academic_degree,
-    "Clergy": Nampi_type.Mona.clergy,
-    "Community subsacristan": Nampi_type.Mona.community_subsacristan,
-    "Community superior": Nampi_type.Mona.community_superior,
-    "Member of a religious community": Nampi_type.Mona.member_of_a_religious_community,
-    "Member of a religious community with manual focus": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
-    "Member of a religious community with spiritual focus": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
-    "Procurator": Nampi_type.Mona.procurator,
-    "Professed member of a religious community": Nampi_type.Mona.professed_member_of_a_religious_community,
-    "Vice community superior": Nampi_type.Mona.vice_community_superior,
+    "Abbas Lateranensis": Nampi_type.Mona.community_superior,
+    "Abbess": Nampi_type.Mona.community_superior,
+    "Abbot": Nampi_type.Mona.community_superior,
+    "Academy professor": Nampi_type.Mona.educator,
+    "Archbishop": Nampi_type.Mona.clergy,
+    "Archdeacon": Nampi_type.Mona.clergy,
+    "Archpriest": Nampi_type.Mona.clergy,
+    "assessor": Nampi_type.Core.status,
+    "Assistant emeritus of the Josephsbruderschaft": Nampi_type.Mona.office,
+    "Assistant of the Vicar of Bohemia": Nampi_type.Mona.office,
+    "Augustinian father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Augustinian friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Augustinian prior": Nampi_type.Mona.community_superior,
+    "Augustinian prior perpetuus": Nampi_type.Mona.community_superior,
+    "Barnabite father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Barnabite friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Barnabite father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Benedictine father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Benedictine prior": Nampi_type.Mona.vice_community_superior,
+    "Beneficiatus": Nampi_type.Mona.clergy,
+    "Bibliothecarius": Nampi_type.Mona.office,
+    "Bishop": Nampi_type.Mona.clergy,
+    "Bishop elect": Nampi_type.Mona.clergy,
+    "Camerarius": Nampi_type.Mona.monastic_office,
+    "Canon": Nampi_type.Mona.clergy,
+    "Canon regular": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Canoness regular": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Canonicus regius": Nampi_type.Mona.clergy,
+    "Cantor": Nampi_type.Mona.monastic_office,
+    "Capitularis": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Capuchine father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Capuchine friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Carmelite father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Carmelite nun": Nampi_type.Mona.member_of_a_religious_community,
+    "Carmelite prioress": Nampi_type.Mona.community_superior,
+    "Carthusian converse": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Carthusian convisitator": Nampi_type.Mona.visitator,
+    "Carthusian hospes": Nampi_type.Mona.member_of_a_religious_community_visiting,
+    "Carthusian prior": Nampi_type.Mona.community_superior,
+    "Carthusian procurator": Nampi_type.Mona.vice_community_superior,
+    "Carthusian subsacristan": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Carthusian vicar": Nampi_type.Mona.vice_community_superior,
+    "Carthusian visitator": Nampi_type.Mona.visitator,
+    "Cellarer": Nampi_type.Mona.monastic_office_with_manual_focus,
+    "Chancellor": Nampi_type.Mona.office,
+    "Chaplain": Nampi_type.Mona.clergy,
+    "Choir monk": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Choir nun": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Cistercian father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Cistercian prior": Nampi_type.Mona.vice_community_superior,
+    "Cistercian prioress": Nampi_type.Mona.community_superior,
+    "Cistercian prioress emerita": Nampi_type.Mona.community_superior,
+    "Cistercian subprior": Nampi_type.Mona.vice_community_superior,
+    "Cistercian subprior emeritus": Nampi_type.Mona.vice_community_superior,
+    "Cistercian subprioress": Nampi_type.Mona.vice_community_superior,
+    "Cistercian vicar general": Nampi_type.Mona.community_superior,
+    "Cistercian vicar general emeritus": Nampi_type.Mona.community_superior,
+    "Cistercian visitator": Nampi_type.Mona.visitator,
+    "Cleric": Nampi_type.Mona.clergy,
+    "Coadiutor": Nampi_type.Core.status,
+    "Commissioner general": Nampi_type.Core.status,
+    "Concionator": Nampi_type.Mona.clergy,
+    "Concionator jubilatus": Nampi_type.Mona.clergy,
+    "Confessor": Nampi_type.Mona.clergy,
+    "Consistorialis": Nampi_type.Core.status,
+    "Consistorial councillor": Nampi_type.Mona.office_in_a_diocese,
+    "converse": Nampi_type.Core.status,
+    "Conversus": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Councillor": Nampi_type.Core.status,
+    "Count palatine": Nampi_type.Mona.secular_office,
+    "Court chaplain": Nampi_type.Mona.clergy,
+    "Curatus": Nampi_type.Mona.clergy,
+    "Curatus ecclesiasticus": Nampi_type.Mona.clergy,
+    "Custos": Nampi_type.Mona.office,
+    "Deacon": Nampi_type.Mona.clergy,
+    "Dean": Nampi_type.Mona.community_superior,
+    "Dean emeritus": Nampi_type.Mona.community_superior,
+    "Decanissa": Nampi_type.Mona.community_superior,
+    "Decanus foraneus": Nampi_type.Mona.community_superior,
+    "Definitor": Nampi_type.Mona.community_superior,
+    "Definitor of the German order province ": Nampi_type.Mona.community_superior,
+    "Deputy of the estates of Carinthia": Nampi_type.Mona.secular_office,
+    "Deputy of the estates of Lower Austria": Nampi_type.Mona.secular_office,
+    "Deputy of the estates of Lower Austria emeritus": Nampi_type.Mona.secular_office,
+    "Director of the bursary": Nampi_type.Mona.office,
+    "Doctor of Laws": Nampi_type.Mona.academic_degree,
+    "Doctor of Theology": Nampi_type.Mona.academic_degree,
+    "Dominican administrator": Nampi_type.Mona.community_superior,
+    "Dominican confessor": Nampi_type.Mona.clergy,
+    "Dominican father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Dominican friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Dominican novice": Nampi_type.Mona.member_of_a_religious_community,
+    "Dominican novice mistress": Nampi_type.Mona.professed_member_of_a_religious_community,
+    "Dominican prior ": Nampi_type.Mona.community_superior,
+    "Dominican prior provincialis": Nampi_type.Mona.community_superior,
+    "Dominican prioress": Nampi_type.Mona.community_superior,
+    "Dominican prioress emerita": Nampi_type.Mona.community_superior,
+    "Dominican provincial vicar": Nampi_type.Mona.community_superior,
+    "Dominican subprioress": Nampi_type.Mona.vice_community_superior,
+    "Dominican vicar": Nampi_type.Mona.community_superior,
+    "Donatus": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Fleischkuchlmeister": Nampi_type.Mona.monastic_office_with_manual_focus,
+    "Franciscan Hermit friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Franciscan father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Franciscan friar": Nampi_type.Mona.member_of_a_religious_community,
+    "friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Guardianus": Nampi_type.Mona.community_superior,
+    "Guest": Nampi_type.Mona.member_of_a_religious_community_visiting,
+    "Guest master": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Hermit": Nampi_type.Mona.religious_life_outside_a_community,
+    "Imperial administrator": Nampi_type.Mona.community_superior,
+    "Imperial and royal councillor": Nampi_type.Mona.secular_office,
+    "Imperial and royal secret councillor": Nampi_type.Mona.secular_office,
+    "Imperial chamberlain": Nampi_type.Mona.secular_office,
+    "Imperial councillor": Nampi_type.Mona.secular_office,
+    "Imperial court chaplain": Nampi_type.Mona.clergy,
+    "Imperial parish priest": Nampi_type.Mona.clergy,
+    "Imperial secret councillor": Nampi_type.Mona.secular_office,
+    "Jesuit brother": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Jesuit father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Jesuit priest": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Judge": Nampi_type.Mona.secular_office,
+    "Kitchen master": Nampi_type.Mona.monastic_office_with_manual_focus,
+    "Laica": Nampi_type.Core.status,
+    "Laicus": Nampi_type.Core.status,
+    "Lay brother": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Lay sister": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Lector": Nampi_type.Mona.office,
+    "Lector theologiae": Nampi_type.Mona.educator,
+    "Magnus Conestabilis": Nampi_type.Mona.secular_office,
+    "Marshal of Tyrolia": Nampi_type.Mona.secular_office,
+    "Master of theology": Nampi_type.Mona.academic_degree,
+    "Member": Nampi_type.Mona.member_of_a_religious_community,
+    "Minister of ceremonies": Nampi_type.Mona.office_in_a_diocese,
+    "Minorite father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Minorite friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Missionarius apostolicus": Nampi_type.Mona.office,
+    "Novice": Nampi_type.Mona.member_of_a_religious_community,
+    "Novice master": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Novice master emeritus": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Novice mistress": Nampi_type.Mona.vice_community_superior,
+    "nun": Nampi_type.Core.status,
+    "Oblatus": Nampi_type.Mona.member_of_a_religious_community_with_manual_focus,
+    "Observant definitor": Nampi_type.Mona.community_superior,
+    "Observant father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Observant friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Observant lector generalis": Nampi_type.Core.status,
+    "Oeconomus": Nampi_type.Mona.office,
+    "Official": Nampi_type.Mona.office_in_a_diocese,
+    "Official in Kirchberg": Nampi_type.Mona.office_in_a_diocese,
+    "order prefect of the mission": Nampi_type.Core.status,
+    "order prefect of the Mission in Carinthia, Krain and Styria": Nampi_type.Core.status,
+    "Parish priest": Nampi_type.Mona.clergy,
+    "Parochus emeritus": Nampi_type.Mona.clergy,
+    "Parson": Nampi_type.Mona.clergy,
+    "Pater immediatus for Carinthia, Krain and parts of Austria": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Pauline father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Pauline friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Pilgrim": Nampi_type.Mona.religious_life_outside_a_community,
+    "Poenitentiarius": Nampi_type.Mona.clergy,
+    "Poenitentiarius apostolicus": Nampi_type.Mona.clergy,
+    "Poor Clare nun": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Praedicator generalis": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Praefectus": Nampi_type.Core.status,
+    "Praefectus aulae": Nampi_type.Mona.monastic_office,
+    "Praefectus aulae et judiciorum": Nampi_type.Mona.office,
+    "Praefectus rationum": Nampi_type.Mona.office,
+    "Praefectus sylvarum": Nampi_type.Mona.office,
+    "Praepositus of the Congregation of the Austrian Lateran Canons regular": Nampi_type.Mona.community_superior,
+    "Praesentatus theologiae": Nampi_type.Core.status,
+    "Praeses of the Josephsbruderschaft": Nampi_type.Mona.office,
+    "Praeses of the Josephsbruderschaft emeritus": Nampi_type.Mona.office,
+    "Praeses of the prelates of Lower Austria in the diet": Nampi_type.Mona.office,
+    "Praeses of the Rosenkranzbruderschaft": Nampi_type.Mona.office,
+    "praetor": Nampi_type.Core.status,
+    "Prefect": Nampi_type.Core.status,
+    "Prefect of the mission": Nampi_type.Core.status,
+    "Prelate": Nampi_type.Mona.community_superior,
+    "Premonstratensian father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Presbyter jubilatus": Nampi_type.Mona.clergy,
+    "President of the congregation": Nampi_type.Core.status,
+    "Priest": Nampi_type.Mona.clergy,
+    "Priest monk": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Prior emeritus": Nampi_type.Mona.community_superior,
+    "Prior perpetuus": Nampi_type.Mona.community_superior,
+    "Prioress": Nampi_type.Mona.community_superior,
+    "Prioress emerita": Nampi_type.Mona.community_superior,
+    "Prioress of the Poor Clares": Nampi_type.Mona.community_superior,
+    "Procurator": Nampi_type.Mona.monastic_office,
+    "Professa jubilata": Nampi_type.Mona.professed_member_of_a_religious_community,
+    "Professus jubilatus": Nampi_type.Mona.professed_member_of_a_religious_community,
+    "Promotor of the Josephsbruderschaft": Nampi_type.Mona.office,
+    "Protonotary apostolic": Nampi_type.Mona.clergy,
+    "Provincialis emeritus": Nampi_type.Mona.community_superior,
+    "Provost": Nampi_type.Mona.community_superior,
+    "rector": Nampi_type.Core.status,
+    "Rector of the Jesuit college": Nampi_type.Mona.ruler_of_a_school,
+    "Rector of the Josephsbruderschaft": Nampi_type.Mona.office,
+    "Rector of the Josephsbruderschaft emeritus": Nampi_type.Mona.office,
+    "Rector of the University of Salzburg": Nampi_type.Mona.ruler_of_a_school,
+    "Rector of the University of Vienna": Nampi_type.Mona.ruler_of_a_school,
+    "Regens chori": Nampi_type.Mona.monastic_office_with_spiritual_focus,
+    "Royal vicar": Nampi_type.Core.status,
+    "Sacerdos jubilatus": Nampi_type.Mona.clergy,
+    "Sacrista": Nampi_type.Mona.monastic_office,
+    "Sacristan": Nampi_type.Mona.monastic_office,
+    "Second assistant of the Josephsbruderschaft": Nampi_type.Mona.office,
+    "Secretary": Nampi_type.Mona.office,
+    "Secretrary emeritus": Nampi_type.Mona.office,
+    "Secretary emeritus of the Josephsbruderschaft": Nampi_type.Mona.office,
+    "Secretary of the Imperial secret counsel in Lower Austria": Nampi_type.Mona.secular_office,
+    "Secretary of the Josephsbruderschaft": Nampi_type.Mona.office,
+    "Secret councillor": Nampi_type.Mona.office,
+    "Secular priest": Nampi_type.Mona.clergy,
+    "Senior": Nampi_type.Mona.member_of_a_religious_community,
+    "Senior capitularis": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Senior jubilatus": Nampi_type.Mona.member_of_a_religious_community,
+    "Servite father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Servite friar": Nampi_type.Mona.member_of_a_religious_community,
+    "Servite nun": Nampi_type.Mona.member_of_a_religious_community,
+    "Steward for the hereditary lands": Nampi_type.Core.status,
+    "Subprior": Nampi_type.Mona.vice_community_superior,
+    "Subprior emeritus": Nampi_type.Mona.vice_community_superior,
+    "Subprioress": Nampi_type.Mona.vice_community_superior,
+    "Suffragan bishop": Nampi_type.Mona.clergy,
+    "Superior": Nampi_type.Mona.community_superior,
+    "Superioress": Nampi_type.Mona.community_superior,
+    "Theatine father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Thesaurarius": Nampi_type.Mona.monastic_office,
+    "Titular abbot": Nampi_type.Mona.community_superior,
+    "Titular bishop": Nampi_type.Mona.clergy,
+    "University professor": Nampi_type.Mona.educator,
+    "university rector": Nampi_type.Core.status,
+    "Ursuline nun": Nampi_type.Mona.member_of_a_religious_community,
+    "Velata professa": Nampi_type.Mona.member_of_a_religious_community,
+    "Vicar": Nampi_type.Mona.clergy,
+    "Vicar general": Nampi_type.Mona.office_in_a_diocese,
+    "Vicar general of the Cistercian order": Nampi_type.Mona.community_superior,
+    "Vicar senior": Nampi_type.Core.status,
+    "Vicerector of the Josephsbruderschaft": Nampi_type.Core.status,
+    "Vicerector of the Josephsbruderschaft emeritus": Nampi_type.Core.status,
+    "Vicedean": Nampi_type.Mona.vice_community_superior,
     "Visitator": Nampi_type.Mona.visitator,
-    "Monastic office with spiritual focus": Nampi_type.Mona.monastic_office_with_spiritual_focus,
-    "Monastic office with manual focus": Nampi_type.Mona.monastic_office_with_manual_focus,
-    "Monastic office": Nampi_type.Mona.monastic_office,
-    "Member of a religious community visiting": Nampi_type.Mona.member_of_a_religious_community_visiting,
-    "Religious life outside a community": Nampi_type.Mona.religious_life_outside_a_community,
-    "Office in a diocese": Nampi_type.Mona.office_in_a_diocese,
-    "Unspecified" : Nampi_type.Mona.unspecified_aspect
+    "Visitator for Hungary, Styria, Upper and Lower Austria": Nampi_type.Mona.visitator,
+    "Dominican / Premonstratensian father": Nampi_type.Mona.member_of_a_religious_community_with_spiritual_focus,
+    "Profess": Nampi_type.Core.status,
+    "Unspecified aspect": Nampi_type.Mona.unspecified_aspect
 }
 
 _occupation_types = {
@@ -101,7 +330,7 @@ _occupation_types = {
     "Associated parish clergy": Nampi_type.Mona.associated_parish_clergy,
     "Clergy": Nampi_type.Mona.clergy,
     "Official": Nampi_type.Mona.official,
-    "Profession": Nampi_type.Mona.profession,
+
     "Rule of a community": Nampi_type.Mona.rule_of_a_community,
 }
 
@@ -288,17 +517,17 @@ class Nampi_data_entry_form_parser_prodomo:
             logging.warning("No source entry for 'person' ")
             return
 
-        Person = self.__get_person(person.Name)
+        objPerson = self.__get_person(person.Name)
 
         strPlace = ""
-        Place = ""
+        objPlace = ""
         place = ""
 
         if hasattr(Monastery, "Place_Label"):
             strPlace = Monastery.Place_Label
-            Place = self.__get_place(strPlace, Monastery.GeoId)
+            objPlace = self.__get_place(strPlace, Monastery.GeoId)
         elif place:
-            Place = self.__get_place(place, "")
+            objPlace = self.__get_place(place, "")
 
  
 
@@ -353,11 +582,11 @@ class Nampi_data_entry_form_parser_prodomo:
         if len(dateearly) > 0  :
              PlainEvent = Event(
                 self._graph,
-                Person,
+                objPerson,
                 Nampi_type.Core.has_main_participant,
                 label,
                 Nampi_type.Core.event,
-                Place,
+                objPlace,
                 "",
                 dateearly,
                 datelast
@@ -365,21 +594,21 @@ class Nampi_data_entry_form_parser_prodomo:
         elif date:
             PlainEvent = Event(
                 self._graph,
-                Person,
+                objPerson,
                 Nampi_type.Core.has_main_participant,
                 label,
                 Nampi_type.Core.event,
-                Place,
+                objPlace,
                 date,
             )     
         else: 
              PlainEvent = Event(
                 self._graph,
-                Person,
+                objPerson,
                 Nampi_type.Core.has_main_participant,
                 label,
                 Nampi_type.Core.event,
-                Place,
+                objPlace,
             )                       
 
 
@@ -403,11 +632,11 @@ class Nampi_data_entry_form_parser_prodomo:
                 types.append(_occupation_types[occupationkey])
 
             if len(types) == 0:
-                types.append(_status_types["Unspecified"])
+                types.append(_status_types["Unspecified aspect"])
 
         except:
             logging.info("Key not in Dict")
-
+       
         varAspect =""
         alabel = ""
 
@@ -460,9 +689,9 @@ class Nampi_data_entry_form_parser_prodomo:
 
             if hasattr(Monastery, "Place_Label"):
                 strPlace = Monastery.Place_Label
-                Place = self.__get_place(strPlace, Monastery.GeoId)
+                objPlace = self.__get_place(strPlace, Monastery.GeoId)
 
-            Person = self.__get_person(person.Name)
+            objPerson = self.__get_person(person.Name)
 
             Religious_Name = Appellation(
                 self._graph, person.Forename, Appellation_type.RELIGIOUS_NAME
@@ -474,11 +703,11 @@ class Nampi_data_entry_form_parser_prodomo:
 
             investiture = Event(
                 self._graph,
-                Person,
+                objPerson,
                 Nampi_type.Core.has_main_participant,
                 "Investiture in " + Monastery.Event,
                 Nampi_type.Core.event,
-                Place,
+                objPlace,
                 invest_date.When,
             )
 
@@ -625,7 +854,7 @@ class Nampi_data_entry_form_parser_prodomo:
                     person_label,
                     family_names,
                     birthplace,
-                    persondata.Id,
+                    ids["Geburt"],
                     persondata.Mother,
                     persondata.Father,
                 )
