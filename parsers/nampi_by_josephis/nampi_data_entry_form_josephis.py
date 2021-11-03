@@ -118,7 +118,7 @@ _occupation_types = {
     "Unspecified aspect": Nampi_type.Mona.unspecified_aspect,
 }
 
-authors = ["Stephan Makowski", "Manuela Mayer", "Andrea Singh Bottanova"]
+authors = ["Stephan Makowski", "Manuela Mayer", "Andrea Singh Bottanova", "Patrick Fiska", "Irene Rabl"]
 
 
 def safe_str(row: Series, column: str) -> Optional[str]:
